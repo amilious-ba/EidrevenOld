@@ -1,0 +1,832 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"build",
+				"buildSteps\tint"
+			],
+			[
+				"load",
+				"loadedChunks\tConcurrentDictionary<string, Chunk>"
+			],
+			[
+				"IEnum",
+				"IEnumerator\tIEnumerator"
+			],
+			[
+				"C",
+				"CreateBlock(BlockType blockType, Vector3 position, Chunk chunk)\tBlock"
+			],
+			[
+				"vec",
+				"Vector3\tVector3"
+			],
+			[
+				"chun",
+				"chunkBlocks\tBlock[,,]"
+			],
+			[
+				"ma",
+				"maxHealth\tint"
+			],
+			[
+				"buil",
+				"buildType\tBlockType"
+			],
+			[
+				"bl",
+				"blockUVs\tVector2[,]"
+			],
+			[
+				"blo",
+				"BlockType\tBlockType"
+			],
+			[
+				"G",
+				"GRASS\tBlockType"
+			],
+			[
+				"IEnu",
+				"IEnumerator\tIEnumerator"
+			],
+			[
+				"Get",
+				"GetComponent(string type)\tComponent"
+			],
+			[
+				"fil",
+				"fillData\tbyte[]"
+			],
+			[
+				"Wao",
+				"WaitForSeconds\tWaitForSeconds"
+			],
+			[
+				"bloc",
+				"blockType\tBlockType"
+			],
+			[
+				"c",
+				"chunk\tGameObject"
+			],
+			[
+				"loadin",
+				"loadingText\tText"
+			],
+			[
+				"play",
+				"playButton\tButton"
+			],
+			[
+				"bui",
+				"buildSteps\tint"
+			],
+			[
+				"chunk",
+				"chunkCount\tint"
+			],
+			[
+				"colm",
+				"ColumnHeight\tint"
+			],
+			[
+				"chu",
+				"ChunkSize\tint"
+			],
+			[
+				"max",
+				"maxWidth\tint"
+			],
+			[
+				"l",
+				"loadingText\tText"
+			],
+			[
+				"step",
+				"buildSteps\tint"
+			],
+			[
+				"getC",
+				"getChunkSize()\tint"
+			],
+			[
+				"get",
+				"getLoadRadius()\tint"
+			],
+			[
+				"Start",
+				"StartCoroutine"
+			],
+			[
+				"Chunk",
+				"ChunkStatus"
+			],
+			[
+				"chan",
+				"channel"
+			],
+			[
+				"set",
+				"setDescription"
+			],
+			[
+				"con",
+				"content"
+			],
+			[
+				"ge",
+				"general"
+			],
+			[
+				"cons",
+				"console"
+			],
+			[
+				"updated",
+				"updatedOn"
+			],
+			[
+				"crea",
+				"createdOn"
+			],
+			[
+				"update",
+				"updateUnitInfo"
+			],
+			[
+				"level",
+				"level_id"
+			],
+			[
+				"num",
+				"num_levels"
+			],
+			[
+				"fet",
+				"fetchedAll"
+			],
+			[
+				"nu",
+				"num_levels"
+			],
+			[
+				"ava",
+				"available"
+			],
+			[
+				"avai",
+				"availableOnly"
+			],
+			[
+				"created",
+				"createdBy"
+			],
+			[
+				"pos",
+				"position"
+			],
+			[
+				"upade",
+				"updateLevelInfo"
+			],
+			[
+				"course",
+				"course_id"
+			],
+			[
+				"cours",
+				"course_id"
+			],
+			[
+				"cour",
+				"course_id"
+			],
+			[
+				"logged",
+				"loggedin"
+			],
+			[
+				"log",
+				"logout"
+			],
+			[
+				"action",
+				"actionType"
+			],
+			[
+				"var",
+				"var_dump"
+			],
+			[
+				"is",
+				"isset"
+			],
+			[
+				"text",
+				"text-align\tproperty"
+			],
+			[
+				"up",
+				"updateClassInfo"
+			],
+			[
+				"class",
+				"class_id"
+			],
+			[
+				"cl",
+				"class_id"
+			],
+			[
+				"curren",
+				"currentUser"
+			],
+			[
+				"lock",
+				"lock_duration"
+			],
+			[
+				"locked",
+				"locked_time"
+			],
+			[
+				"loc",
+				"lock_duration"
+			],
+			[
+				"is_a",
+				"is_array"
+			],
+			[
+				"ip",
+				"ipfails"
+			],
+			[
+				"chec",
+				"checkTime"
+			],
+			[
+				"email_verify",
+				"email_verify_sent"
+			],
+			[
+				"emai",
+				"email_verified_date"
+			],
+			[
+				"succes",
+				"Successfully"
+			],
+			[
+				"Succes",
+				"successful"
+			],
+			[
+				"register",
+				"registered"
+			],
+			[
+				"su",
+				"success"
+			],
+			[
+				"curr",
+				"currentUser"
+			],
+			[
+				"time",
+				"timezone_name"
+			],
+			[
+				"va",
+				"value"
+			],
+			[
+				"dis",
+				"disabled"
+			],
+			[
+				"pre",
+				"preventDefault"
+			],
+			[
+				"hid",
+				"hiddenVal"
+			],
+			[
+				"t",
+				"target\tAttr"
+			],
+			[
+				"old",
+				"oldConf"
+			],
+			[
+				"confi",
+				"confirmField"
+			],
+			[
+				"fe",
+				"fieldName"
+			],
+			[
+				"fi",
+				"fieldName"
+			],
+			[
+				"subm",
+				"submit"
+			],
+			[
+				"forma",
+				"format"
+			],
+			[
+				"format",
+				"formatValue"
+			],
+			[
+				"N",
+				"NUM"
+			],
+			[
+				"col",
+				"colspan"
+			],
+			[
+				"testRe",
+				"testResultName"
+			],
+			[
+				"displa",
+				"displayResults"
+			],
+			[
+				"is_n",
+				"is_null"
+			],
+			[
+				"NEW",
+				"NEW_TEST_AFTER"
+			],
+			[
+				"NEW_TEST",
+				"NEW_TEST_BEFORE"
+			],
+			[
+				"sin",
+				"@since\tPhpDoc"
+			],
+			[
+				"lang",
+				"language"
+			],
+			[
+				"config",
+				"config_manager"
+			],
+			[
+				"json",
+				"json_decode"
+			],
+			[
+				"save",
+				"saveConfig"
+			],
+			[
+				"pass",
+				"password_changed"
+			],
+			[
+				"user",
+				"user_name"
+			],
+			[
+				"db",
+				"db_con"
+			],
+			[
+				"table",
+				"tableName"
+			],
+			[
+				"mysqli",
+				"mysqli_fetch"
+			],
+			[
+				"DB",
+				"DB_DB"
+			],
+			[
+				"D",
+				"DB_DB"
+			],
+			[
+				"thir",
+				"thirteen"
+			],
+			[
+				"sha",
+				"sharinginfo"
+			],
+			[
+				"tra",
+				"tracking"
+			],
+			[
+				"ter",
+				"termination"
+			],
+			[
+				"lia",
+				"liabilityDisclaimer"
+			],
+			[
+				"clas",
+				"classaction"
+			],
+			[
+				"inter",
+				"international"
+			],
+			[
+				"third",
+				"thirdPartyAccounts"
+			],
+			[
+				"provi",
+				"providedMaterials"
+			],
+			[
+				"comm",
+				"communicationServices"
+			],
+			[
+				"can",
+				"cancellation"
+			],
+			[
+				"cance",
+				"Cancellation"
+			],
+			[
+				"form",
+				"format"
+			],
+			[
+				"js",
+				"json_data"
+			],
+			[
+				"nex",
+				"nextPageBack"
+			],
+			[
+				"hand",
+				"handleClass"
+			],
+			[
+				"link",
+				"linkClicked"
+			],
+			[
+				"ic",
+				"iconAreas"
+			],
+			[
+				"icon",
+				"icon-area"
+			],
+			[
+				"pri",
+				"private40"
+			],
+			[
+				"privat",
+				"private20"
+			],
+			[
+				"htm",
+				"htmlBody"
+			],
+			[
+				"return",
+				"returnStudents"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts"
+	],
+	"file_history":
+	[
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DiamondOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Block.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Packages/manifest.json",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Direction.cs",
+		"/C/Users/brand/AppData/LocalLow/Amilious/Never World/savedata/Chunk_0_64_96_16_16.dat",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/GoldOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/RedstoneOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/GrassBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DirtBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/BedrockBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/SandBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/StoneBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/WaterBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/AirBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/BlockInteration.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/World.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Preformance/ConcurrentDictionary.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/QM_Compass.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Chunk/Chunk.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Preformance/LockFreeQueue.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Settings.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Chunk/ChunkGererator.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Chunk/Chunk.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Chunk.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/BlockInteration.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/ChunkMB.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Direction.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Block.cs",
+		"/C/Users/brand/Desktop/WitchPot.json",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/Models/Test.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/Models/ModelCreator.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/World.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Global.cs",
+		"/C/Users/brand/AppData/Local/Temp/scp27717/var/www/louella.andersonsblog.com/index.html",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Never World.sln",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/World.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/NeverWorld.sublime-project",
+		"/C/Users/brand/AppData/Local/Temp/scp42010/var/www/wwlingo.com/classroom/classes/Unit.php",
+		"/C/Users/brand/AppData/Local/Temp/scp42903/var/www/wwlingo.com/classroom/classes/Level.php",
+		"/C/Users/brand/AppData/Local/Temp/scp42286/var/www/wwlingo.com/classroom/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp48199/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/Desktop/Game Classes/Voxel Worlds/1. Introduction/6/VLU2L9/Assets/World.cs",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/index.js",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/package.json",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/config.json",
+		"/C/Users/brand/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/C/Users/brand/Downloads/json.txt",
+		"/C/Users/brand/Downloads/f (1).txt",
+		"/C/Users/brand/AppData/Local/Temp/scp18736/var/www/wwlingo.com/classroom/classes/Level.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29819/var/www/wwlingo.com/classroom/classes/Chapter.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29794/var/www/wwlingo.com/classroom/classes/Unit.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18841/var/www/wwlingo.com/classroom/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18168/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28394/var/www/wwlingo.com/amilious_login/AmiliousLogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp33820/var/www/wwlingo.com/amilious_login/action/logout.php",
+		"/C/Users/brand/Desktop/wwlingo/Logo_On_Left/Blue_On_White/Logo Files/For Web/svg/Color logo - no background.svg",
+		"/C/Users/brand/AppData/Local/Temp/scp23422/var/www/wwlingo.com/assets/php/wwlingo.php",
+		"/C/Users/brand/AppData/Local/Temp/scp37208/var/www/wwlingo.com/classes/overview/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28277/var/www/wwlingo.com/classes/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp26551/var/www/wwlingo.com/account/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29761/var/www/wwlingo.com/amilious_login/configMaker.php",
+		"/C/Users/brand/AppData/Local/Temp/scp34160/var/www/wwlingo.com/amilious_login/AmiliousLoginConfig.php",
+		"/C/Users/brand/AppData/Local/Temp/scp26757/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp15517/var/www/wwlingo.com/classroom/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp40228/var/www/wwlingo.com/classes/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp07550/var/www/wwlingo.com/classes/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29911/var/www/wwlingo.com/amilious_login/classes/User.php",
+		"/C/Users/brand/AppData/Local/Temp/scp06262/var/www/wwlingo.com/amilious_login/classes/DatabaseConnectors/MysqliDatabaseConnector.php",
+		"/C/Users/brand/AppData/Local/Temp/scp08734/var/www/wwlingo.com/amilious_login/AmiliousLogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28313/var/www/wwlingo.com/amilious_login/AmiliousLoginConfig.php",
+		"/C/Users/brand/AppData/Local/Temp/scp54704/var/www/wwlingo.com/ltest/action.php",
+		"/C/Users/brand/AppData/Local/Temp/scp17852/var/www/wwlingo.com/classes/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp45885/var/www/wwlingo.com/assets/php/wwlingo.php",
+		"/C/Users/brand/AppData/Local/Temp/scp31816/var/www/wwlingo.com/classes/overview/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18548/var/www/wwlingo.com/ltest/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp52230/var/www/wwlingo.com/ltest/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp47359/var/www/wwlingo.com/classes/classes/Class.php",
+		"/C/Users/brand/AppData/Local/Temp/scp07799/var/www/wwlingo.com/aboutus/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp58874/var/www/wwlingo.com/amilious_login/action/login.php",
+		"/C/Users/brand/AppData/Local/Temp/scp19243/var/www/wwlingo.com/account/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp54285/var/www/wwlingo.com/account/settings/index2.php",
+		"/C/Users/brand/AppData/Local/Temp/scp06991/var/www/wwlingo.com/account/settings/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp43766/var/www/wwlingo.com/account/index2.php",
+		"/C/Users/brand/AppData/Local/Temp/scp44739/var/www/wwlingo.com/account/profile/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp21151/var/www/wwlingo.com/account/profile/index2.php",
+		"/C/Users/brand/AppData/Local/Temp/scp35814/var/www/wwlingo.com/efinfo.json",
+		"/C/Users/brand/AppData/Local/Temp/scp36004/var/www/wwlingo.com/amilious_login/configMaker.php",
+		"/C/Users/brand/AppData/Local/Temp/scp48438/var/www/wwlingo.com/amilious_login/langMaker.php",
+		"/C/Users/brand/Desktop/website backup/account/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp39093/var/www/wwlingo.com/assets/css/custom.css",
+		"/C/Users/brand/AppData/Local/Temp/scp48391/var/www/wwlingo.com/home.php",
+		"/C/Users/brand/AppData/Local/Temp/scp49478/var/www/wwlingo.com/assets/css/unify.css",
+		"/C/Users/brand/AppData/Local/Temp/scp49730/var/www/wwlingo.com/assets/css/unify-components.css",
+		"/C/Users/brand/AppData/Local/Temp/scp06992/var/www/wwlingo.com/amilious_login/classes/DatabaseConnectorInterface.php",
+		"/C/Users/brand/AppData/Local/Temp/scp31379/var/www/wwlingo.com/amilious_login/action/email.php",
+		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/AmiliousLogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp05271/var/www/wwlingo.com/amilious_login/langMaker.php",
+		"/C/Users/brand/AppData/Local/Temp/scp23420/var/www/wwlingo.com/amilious_login/configMaker.php",
+		"/C/Users/brand/AppData/Local/Temp/scp31583/var/www/wwlingo.com/amilious_login/classes/Session.php",
+		"/C/Users/brand/AppData/Local/Temp/scp35706/var/www/wwlingo.com/amilious_login/classes/Security.php",
+		"/C/Users/brand/AppData/Local/Temp/scp30003/var/www/wwlingo.com/amilious_login/classes/Session",
+		"/C/Users/brand/AppData/Local/Temp/scp01432/var/www/wwlingo.com/amilious_login/plugins/SocketLabsEmailPlugin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp48181/var/www/wwlingo.com/amilious_login/ajax/register.php",
+		"/C/Users/brand/AppData/Local/Temp/scp05357/var/www/wwlingo.com/amilious_login/unittest/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp07579/var/www/wwlingo.com/amilious_login/amiliouslogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp14081/var/www/wwlingo.com/amilious_login/classes/email_validation.php",
+		"/C/Users/brand/AppData/Local/Temp/scp34796/var/www/wwlingo.com/assets/php/wwlingo.php",
+		"/C/Users/brand/AppData/Local/Temp/scp45071/var/www/wwlingo.com/amilious_login/ajax/logout.php",
+		"/C/Users/brand/AppData/Local/Temp/scp45876/var/www/wwlingo.com/amilious_login/ajax/userName.php",
+		"/C/Users/brand/AppData/Local/Temp/scp45393/var/www/wwlingo.com/amilious_login/ajax/email.php",
+		"/C/Users/brand/AppData/Local/Temp/scp54892/var/www/wwlingo.com/amilious_login/ajax/login.php",
+		"/C/Users/brand/AppData/Local/Temp/scp38523/var/www/wwlingo.com/amilious_login/classes/user.php",
+		"/C/Users/brand/AppData/Local/Temp/scp06148/var/www/wwlingo.com/amilious_login/classes/mysqli_connector.php",
+		"/C/Users/brand/AppData/Local/Temp/scp03669/var/www/wwlingo.com/amilious_login/classes/db_connector_interface.php",
+		"/C/Users/brand/AppData/Local/Temp/scp32538/var/www/wwlingo.com/login/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp50324/var/www/wwlingo.com/amilious_login/loginconfig.php",
+		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/AmiliousLoginConfig.php",
+		"/C/Users/brand/AppData/Local/Temp/scp47368/var/www/wwlingo.com/login/index2.php",
+		"/C/Users/brand/AppData/Local/Temp/scp06578/var/www/wwlingo.com/login/index3.php",
+		"/C/Users/brand/AppData/Local/Temp/scp34360/var/www/wwlingo.com/amilious_login/classes/AmiliousUnitTest.php",
+		"/C/Users/brand/AppData/Local/Temp/scp40222/var/www/wwlingo.com/amilious_login/test.php",
+		"/C/Users/brand/AppData/Local/Temp/scp59381/var/www/wwlingo.com/amilious_login/lang/english.php",
+		"/C/Users/brand/AppData/Local/Temp/scp46229/var/www/wwlingo.com/amilious_login/installer/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp41266/var/www/wwlingo.com/amilious_login/config/config.json",
+		"/C/Users/brand/AppData/Local/Temp/scp11741/var/www/wwlingo.com/amilious_login/amiliouslogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18167/var/www/wwlingo.com/amilious_login/loginconfig.php",
+		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/php/user.php",
+		"/C/Users/brand/AppData/Local/Temp/scp01504/var/www/wwlingo.com/amilious_login/classes/mysqli_connector"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"BlockSide",
+			"ConvertBlockIndexToLocal",
+			"UVs",
+			"changed"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.exec":
+	{
+		"height": 103.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.variable_get":
+	{
+		"height": 103.0
+	},
+	"pinned_build_system": "",
+	"project": "NeverWorld.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 214.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
