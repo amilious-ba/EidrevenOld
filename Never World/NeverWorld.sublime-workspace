@@ -4,6 +4,50 @@
 		"selected_items":
 		[
 			[
+				"explo",
+				"explosionPos\tVector3"
+			],
+			[
+				"expl",
+				"explosionPos\tVector3"
+			],
+			[
+				"cubesP",
+				"cubesPivot\tVector3"
+			],
+			[
+				"cubesPivo",
+				"cubesPivotDistance\tfloat"
+			],
+			[
+				"Vec",
+				"Vector3\tVector3"
+			],
+			[
+				"cube",
+				"cubesPivotDistance\tfloat"
+			],
+			[
+				"cubes",
+				"cubesInRow\tint"
+			],
+			[
+				"Stat",
+				"StatModifierType\tStatModifierType"
+			],
+			[
+				"P",
+				"Percent_FROM_BASE\tStatModifierType"
+			],
+			[
+				"remo",
+				"Remove(StatModifier item)\tbool"
+			],
+			[
+				"stat",
+				"statModifiers\tstatModifiers"
+			],
+			[
 				"build",
 				"buildSteps\tint"
 			],
@@ -470,55 +514,62 @@
 			[
 				"cance",
 				"Cancellation"
-			],
-			[
-				"form",
-				"format"
-			],
-			[
-				"js",
-				"json_data"
-			],
-			[
-				"nex",
-				"nextPageBack"
-			],
-			[
-				"hand",
-				"handleClass"
-			],
-			[
-				"link",
-				"linkClicked"
-			],
-			[
-				"ic",
-				"iconAreas"
-			],
-			[
-				"icon",
-				"icon-area"
-			],
-			[
-				"pri",
-				"private40"
-			],
-			[
-				"privat",
-				"private20"
-			],
-			[
-				"htm",
-				"htmlBody"
-			],
-			[
-				"return",
-				"returnStudents"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "Assets/Scripts/Character Stats/CharacterStat.cs",
+			"settings":
+			{
+				"buffer_size": 1558,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+			"settings":
+			{
+				"buffer_size": 2435,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
+			"settings":
+			{
+				"buffer_size": 1218,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Player/character.json",
+			"settings":
+			{
+				"buffer_size": 2435,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Player/CreateObject.cs",
+			"settings":
+			{
+				"buffer_size": 296,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Character Stats/StatModifier.cs",
+			"settings":
+			{
+				"buffer_size": 423,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -564,12 +615,18 @@
 	},
 	"expanded_folders":
 	[
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts"
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block"
 	],
 	"file_history":
 	[
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DiamondOreBlock.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Block.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Exploding Cube/CubeExplosion.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DiamondOreBlock.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Packages/manifest.json",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Direction.cs",
 		"/C/Users/brand/AppData/LocalLow/Amilious/Never World/savedata/Chunk_0_64_96_16_16.dat",
@@ -694,12 +751,11 @@
 		"/C/Users/brand/AppData/Local/Temp/scp41266/var/www/wwlingo.com/amilious_login/config/config.json",
 		"/C/Users/brand/AppData/Local/Temp/scp11741/var/www/wwlingo.com/amilious_login/amiliouslogin.php",
 		"/C/Users/brand/AppData/Local/Temp/scp18167/var/www/wwlingo.com/amilious_login/loginconfig.php",
-		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/php/user.php",
-		"/C/Users/brand/AppData/Local/Temp/scp01504/var/www/wwlingo.com/amilious_login/classes/mysqli_connector"
+		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/php/user.php"
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 22.0
 	},
 	"find_in_files":
 	{
@@ -734,14 +790,202 @@
 	"groups":
 	[
 		{
+			"selected": 3,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "Assets/Scripts/Character Stats/CharacterStat.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1558,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								972,
+								972
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"1009,1021": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"1214,1226": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"127,139": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"1279,1295": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"1367,1383": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"473,485": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"519,531": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"687,699": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"703,715": "The type 'StatModifier' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifier' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2435,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1218,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 169.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Assets/Scripts/Player/character.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2435,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Assets/Scripts/Player/CreateObject.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 296,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Assets/Scripts/Character Stats/StatModifier.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 423,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								36,
+								36
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"144,160": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"230,246": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
+								"367,383": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				}
 			]
 		}
 	],
 	"incremental_find":
 	{
-		"height": 23.0
+		"height": 22.0
 	},
 	"input":
 	{
@@ -786,7 +1030,7 @@
 	"project": "NeverWorld.sublime-project",
 	"replace":
 	{
-		"height": 42.0
+		"height": 40.0
 	},
 	"save_all_on_build": true,
 	"select_file":

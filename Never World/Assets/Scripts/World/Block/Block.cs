@@ -258,5 +258,4 @@ public abstract class Block {
 			if(shouldRenderQuad(dir))CreateQuad(dir);
 		}
 	}
-
 }

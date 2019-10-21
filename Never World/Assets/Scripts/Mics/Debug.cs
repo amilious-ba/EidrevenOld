@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Debug : MonoBehaviour {
+public class Debuger : MonoBehaviour {
 
 	private static string playerPosition = "";
 	private static string playerLookingAt = "";
@@ -50,8 +50,8 @@ public class Debug : MonoBehaviour {
     }
 
     public static void setDebugging(bool debug){
-    	if(debug!=Debug.debug)return;
-    	Debug.debug = debug;
+    	if(debug!=Debuger.debug)return;
+    	Debuger.debug = debug;
     	panel.gameObject.SetActive(debug);
     }
 }

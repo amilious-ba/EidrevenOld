@@ -27,4 +27,14 @@ public class Utils {
 	public static Vector3 fillVector3(float value){
 		return new Vector3(value, value, value);
 	}
+
+	public static Vector3 convertArrayToVector3(float[] array){
+		if(array==null||array.Length<3)return new Vector3(0,0,0);
+		return new Vector3(array[0],array[1],array[2]);
+	}
+
+	public static Vector2 convertArrayToVector2(float[] array){
+		if(array==null||array.Length<2)return new Vector2(0,0);
+		return new Vector2(array[0],array[1]);
+	}
 }
