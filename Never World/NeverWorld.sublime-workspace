@@ -4,6 +4,98 @@
 		"selected_items":
 		[
 			[
+				"model",
+				"modelFile\tModelFile"
+			],
+			[
+				"te",
+				"textureHeight\tint"
+			],
+			[
+				"Vec",
+				"Vector2\tVector2"
+			],
+			[
+				"vec",
+				"Vector3\tVector3"
+			],
+			[
+				"Vector",
+				"Vector2\tVector2"
+			],
+			[
+				"con",
+				"convertArrayToVector3(float[] array)\tVector3"
+			],
+			[
+				"Vect",
+				"Vector2\tVector2"
+			],
+			[
+				"ReadAll",
+				"ReadAllText(string path)\tstring"
+			],
+			[
+				"Mode",
+				"ModelFile\tModelFile"
+			],
+			[
+				"e",
+				"Exists(string path)\tbool"
+			],
+			[
+				"stre",
+				"streamingAssetsPath\tstring"
+			],
+			[
+				"UnityE",
+				"UnityEngine\tUnityEngine"
+			],
+			[
+				"pi",
+				"pivotZ\tfloat"
+			],
+			[
+				"uv",
+				"uvY\tfloat"
+			],
+			[
+				"s",
+				"sizeZ\tfloat"
+			],
+			[
+				"si",
+				"sizeX\tfloat"
+			],
+			[
+				"or",
+				"originZ\tfloat"
+			],
+			[
+				"ori",
+				"originX\tfloat"
+			],
+			[
+				"mode",
+				"modelBone\tModelBone"
+			],
+			[
+				"c",
+				"Count\tint"
+			],
+			[
+				"C",
+				"Count\tint"
+			],
+			[
+				"v",
+				"Vector3\tVector3"
+			],
+			[
+				"vis",
+				"visibleBoundsOffset\tVector3"
+			],
+			[
 				"explo",
 				"explosionPos\tVector3"
 			],
@@ -18,10 +110,6 @@
 			[
 				"cubesPivo",
 				"cubesPivotDistance\tfloat"
-			],
-			[
-				"Vec",
-				"Vector3\tVector3"
 			],
 			[
 				"cube",
@@ -58,14 +146,6 @@
 			[
 				"IEnum",
 				"IEnumerator\tIEnumerator"
-			],
-			[
-				"C",
-				"CreateBlock(BlockType blockType, Vector3 position, Chunk chunk)\tBlock"
-			],
-			[
-				"vec",
-				"Vector3\tVector3"
 			],
 			[
 				"chun",
@@ -110,10 +190,6 @@
 			[
 				"bloc",
 				"blockType\tBlockType"
-			],
-			[
-				"c",
-				"chunk\tGameObject"
 			],
 			[
 				"loadin",
@@ -174,10 +250,6 @@
 			[
 				"set",
 				"setDescription"
-			],
-			[
-				"con",
-				"content"
 			],
 			[
 				"ge",
@@ -442,78 +514,6 @@
 			[
 				"pass",
 				"password_changed"
-			],
-			[
-				"user",
-				"user_name"
-			],
-			[
-				"db",
-				"db_con"
-			],
-			[
-				"table",
-				"tableName"
-			],
-			[
-				"mysqli",
-				"mysqli_fetch"
-			],
-			[
-				"DB",
-				"DB_DB"
-			],
-			[
-				"D",
-				"DB_DB"
-			],
-			[
-				"thir",
-				"thirteen"
-			],
-			[
-				"sha",
-				"sharinginfo"
-			],
-			[
-				"tra",
-				"tracking"
-			],
-			[
-				"ter",
-				"termination"
-			],
-			[
-				"lia",
-				"liabilityDisclaimer"
-			],
-			[
-				"clas",
-				"classaction"
-			],
-			[
-				"inter",
-				"international"
-			],
-			[
-				"third",
-				"thirdPartyAccounts"
-			],
-			[
-				"provi",
-				"providedMaterials"
-			],
-			[
-				"comm",
-				"communicationServices"
-			],
-			[
-				"can",
-				"cancellation"
-			],
-			[
-				"cance",
-				"Cancellation"
 			]
 		]
 	},
@@ -529,43 +529,90 @@
 			}
 		},
 		{
-			"file": "/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+			"file": "Assets/Scripts/ObjectLoader/ModelDescription.cs",
 			"settings":
 			{
-				"buffer_size": 2435,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
-			"settings":
-			{
-				"buffer_size": 1218,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Assets/Scripts/Player/character.json",
-			"settings":
-			{
-				"buffer_size": 2435,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/Player/CreateObject.cs",
-			"settings":
-			{
-				"buffer_size": 296,
+				"buffer_size": 1263,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "Assets/Scripts/Character Stats/StatModifier.cs",
+			"file": "Assets/Scripts/ObjectLoader/ObjectLoader.cs",
 			"settings":
 			{
-				"buffer_size": 423,
+				"buffer_size": 6523,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Mics/Debug.cs",
+			"settings":
+			{
+				"buffer_size": 1427,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/ObjectLoader/ModelCube.cs",
+			"settings":
+			{
+				"buffer_size": 1046,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/StreamingAssets/character.json",
+			"settings":
+			{
+				"buffer_size": 3399,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Player/BlockInteration.cs",
+			"settings":
+			{
+				"buffer_size": 4212,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Mics/Utils.cs",
+			"settings":
+			{
+				"buffer_size": 1226,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/ObjectLoader/ModelGeometry.cs",
+			"settings":
+			{
+				"buffer_size": 458,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/ObjectLoader/ModelFile.cs",
+			"settings":
+			{
+				"buffer_size": 514,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/ObjectLoader/ModelBone.cs",
+			"settings":
+			{
+				"buffer_size": 914,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Unix"
 			}
@@ -617,13 +664,20 @@
 	[
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Exploding Cube",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Inventory",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Inventory/Scripts",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics",
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player",
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World",
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block"
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player"
 	],
 	"file_history":
 	[
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JsonHelper.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JSONLoader.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats/StatModifier.cs",
+		"/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/CreateObject.cs",
+		"/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Block.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Exploding Cube/CubeExplosion.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DiamondOreBlock.cs",
@@ -745,17 +799,11 @@
 		"/C/Users/brand/AppData/Local/Temp/scp47368/var/www/wwlingo.com/login/index2.php",
 		"/C/Users/brand/AppData/Local/Temp/scp06578/var/www/wwlingo.com/login/index3.php",
 		"/C/Users/brand/AppData/Local/Temp/scp34360/var/www/wwlingo.com/amilious_login/classes/AmiliousUnitTest.php",
-		"/C/Users/brand/AppData/Local/Temp/scp40222/var/www/wwlingo.com/amilious_login/test.php",
-		"/C/Users/brand/AppData/Local/Temp/scp59381/var/www/wwlingo.com/amilious_login/lang/english.php",
-		"/C/Users/brand/AppData/Local/Temp/scp46229/var/www/wwlingo.com/amilious_login/installer/index.php",
-		"/C/Users/brand/AppData/Local/Temp/scp41266/var/www/wwlingo.com/amilious_login/config/config.json",
-		"/C/Users/brand/AppData/Local/Temp/scp11741/var/www/wwlingo.com/amilious_login/amiliouslogin.php",
-		"/C/Users/brand/AppData/Local/Temp/scp18167/var/www/wwlingo.com/amilious_login/loginconfig.php",
-		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/php/user.php"
+		"/C/Users/brand/AppData/Local/Temp/scp40222/var/www/wwlingo.com/amilious_login/test.php"
 	],
 	"find":
 	{
-		"height": 22.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -769,6 +817,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Count",
+			";\n",
+			"Count",
+			"5f",
 			"BlockSide",
 			"ConvertBlockIndexToLocal",
 			"UVs",
@@ -790,7 +842,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -806,8 +858,8 @@
 						"selection":
 						[
 							[
-								972,
-								972
+								782,
+								783
 							]
 						],
 						"settings":
@@ -830,24 +882,233 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+					"file": "Assets/Scripts/ObjectLoader/ModelDescription.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2435,
+						"buffer_size": 1263,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								711,
+								711
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"1114,1119": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"115,131": "The namespace '<global namespace>' already contains a definition for 'ModelDescription'",
+								"26,31": "Unnecessary using directive.",
+								"332,348": "Type 'ModelDescription' already defines a member called '.ctor' with the same parameter types",
+								"555,571": "Type 'ModelDescription' already defines a member called '.ctor' with the same parameter types",
+								"726,736": "Ambiguity between 'ModelDescription.identifier' and 'ModelDescription.identifier'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Assets/Scripts/ObjectLoader/ObjectLoader.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6523,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								429,
+								429
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"1026,1031": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'",
+								"1046,1057": "Ambiguity between 'ModelGeometry.description' and 'ModelGeometry.description'",
+								"1112,1117": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'",
+								"1142,1151": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"1165,1170": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'",
+								"1194,1198": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"1211,1217": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
+								"1230,1234": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"1245,1251": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
+								"1278,1282": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"1316,1322": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
+								"1384,1393": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"1497,1501": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"1536,1540": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"159,172": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"1693,1698": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"1718,1723": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"1814,1819": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"1875,1880": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"1902,1907": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"1934,1939": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"5280,5293": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5333,5349": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5368,5384": "The call is ambiguous between the following methods or properties: 'ModelDescription.ModelDescription(string, int, int, int, int, Vector3)' and 'ModelDescription.ModelDescription(string, int, int, int, int, Vector3)'",
+								"5449,5458": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5476,5485": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5519,5528": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5540,5549": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5627,5636": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5647,5656": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5684,5693": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5704,5713": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5742,5751": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5762,5771": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5807,5816": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5837,5846": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5916,5925": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"5942,5951": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6041,6050": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6060,6069": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6104,6113": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"611,620": "The type 'ModelFile' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\ObjectLoader\\JSONLoader.cs' conflicts with the imported type 'ModelFile' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\ObjectLoader\\JSONLoader.cs'.",
+								"6133,6142": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6174,6183": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6195,6204": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6292,6301": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6312,6321": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6348,6357": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6368,6377": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6436,6449": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"6462,6475": "The call is ambiguous between the following methods or properties: 'ModelGeometry.ModelGeometry(ModelDescription, List<ModelBone>)' and 'ModelGeometry.ModelGeometry(ModelDescription, List<ModelBone>)'",
+								"654,663": "The type 'ModelFile' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\ObjectLoader\\JSONLoader.cs' conflicts with the imported type 'ModelFile' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\ObjectLoader\\JSONLoader.cs'.",
+								"898,911": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"979,984": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Assets/Scripts/Mics/Debug.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1427,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1257,
+								1257
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"1329,1336": "The type 'Debuger' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Debug.cs' conflicts with the imported type 'Debuger' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Debug.cs'.",
+								"1356,1363": "The type 'Debuger' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Debug.cs' conflicts with the imported type 'Debuger' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Debug.cs'.",
+								"26,31": "Unnecessary using directive."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Assets/Scripts/ObjectLoader/ModelCube.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1046,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								882,
+								882
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"1004,1009": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"1032,1034": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
+								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelCube'",
+								"201,210": "Type 'ModelCube' already defines a member called '.ctor' with the same parameter types",
+								"26,31": "Unnecessary using directive.",
+								"330,339": "Type 'ModelCube' already defines a member called '.ctor' with the same parameter types",
+								"390,396": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
+								"448,452": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'",
+								"498,500": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
+								"665,671": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
+								"719,723": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'",
+								"765,767": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
+								"838,843": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"866,872": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
+								"923,928": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"951,955": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Assets/StreamingAssets/character.json",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3399,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								75,
+								64
 							]
 						],
 						"settings":
@@ -863,12 +1124,12 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
-					"semi_transient": false,
+					"buffer": 6,
+					"file": "Assets/Scripts/Player/BlockInteration.cs",
+					"semi_transient": true,
 					"settings":
 					{
-						"buffer_size": 1218,
+						"buffer_size": 4212,
 						"regions":
 						{
 						},
@@ -881,95 +1142,77 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Text/Plain text.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 169.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "Assets/Scripts/Player/character.json",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 2435,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "Assets/Scripts/Player/CreateObject.cs",
+					"buffer": 7,
+					"file": "Assets/Scripts/Mics/Utils.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 296,
+						"buffer_size": 1226,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1121,
+								1121
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "Assets/Scripts/Character Stats/StatModifier.cs",
+					"buffer": 8,
+					"file": "Assets/Scripts/ObjectLoader/ModelGeometry.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 423,
+						"buffer_size": 458,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								36,
-								36
+								194,
+								194
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"144,160": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
-								"230,246": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'.",
-								"367,383": "The type 'StatModifierType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs' conflicts with the imported type 'StatModifierType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Character Stats\\StatModifier.cs'."
+								"0,5": "Unnecessary using directive.",
+								"115,128": "The namespace '<global namespace>' already contains a definition for 'ModelGeometry'",
+								"138,154": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"176,185": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"204,217": "Type 'ModelGeometry' already defines a member called '.ctor' with the same parameter types",
+								"320,333": "Type 'ModelGeometry' already defines a member called '.ctor' with the same parameter types",
+								"334,350": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"369,378": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"394,405": "Ambiguity between 'ModelGeometry.description' and 'ModelGeometry.description'",
+								"428,433": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'",
+								"60,65": "Unnecessary using directive."
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
 						},
@@ -977,7 +1220,95 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Assets/Scripts/ObjectLoader/ModelFile.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 514,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								476,
+								476
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelFile'",
+								"167,180": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"199,215": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"237,246": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"415,428": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"444,458": "Ambiguity between 'ModelFile.format_version' and 'ModelFile.format_version'",
+								"60,65": "Unnecessary using directive.",
+								"81,87": "Duplicate 'System.Serializable' attribute"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Assets/Scripts/ObjectLoader/ModelBone.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 914,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								909,
+								909
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelBone'",
+								"201,210": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"229,238": "Type 'ModelBone' already defines a member called '.ctor' with the same parameter types",
+								"369,378": "Type 'ModelBone' already defines a member called '.ctor' with the same parameter types",
+								"427,436": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"452,456": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"472,478": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
+								"496,501": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'",
+								"549,554": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"673,682": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
+								"698,702": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
+								"718,724": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
+								"742,747": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'",
+								"812,817": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
+								"874,879": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"902,907": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 11.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
 					"type": "text"
 				}
 			]

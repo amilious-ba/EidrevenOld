@@ -6,21 +6,28 @@ using System.IO;
 public class ObjectLoader : MonoBehaviour{
 
 	[SerializeField] ModelGeometry model;
-	private Dictionary<string, GameObject> objects;
 
-	public string path;
-	public Material material;
-	private string jsonString;
+	public string blueprintPath;
+	public string skinPath;
+	public string animationPath;
 
     // Start is called before the first frame update
     void Start(){
-    	objects = new Dictionary<string,GameObject>();
-    	if(path==null)return;
-    	jsonString = File.ReadAllText(Application.streamingAssetsPath + "/"+path);
-    	jsonString = jsonString.Replace("minecraft:geometry", "model");
-    	ModelFile modelFile = JsonUtility.FromJson<ModelFile>(jsonString);
-    	if(modelFile.model!=null)
-    	buildModel(modelFile.model[0]);
+    	//check to see if all the required assests exist    	
+    	if(blueprintPath==null||
+    		!File.Exists(Application.streamingAssetsPath + "/"+blueprintPath))return;
+    	//create the material
+    	Material loadedMaterial;
+    	if(createMaterial(Application.streamingAssetsPath + "/"+skinPath,
+    	 Shader.Find("Standard"), out loadedMaterial)){
+
+    	}
+    	
+    	//build the moddel
+    	loadModel(blueprintPath,out model);
+    	buildModel(model,loadedMaterial);
+    	//load animations
+    	
     }
 
     // Update is called once per frame
@@ -33,40 +40,96 @@ public class ObjectLoader : MonoBehaviour{
 
     }
 
-    public void buildModel(ModelGeometry model){
+    public bool createMaterial(string path, Shader shader, out Material material){
+    	Material loadedMaterial = new Material(shader);
+    	//check to see if the file exists
+    	if(!File.Exists(path)){
+    		material = null; return false;
+    	}
+    	var bytes = System.IO.File.ReadAllBytes(path);
+    	var texture = new Texture2D(1,1);
+    	texture.filterMode = FilterMode.Point;
+    	texture.LoadImage(bytes);
+    	loadedMaterial.mainTexture = texture;
+    	//need to modify the material here
+    	loadedMaterial.EnableKeyword("_SPECULARHIGHLIGHTS_OFF");
+ 		loadedMaterial.EnableKeyword("_GLOSSYREFLECTIONS_OFF");
+    	//return the material
+    	material = loadedMaterial;return true;
+    }
+
+    /**
+     * This method is used to load and decode a model blueprint from a 
+     * json file.
+     * @param  string path          path to the jason file.
+     * @param  out    ModelGeometry model         Will be set to the 
+     * loaded ModelGeometry
+     * @return bool        Returns true if the object was loaded,
+     * otherwise returns false.
+     */
+    public bool loadModel(string path, out ModelGeometry model){
+    	string jsonString = File.ReadAllText(Application.streamingAssetsPath + "/"+path);
+    	jsonString = jsonString.Replace("minecraft:geometry", "model");
+    	ModelBlueprint modelBlueprint = JsonUtility.FromJson<ModelBlueprint>(jsonString);
+    	if(modelBlueprint.model!=null){
+    		model = modelBlueprint.model[0];
+    		return true;
+    	}else{
+    		model = null;
+    		return false;
+    	} 
+    }
+
+    /**
+     * When called this method builds a model from the passed
+     * modelGeometry.
+     * @param  ModelGeometry model         The blueprint of the
+     * model.
+     */
+    public void buildModel(ModelGeometry model, Material material){
+		Dictionary<string, GameObject> objects  = new Dictionary<string,GameObject>();
     	//create the cubes
     	for(int boneId=0;boneId<model.bones.Length;boneId++){
-    		createBone(model.bones[boneId],model.description.ImageSize);
+    		GameObject bone = createBone(model.bones[boneId],model.description.ImageSize,material);
+    		objects.Add(model.bones[boneId].name, bone);
     	}
     	for(int boneId=0;boneId<model.bones.Length;boneId++){
-    		ModelBone bone = model.bones[boneId];
-    		if(bone.name!=null&&bone.parent!=null&&bone.name!=""&&bone.parent!=""){
+    		BoneBlueprint bone = model.bones[boneId];
+    		if(bone.name!=null&&bone.parent!=null&&bone.name!=""&&bone.parent!=""&&
+    			objects[bone.name]!=null&&objects[bone.parent]!=null){
     			objects[bone.name].transform.parent = objects[bone.parent].transform;
     		}
     	}
     }
 
-    public void createBone(ModelBone modelBone,Vector2 imageSize){
+    /**
+     * This method is called to create a bone for the model.
+     * @param  ModelBone modelBone     The blueprint for the
+     * bone.
+     * @param  Vector2   imageSize     Contains the with (x) and
+     * the height (y) of the objects skin file.
+     */
+    public GameObject createBone(BoneBlueprint boneBlueprint,Vector2 imageSize, Material material){
     	GameObject bone = new GameObject();
-    	this.objects.Add(modelBone.name,bone);
-    	bone.name = modelBone.name;
-    	bone.transform.position = modelBone.Pivot;
+    	bone.name = boneBlueprint.name;
+    	bone.transform.position = boneBlueprint.Pivot;
     	bone.transform.parent = this.transform;
     	//check if the bone contains cubes
-    	if(modelBone.cubes == null||modelBone.cubes.Length == 0)return;
+    	if(boneBlueprint.cubes == null||boneBlueprint.cubes.Length == 0)return null;
     	//the bone has cubes so create them
-    	for(int i=0;i<modelBone.cubes.Length;i++){
-    		createCube("cube_"+i,bone,modelBone.cubes[i].Origin, modelBone.cubes[i].Size,
-    			modelBone.cubes[i].UV,imageSize);
+    	for(int i=0;i<boneBlueprint.cubes.Length;i++){
+    		createCube("cube_"+i,bone,boneBlueprint.cubes[i].Origin, boneBlueprint.cubes[i].Size,
+    			boneBlueprint.cubes[i].UV,imageSize,material);
     	}
+    	return bone;
     }
 
-    private void createCube(string name, GameObject parent, Vector3 origin, Vector3 size, Vector2 uv, Vector2 imageSize){
+    private void createCube(string name, GameObject parent, Vector3 origin, Vector3 size, Vector2 uv, Vector2 imageSize, Material material){
     	GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
     	cube.gameObject.name = name;
     	cube.gameObject.transform.parent = parent.transform;
     	//set the material
-    	cube.GetComponent<Renderer>().material = this.material;
+    	cube.GetComponent<Renderer>().material = material;
     	//set cube position
     	cube.transform.localScale = size;
     	cube.transform.position = this.transform.position + origin + new Vector3(size.x/2,size.y/2,size.z/2);
@@ -108,36 +171,5 @@ public class ObjectLoader : MonoBehaviour{
     	uvs[15] = new Vector2((muv.x+size.z+size.x)/imageSize.x,1-((muv.y+size.z)/imageSize.y)); 	
     	uvs[14] = new Vector2((muv.x+size.z+size.x)/imageSize.x,1-((muv.y)/imageSize.y));
     	return uvs;
-    }
-
-    //this method would be replaced by the code that will
-    //load the values from a json file
-    public ModelGeometry loadModel(){
-    	//set up object
-    	ModelDescription description = new ModelDescription("geomery.unknown",128,128,3,3,new Vector3(0,1.5f,0));
-    	List<ModelBone>bones = new List<ModelBone>();
-    	//create root bone
-    	ModelBone root = new ModelBone("root","",3,17,-4,null);
-    	bones.Add(root);
-    	//create upper body
-    	ModelCube ub1 = new ModelCube(-3,40,0,6,4,4,56,11);
-    	ModelCube ub2 = new ModelCube(-8,31,-1,16,9,6,0,20);
-    	ModelCube ub3 = new ModelCube(-6,26,-1, 12,5,6,36,36);
-    	List<ModelCube>ub_cubes = new List<ModelCube>();
-    	ub_cubes.Add(ub1);ub_cubes.Add(ub2);ub_cubes.Add(ub3);
-    	ModelBone upperBody = new ModelBone("Upper_Body","root",0,26,2,ub_cubes);
-    	bones.Add(upperBody);
-    	//create head
-    	ModelCube h1 = new ModelCube(-5,42,-3,10,10,10,0,0);
-    	List<ModelCube>h_cubes = new List<ModelCube>();
-    	h_cubes.Add(h1);
-    	ModelBone head = new ModelBone("Head","Upper_Body",0,42,2,h_cubes);
-    	bones.Add(head);
-    	//create Arm_Left
-    	ModelCube al1 = new ModelCube(7,29,0,4,9,4,16,61);
-    	ModelCube al2 = new ModelCube(7,19,0,4,10,4,36,60);
-    	//build object and return
-    	ModelGeometry model = new ModelGeometry(description,bones);
-    	return model;
     }
 }
