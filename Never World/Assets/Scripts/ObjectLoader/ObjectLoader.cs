@@ -10,9 +10,21 @@ public class ObjectLoader : MonoBehaviour{
 	public string blueprintPath;
 	public string skinPath;
 	public string animationPath;
+	public bool loadedInUnity = false;
 
     // Start is called before the first frame update
     void Start(){
+    	
+    	
+    }
+
+    private void OnValidate(){
+    	if(loadedInUnity)return;
+    	load();
+    	loadedInUnity = true;
+    }
+
+    public void load(){
     	//check to see if all the required assests exist    	
     	if(blueprintPath==null||
     		!File.Exists(Application.streamingAssetsPath + "/"+blueprintPath))return;
@@ -27,17 +39,14 @@ public class ObjectLoader : MonoBehaviour{
     	loadModel(blueprintPath,out model);
     	buildModel(model,loadedMaterial);
     	//load animations
-    	
     }
+
+
 
     // Update is called once per frame
     void Update()
     {
         
-    }
-
-    private void OnValidate(){
-
     }
 
     public bool createMaterial(string path, Shader shader, out Material material){
@@ -115,7 +124,7 @@ public class ObjectLoader : MonoBehaviour{
     	bone.transform.position = boneBlueprint.Pivot;
     	bone.transform.parent = this.transform;
     	//check if the bone contains cubes
-    	if(boneBlueprint.cubes == null||boneBlueprint.cubes.Length == 0)return null;
+    	if(boneBlueprint.cubes == null||boneBlueprint.cubes.Length == 0)return bone;
     	//the bone has cubes so create them
     	for(int i=0;i<boneBlueprint.cubes.Length;i++){
     		createCube("cube_"+i,bone,boneBlueprint.cubes[i].Origin, boneBlueprint.cubes[i].Size,
@@ -134,7 +143,14 @@ public class ObjectLoader : MonoBehaviour{
     	cube.transform.localScale = size;
     	cube.transform.position = this.transform.position + origin + new Vector3(size.x/2,size.y/2,size.z/2);
     	//set the uvs for the material
-    	Mesh mesh = cube.GetComponent<MeshFilter>().mesh as Mesh;
+    	Mesh mesh;
+    	#if UNITY_EDITOR
+    		MeshFilter mf = cube.GetComponent<MeshFilter>();
+    		Mesh meshCopy = Mesh.Instantiate(mf.sharedMesh) as Mesh;
+    		mesh = mf.mesh = meshCopy;
+    	#else
+    		mesh = cube.GetComponent<MeshFilter>().mesh as Mesh;
+    	#endif 
     	mesh.uv = mapUvs(uv, size, imageSize);
     }
 

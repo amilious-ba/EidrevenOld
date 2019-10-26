@@ -212,7 +212,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 672655047}
-  - component: {fileID: 672655046}
   - component: {fileID: 672655048}
   m_Layer: 0
   m_Name: GameObject
@@ -221,18 +220,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &672655046
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 672655045}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8c45f6aaf3866b548a4f5e49a8207cba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &672655047
 Transform:
   m_ObjectHideFlags: 0
@@ -268,8 +255,9 @@ MonoBehaviour:
       visible_bounds_height: 0
       visible_bounds_offset: []
     bones: []
-  path: character.json
-  material: {fileID: 2100000, guid: 542660668d105e34cbc564c5a63335d9, type: 2}
+  blueprintPath: character.json
+  skinPath: character.png
+  animationPath: character.animation.json
 --- !u!1 &1334332143
 GameObject:
   m_ObjectHideFlags: 0
