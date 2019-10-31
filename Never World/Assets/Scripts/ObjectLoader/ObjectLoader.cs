@@ -12,6 +12,8 @@ public class ObjectLoader : MonoBehaviour{
 	public string animationPath;
 	public bool loadedInUnity = false;
 
+	private Dictionary<string, GameObject> objects;
+
     // Start is called before the first frame update
     void Start(){
     	
@@ -20,8 +22,19 @@ public class ObjectLoader : MonoBehaviour{
 
     private void OnValidate(){
     	if(loadedInUnity)return;
+    	if(objects!=null){
+    		foreach(KeyValuePair<string, GameObject> entry in objects){
+    			StartCoroutine(DestroyGO(entry.Value));
+			}
+			objects.Clear();
+    	}
     	load();
     	loadedInUnity = true;
+    }
+
+    IEnumerator DestroyGO(GameObject obj){
+    	yield return new WaitForEndOfFrame();
+    	DestroyImmediate(obj);
     }
 
     public void load(){
@@ -96,7 +109,7 @@ public class ObjectLoader : MonoBehaviour{
      * model.
      */
     public void buildModel(ModelGeometry model, Material material){
-		Dictionary<string, GameObject> objects  = new Dictionary<string,GameObject>();
+		objects  = new Dictionary<string,GameObject>();
     	//create the cubes
     	for(int boneId=0;boneId<model.bones.Length;boneId++){
     		GameObject bone = createBone(model.bones[boneId],model.description.ImageSize,material);
