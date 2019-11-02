@@ -18,6 +18,7 @@ public class Chunk {
 	public Vector3 position;
 	SaveData saveData;
 	public bool changed = false;
+	private int seed = 0;
 
 	public GameObject getSolids(){
 		return this.solidGameObject;
@@ -66,7 +67,7 @@ public class Chunk {
 
 	void BuildChunk(){
 		if(Load()) chunkBlocks = saveData.loadBlocks(this);
-		else chunkBlocks = WorldGenerator.generateChunkBlocks(this);
+		else chunkBlocks = WorldGenerator.generateChunkBlocks(this,seed);
 		status = ChunkStatus.DRAW;
 	}
 
@@ -98,8 +99,8 @@ public class Chunk {
 
 	public Chunk(){}
 	// Use this for initialization
-	public Chunk (Vector3 position, Material c, Material t) {
-		
+	public Chunk (Vector3 position, int seed, Material c, Material t) {
+		this.seed = seed;
 		solidGameObject = new GameObject(World.BuildChunkName(position));
 		solidGameObject.transform.position = position;
 		fluidGameObject = new GameObject(World.BuildChunkName(position)+"_F");

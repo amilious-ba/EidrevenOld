@@ -4,16 +4,64 @@
 		"selected_items":
 		[
 			[
+				"noise",
+				"noiseScale\tint"
+			],
+			[
+				"noi",
+				"noiseScale\tint"
+			],
+			[
+				"map",
+				"mapHeight\tint"
+			],
+			[
+				"F",
+				"FBM_Map(float x, float z, int mapWidth, int mapHeight, int seed, int octaves, float persistance, float lacunarity)\tfloat[,]"
+			],
+			[
+				"oc",
+				"octaves\tint"
+			],
+			[
+				"Vec",
+				"Vector2\tVector2"
+			],
+			[
+				"octa",
+				"octaveOffsets\tVector2[]"
+			],
+			[
+				"offs",
+				"offsetY\tfloat"
+			],
+			[
+				"ma",
+				"maxNoiseHeight\tfloat"
+			],
+			[
+				"GUILa",
+				"GUILayout()\tGUILayout()"
+			],
+			[
+				"Uni",
+				"UnityEditor\tUnityEditor"
+			],
+			[
+				"tex",
+				"textureRenderer\tRenderer"
+			],
+			[
+				"sa",
+				"sampleY\tfloat"
+			],
+			[
 				"model",
 				"modelFile\tModelFile"
 			],
 			[
 				"te",
 				"textureHeight\tint"
-			],
-			[
-				"Vec",
-				"Vector2\tVector2"
 			],
 			[
 				"vec",
@@ -150,10 +198,6 @@
 			[
 				"chun",
 				"chunkBlocks\tBlock[,,]"
-			],
-			[
-				"ma",
-				"maxHealth\tint"
 			],
 			[
 				"buil",
@@ -470,50 +514,6 @@
 			[
 				"col",
 				"colspan"
-			],
-			[
-				"testRe",
-				"testResultName"
-			],
-			[
-				"displa",
-				"displayResults"
-			],
-			[
-				"is_n",
-				"is_null"
-			],
-			[
-				"NEW",
-				"NEW_TEST_AFTER"
-			],
-			[
-				"NEW_TEST",
-				"NEW_TEST_BEFORE"
-			],
-			[
-				"sin",
-				"@since\tPhpDoc"
-			],
-			[
-				"lang",
-				"language"
-			],
-			[
-				"config",
-				"config_manager"
-			],
-			[
-				"json",
-				"json_decode"
-			],
-			[
-				"save",
-				"saveConfig"
-			],
-			[
-				"pass",
-				"password_changed"
 			]
 		]
 	},
@@ -529,19 +529,95 @@
 			}
 		},
 		{
-			"file": "Assets/Scripts/ObjectLoader/ModelDescription.cs",
+			"file": "Assets/Scripts/ObjectLoader/ObjectLoader.cs",
 			"settings":
 			{
-				"buffer_size": 1263,
+				"buffer_size": 8205,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "Assets/Scripts/ObjectLoader/ObjectLoader.cs",
+			"contents": "using System.Collections;\nusing System.Collections.Generic;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;\n\n/**\n * This is the main class used to interact with the world.\n * @type {[type]}\n */\npublic class World : MonoBehaviour {\n\n\tpublic GameObject player;\n\tpublic Material blockTextures;\n\tpublic Material fluidTextures;\n\n\tpublic static ConcurrentDictionary<string, Chunk> loadedChunks;\n\tpublic Vector3 lastbuildPos;\n\tpublic static CoroutineQueue processQueue;\n\tpublic static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();\n\t//public static List<string> toRemove = new List<string>();\n\n\tpublic Slider loadingProgress;\n\tpublic Text loadingText;\n\tpublic Camera menuCamera;\n\tpublic Canvas menuCanvas;\n\tpublic Canvas hudCanvas;\n\tpublic string seed;\n\tpublic int seedVal = 0;\n\t//public Button playButton;\n\tbool firstbuild = true;\n\tbool building = false;\n\tpublic int buildStep;\n\tpublic int buildSteps;\n\n\n\t/**\n\t * Project notes\n\t *\n\t * only use position when talking about the world coords\n\t * other wise use index. index is the location of the object\n\t * in another object. position or location is the location in the world\n\t */\n\n\n\n\t/**\n\t * This method is used to get the name of a chunk\n\t * based on its position\n\t * @param Vector3 chunkPosition the chunks position in game.\n\t */\n\tpublic static string BuildChunkName(Vector3 chunkPosition){\n\t\treturn (int)chunkPosition.x +\"_\"+chunkPosition.y+\"_\"+chunkPosition.z;\n\t}\n\n\t/**\n\t * This method returns the block at the given world position.\n\t * @param Vector3 pos The position in the world.\n\t * @returns Vector3 containing the block at the given\n\t * position, otherwise returns null.\n\t */\n\tpublic static Block getBlock(Vector3 pos){\n\t\tVector3 chunkPos = WorldToChunkWorldPosistion(pos);\n\t\t//get location in chunk\n\t\tint x = (int) Mathf.Abs((float)Math.Round(pos.x) - chunkPos.x);\n\t\tint y = (int) Mathf.Abs((float)Math.Round(pos.y) - chunkPos.y);\n\t\tint z = (int) Mathf.Abs((float)Math.Round(pos.z) - chunkPos.z);\n\t\tstring chunkName = BuildChunkName(chunkPos);\n\t\tChunk chunk = null;\n\t\tif(loadedChunks.TryGetValue(chunkName, out chunk))\n\t\t\treturn chunk.chunkBlocks[x,y,z];\n\t\telse return null;\n\t}\n\n\t/**\n\t * This method returns the chunk at the given world position.\n\t * @param Vector3 pos The position in the world.\n\t * @returns Chunk containing the chunk at the given position\n\t */\n\tpublic static Chunk GetWorldChunk(Vector3 pos){\n\t\tVector3 chunkPosition = WorldToChunkWorldPosistion(pos);\n\t\tstring chunkName = BuildChunkName(chunkPosition);\n\t\tChunk chunk;\n\t\tif(loadedChunks.TryGetValue(chunkName, out chunk)){\n\t\t\treturn chunk;\n\t\t}else{\n\t\t\treturn null;\n\t\t}\n\t}\n\n\t/**\n\t * This method takes a world position and gives you the containing\n\t * chunks position.\n\t * @param Vector3 worldPos The position in the world.\n\t * @returns Vector3 The position of the containing chunk.\n\t */\n\tpublic static Vector3 WorldToChunkWorldPosistion(Vector3 worldPos){\n\n\t\tint cx, cy, cz;\t\t\n\t\tif(worldPos.x < 0)cx = (int) ((Mathf.Round(worldPos.x-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cx = (int) (Mathf.Round(worldPos.x)/(float)Global.ChunkSize) * Global.ChunkSize;\t\t\n\t\tif(worldPos.y < 0) cy = (int) ((Mathf.Round(worldPos.y-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cy = (int) (Mathf.Round(worldPos.y)/(float)Global.ChunkSize) * Global.ChunkSize;\t\t\n\t\tif(worldPos.z < 0) cz = (int) ((Mathf.Round(worldPos.z-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cz = (int) (Mathf.Round(worldPos.z)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\treturn new Vector3(cx,cy,cz);\n\t}\n\n\t/**\n\t * This method takes a world position and gives you the blocks\n\t * position within the chunk.\n\t * @param Vector3 worldPos The position in the world\n\t * @returns Vector3 the position within its chunk.\n\t */\n\tpublic static Vector3 WorldToChunkPosition(Vector3 worldPos){\n\t\tVector3 chunkPos = WorldToChunkWorldPosistion(worldPos);\n\t\t//get location in chunk\n\t\tint x = (int) Mathf.Abs((float)Math.Round(worldPos.x) - chunkPos.x);\n\t\tint y = (int) Mathf.Abs((float)Math.Round(worldPos.y) - chunkPos.y);\n\t\tint z = (int) Mathf.Abs((float)Math.Round(worldPos.z) - chunkPos.z);\n\t\treturn new Vector3(x,y,z);\n\t}\n\n\n\tprivate bool BuildChunkAt(int x, int y, int z){\n\t\tVector3 chunkPosition = new Vector3(x*Global.ChunkSize,y*Global.ChunkSize,z*Global.ChunkSize);\n\t\tstring chunkName = BuildChunkName(chunkPosition);\n\t\tChunk chunk;\n\t\t//if chunk does not exists\n\t\tif(!loadedChunks.TryGetValue(chunkName,out chunk)){\n\t\t\tchunk = new Chunk(chunkPosition, blockTextures, fluidTextures);\n\t\t\tchunk.getSolids().transform.parent = this.transform;\n\t\t\tchunk.getFluids().transform.parent = this.transform;\n\t\t\tloadedChunks.TryAdd(chunkName, chunk);\n\t\t\treturn true;\n\t\t}return false;\n\t}\n\n\tpublic int calculateSteps(int y, int radius){\n\t\tint chunkCount = calculateLayerSteps(radius);\n\t\t//calculate up\n\t\tint up = y+radius; int upRad = radius-1;\n\t\tif(up>Global.ChunksTall)up=Global.ChunksTall;\n\t\tfor(int i=y+1;i<up;i++)\n\t\t\tchunkCount += calculateLayerSteps(upRad--);\n\t\t//calculate down\n\t\tint down = y-radius;  int downRad = radius-1;\n\t\tif(down<0)down=0;\n\t\tfor(int i=y-1;i>=down;i--)\n\t\t\tchunkCount+= calculateLayerSteps(downRad--);\n\t\treturn chunkCount;\n\t}\n\n\n\tpublic int calculateLayerSteps(int radius){\n\t\tint calc = 0;\n\t\tfor(int i=(radius*2)-1;i>0;i-=2)calc+=i;\n\t\tcalc*=2;calc+=((radius*2)+1);\n\t\treturn calc;\n\t}\n\n\tIEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){\n\t\tif(rad<=0){yield break;}\n\t\trad--;\n\t\tif(y>=0&&y<=Global.ChunksTall+1){\n\t\t\t\n\t\t\t//build chunk forward\n\t\t\tif(BuildChunkAt(x, y, z+1)){updateFirstBuild(\"building x:\"+x+\" y:\"+y+\" z:\"+(z+1));}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y, z+1, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk backward\n\t\t\tif(BuildChunkAt(x, y, z-1)){updateFirstBuild(\"building x:\"+x+\" y:\"+y+\" z:\"+(z-1));}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y, z-1, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk left\n\t\t\tif(BuildChunkAt(x-1, y, z)){updateFirstBuild(\"building x:\"+(x-1)+\" y:\"+y+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x-1, y, z, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk right\n\t\t\tif(BuildChunkAt(x+1, y,z)){updateFirstBuild(\"building x:\"+(x+1)+\" y:\"+y+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x+1, y, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk up\n\t\tif(y+1<Global.ChunksTall+1){\n\t\t\tif(BuildChunkAt(x, y+1, z)){updateFirstBuild(\"building x:\"+x+\" y:\"+(y+1)+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y+1, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk down\n\t\tif(y-1>=0){\n\t\t\tif(BuildChunkAt(x, y-1, z)){updateFirstBuild(\"building x:\"+x+\" y:\"+(y-1)+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y-1, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tIEnumerator DrawChunks(){\n\t\tforeach(KeyValuePair<string, Chunk> chunk in loadedChunks){\n\n\t\t\tif(chunk.Value.getSolids() && Vector3.Distance(player.transform.position,\n\t\t\t\tchunk.Value.getSolids().transform.position)>Global.LoadRadius*Global.ChunkSize){\n\t\t\t\tunloadChunks.Enqueue(chunk.Key);\n\t\t\t}\n\t\t\telse if(chunk.Value.status == ChunkStatus.DRAW){\n\t\t\t\tchunk.Value.DrawChunk();\n\t\t\t\tupdateFirstBuild(\"drawing x:\"+(chunk.Value.position.x/Global.ChunkSize)+\" y:\"+(chunk.Value.position.y/Global.ChunkSize)+\" z:\"+(chunk.Value.position.z/Global.ChunkSize));\n\t\t\t}\n\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tIEnumerator RemoveOldChunks(){\n\t\tstring chunkName = \"\";\n\t\twhile(unloadChunks.Dequeue(out chunkName)){\n\t\t\tprocessQueue.Run(RemoveChunk(chunkName));\n\t\t}yield return null;\n\t}\n\n\tIEnumerator RemoveChunk(string name){\n\t\tChunk chunk;\n\t\tif(loadedChunks.TryGetValue(name,out chunk)){\n\t\t\tchunk.Destroy();\n\t\t\tloadedChunks.TryRemove(name, out chunk);\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tpublic void clickPlay(){\n\t\t//playButton.gameObject.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(true);\n\t\tloadingText.gameObject.SetActive(true);\t\n\t\tVector3 ppos = player.transform.position;\n\t\t//set the player above the ground\n\t\tplayer.transform.position = new Vector3(ppos.x,WorldGenerator.GenerateHeight(ppos.x,ppos.z)+1,ppos.z);\n\t\tppos = player.transform.position;\n\t\tlastbuildPos = ppos;\t\t\n\t\t//set up the world\n\t\tthis.transform.position = Vector3.zero;\n\t\tthis.transform.rotation = Quaternion.identity;\n\t\t//caculate build steps\n\t\tthis.buildSteps = calculateSteps((int)(ppos.y/Global.ChunkSize),Global.LoadRadius);\n\t\tthis.loadingProgress.maxValue = buildSteps;\n\t\t//build and draw the starting chunk\n\t\tbuilding = true;\n\t\tBuildChunkAt((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));\n\t\t//processQueue.Run(DrawChunks());\n\t\tprocessQueue.Run(BuildRecursiveWorld((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize),Global.LoadRadius));\n\t}\n\n\tpublic void BuildNearPlayer(){\n\t\tVector3 ppos = player.transform.position;\n\t\tStopCoroutine(\"BuildRecursiveWorld\");\n\t\tprocessQueue.Run(BuildRecursiveWorld(\n\t\t\t(int)(ppos.x/Global.ChunkSize),\n\t\t\t(int)(ppos.y/Global.ChunkSize),\n\t\t\t(int)(ppos.z/Global.ChunkSize),\n\t\t\tGlobal.LoadRadius));\n\t}\n\n\tpublic void updateFirstBuild(string status){\n\t\tif(!firstbuild)return;\n\t\tbuildStep++;\n\t\t//this.loadingText.text = status;\n\t\tthis.loadingText.text = buildStep+\"/\"+buildSteps+\" \"+status;\n\t\tthis.loadingProgress.value = buildStep;\n\t\tif(building&&buildStep==buildSteps){\n\t\t\tbuilding = false;\n\t\t\tbuildStep = 0;\n\t\t\tbuildSteps-=(buildSteps/15);\n\t\t\tloadingProgress.maxValue = buildSteps;\n\t\t}else if(buildStep==buildSteps){\n\t\t\tfirstbuild=false;\n\t\t\t//activate player\n\t\t\tplayer.SetActive(true);\n\t\t\tmenuCanvas.gameObject.SetActive(false);\n\t\t\tmenuCamera.gameObject.SetActive(false);\n\t\t\thudCanvas.gameObject.SetActive(true);\n\t\t}\n\t}\n\n\t// Use this for initialization\n\tvoid Start () {\t\t\t\n\n\t\thudCanvas.gameObject.SetActive(false);\t\t\n\t\tplayer.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(false);\n\t\tloadingText.gameObject.SetActive(false);\n\t\t\t\t\n\t\tprocessQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);\n\t\tfirstbuild = true;\n\t\tloadedChunks = new ConcurrentDictionary<string, Chunk>();\n\t\tthis.clickPlay();\t\t\n\t}\n\t\n\t// Update is called once per frame\n\tvoid Update () {\n\t\tif(building)return;\n\t\tif(firstbuild){\n\t\t\tif(processQueue==null)return;\n\t\t\tprocessQueue.Run(DrawChunks());\n\t\t\treturn;\n\t\t}\n\t\tVector3 movement = lastbuildPos - player.transform.position;\n\t\tif(Global.BuildOnChunkChange){\n\t\t\tif(movement.magnitude > Global.ChunkSize * Global.BuildWhenMovedXChunks){\n\t\t\t\tlastbuildPos = player.transform.position;\n\t\t\t\tBuildNearPlayer();\n\t\t\t}\n\t\t}else{\n\t\t\tlastbuildPos = player.transform.position;\n\t\t\tBuildNearPlayer();\n\t\t}\n\t\t//Draw Chunks\n\t\tprocessQueue.Run(DrawChunks());\n\t\t//remove unneeded chunks\n\t\tprocessQueue.Run(RemoveOldChunks());\n\t}\n}\n",
+			"file": "Assets/Scripts/World/World.cs",
+			"file_size": 10604,
+			"file_write_time": 132157270708774661,
 			"settings":
 			{
-				"buffer_size": 6523,
+				"buffer_size": 10650,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "using System.Collections;\nusing System.Collections.Generic;\nusing UnityEngine;\n\n/**\n * This class will be used to handle world gerneration\n */\npublic class WorldGenerator {\n\n\tstatic int maxHeight = 150;\n\tstatic float smooth = 0.01f;\n\tstatic int octaves = 4;\n\tstatic float persistence = 0.5f;\n    \n\tpublic static Block[,,] generateChunkBlocks(Chunk chunk){\n\t\tBlock[,,] blocks = new Block[Global.ChunkSize, Global.ChunkSize,Global.ChunkSize];\n\n\n\t\t//generate heatmap\n\t\t//generate mositure map\n\t\t\n\n\n\t\tfor(int y = 0; y < Global.ChunkSize; y++){\n\t\t\t//check to see if past max generated height\n\t\t\tif(y>maxHeight){\n\t\t\t\tfor(int z=0;z<Global.ChunkSize; z++)for(int x=0;x<Global.ChunkSize;x++){\n\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.AIR, new Vector3(x,y,z), chunk);\n\t\t\t\t}continue;\n\t\t\t}\n\t\t\tfor(int z = 0; z < Global.ChunkSize; z++){\n\t\t\t\tfor(int x = 0; x < Global.ChunkSize; x++){\n\t\t\t\t\t//position in chunk\n\t\t\t\t\tVector3 cP = new Vector3(x,y,z);\n\t\t\t\t\t//position in world\n\t\t\t\t\tVector3 wP = chunk.getChunkBlocksWorldPosition(cP);\n\n\t\t\t\t\tint surfaceHeight = GenerateHeight(wP.x,wP.z);\n\t\t\t\t\t\n\t\t\t\t\t\n\t\t\t\t\tif(wP.y == 0)\n\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.BEDROCK, cP, chunk);\n\t\t\t\t\telse if(wP.y <= GenerateStoneHeight(wP.x,wP.z))\n\t\t\t\t\t{\n\t\t\t\t\t\tif(FBM3D(wP.x, wP.y, wP.z, 0.01f, 2) < 0.4f && wP.y < 40)\n\t\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.DIAMONDORE, cP, chunk);\n\t\t\t\t\t\telse if(FBM3D(wP.x, wP.y, wP.z, 0.03f, 3) < 0.41f && wP.y < 20)\n\t\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.REDSTONEORE, cP, chunk);\n\t\t\t\t\t\telse\n\t\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.STONE, cP, chunk);\n\t\t\t\t\t}\n\t\t\t\t\telse if(wP.y == surfaceHeight&&wP.y>=Global.SeaLevel-1){ //grass\n\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.GRASS, cP, chunk);\n\t\t\t\t\t}\n\t\t\t\t\telse if(wP.y<=surfaceHeight){ //dirt layer\n\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.DIRT,cP,chunk);\n\t\t\t\t\t}\n\t\t\t\t\telse\n\t\t\t\t\t{\n\t\t\t\t\t\tif(wP.y<Global.SeaLevel){//fill with water\n\t\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.WATER, cP, chunk);\n\t\t\t\t\t\t}else{//fill with air\n\t\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.AIR, cP, chunk);\n\t\t\t\t\t\t}\n\t\t\t\t\t}\n\t\t\t\t\t//generate caves  change to not liquid\n\t\t\t\t\tif(FBM3D(wP.x, wP.y, wP.z, 0.1f, 3) < 0.42f&&wP.y>0 && blocks[x,y,z].bType!=BlockType.WATER){\n\t\t\t\t\t\tblocks[x,y,z] = Block.CreateBlock(BlockType.AIR, cP, chunk);\n\t\t\t\t\t}\n\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn blocks;\n\t}\n\n\tpublic static int GenerateStoneHeight(float x, float z){\n\t\tfloat height = Map(0,maxHeight-7,0,1,FBM(x*smooth*2,z*smooth*2,octaves+1,persistence));\n\t\treturn (int)height;\n\t}\n\n\tpublic static int GenerateHeight(float x, float z){\n\t\tfloat height = Map(0,maxHeight,0,1,FBM(x*smooth,z*smooth,octaves,persistence));\n\t\treturn (int)height;\n\t}\n\n\tpublic static float Map(float newMin, float newMax, float oldMin, float oldMax, float value){\n\t\treturn Mathf.Lerp(newMin,newMax,Mathf.InverseLerp(oldMin,oldMax, value));\n\t}\n\n\tpublic static float FBM(float x, float z, int oct, float pers){\n\t\tfloat total = 0;\n\t\tfloat freq = 1;\n\t\tfloat amp = 1;\n\t\tfloat maxVal = 0;\n\t\tfloat offset = 32000;\n\t\tfor(int i=0;i<oct; i++){\n\t\t\ttotal+=Mathf.PerlinNoise((x+offset)*freq,(z+offset)*freq)*amp;\n\t\t\tmaxVal+=amp;\n\t\t\tamp*= pers;\n\t\t\tfreq*=2;\n\t\t}\n\t\treturn total/maxVal;\n\t}\n\n\tpublic static float FBM3D(float x, float y, float z, float smooth, int oct){\n\t\tfloat XY = FBM(x*smooth, y*smooth,oct,0.5f);\n\t\tfloat YZ = FBM(y*smooth, z*smooth,oct,0.5f);\n\t\tfloat XZ = FBM(x*smooth, z*smooth,oct,0.5f);\n\t\tfloat YX = FBM(y*smooth, x*smooth,oct,0.5f);\n\t\tfloat ZY = FBM(z*smooth, y*smooth,oct,0.5f);\n\t\tfloat ZX = FBM(z*smooth, x*smooth,oct,0.5f);\n\t\treturn (XY+YZ+XZ+YX+ZY+ZX)/6.0f;\n\t}\n\n}\n",
+			"file": "Assets/Scripts/World/WorldGenerator.cs",
+			"file_size": 3624,
+			"file_write_time": 132171248449404020,
+			"settings":
+			{
+				"buffer_size": 3621,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Mics/Utils.cs",
+			"settings":
+			{
+				"buffer_size": 5487,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World Gen Viewer/Noise.cs",
+			"settings":
+			{
+				"buffer_size": 3936,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World Gen Viewer/MapGenerator.cs",
+			"settings":
+			{
+				"buffer_size": 1625,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World/Biome/Biome.cs",
+			"settings":
+			{
+				"buffer_size": 282,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World/Biome/Biomes/IceBiome.cs",
+			"settings":
+			{
+				"buffer_size": 284,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World Gen Viewer/Editor/MapGeneratorEditor.cs",
+			"settings":
+			{
+				"buffer_size": 411,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World Gen Viewer/MapDisplay.cs",
+			"settings":
+			{
+				"buffer_size": 700,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Unix"
 			}
@@ -556,64 +632,10 @@
 			}
 		},
 		{
-			"file": "Assets/Scripts/ObjectLoader/ModelCube.cs",
-			"settings":
-			{
-				"buffer_size": 1046,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "Assets/StreamingAssets/character.json",
 			"settings":
 			{
-				"buffer_size": 3399,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/Player/BlockInteration.cs",
-			"settings":
-			{
-				"buffer_size": 4212,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/Mics/Utils.cs",
-			"settings":
-			{
-				"buffer_size": 1226,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/ObjectLoader/ModelGeometry.cs",
-			"settings":
-			{
-				"buffer_size": 458,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/ObjectLoader/ModelFile.cs",
-			"settings":
-			{
-				"buffer_size": 514,
-				"encoding": "UTF-8 with BOM",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "Assets/Scripts/ObjectLoader/ModelBone.cs",
-			"settings":
-			{
-				"buffer_size": 914,
-				"encoding": "UTF-8 with BOM",
+				"buffer_size": 3336,
 				"line_ending": "Unix"
 			}
 		}
@@ -668,10 +690,21 @@
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Inventory",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Inventory/Scripts",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics",
-		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player"
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World"
 	],
 	"file_history":
 	[
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biomes/Biome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/Ice.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Editor/ShowOnlyAttribute.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Editor/ShowOnlyDrawer.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelBone.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelFile.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelGeometry.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelCube.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelDescription.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JsonHelper.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JSONLoader.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats/StatModifier.cs",
@@ -789,21 +822,11 @@
 		"/C/Users/brand/AppData/Local/Temp/scp45071/var/www/wwlingo.com/amilious_login/ajax/logout.php",
 		"/C/Users/brand/AppData/Local/Temp/scp45876/var/www/wwlingo.com/amilious_login/ajax/userName.php",
 		"/C/Users/brand/AppData/Local/Temp/scp45393/var/www/wwlingo.com/amilious_login/ajax/email.php",
-		"/C/Users/brand/AppData/Local/Temp/scp54892/var/www/wwlingo.com/amilious_login/ajax/login.php",
-		"/C/Users/brand/AppData/Local/Temp/scp38523/var/www/wwlingo.com/amilious_login/classes/user.php",
-		"/C/Users/brand/AppData/Local/Temp/scp06148/var/www/wwlingo.com/amilious_login/classes/mysqli_connector.php",
-		"/C/Users/brand/AppData/Local/Temp/scp03669/var/www/wwlingo.com/amilious_login/classes/db_connector_interface.php",
-		"/C/Users/brand/AppData/Local/Temp/scp32538/var/www/wwlingo.com/login/index.php",
-		"/C/Users/brand/AppData/Local/Temp/scp50324/var/www/wwlingo.com/amilious_login/loginconfig.php",
-		"/C/Users/brand/Desktop/website backup/amilious/AmiliousLogin/AmiliousLoginConfig.php",
-		"/C/Users/brand/AppData/Local/Temp/scp47368/var/www/wwlingo.com/login/index2.php",
-		"/C/Users/brand/AppData/Local/Temp/scp06578/var/www/wwlingo.com/login/index3.php",
-		"/C/Users/brand/AppData/Local/Temp/scp34360/var/www/wwlingo.com/amilious_login/classes/AmiliousUnitTest.php",
-		"/C/Users/brand/AppData/Local/Temp/scp40222/var/www/wwlingo.com/amilious_login/test.php"
+		"/C/Users/brand/AppData/Local/Temp/scp54892/var/www/wwlingo.com/amilious_login/ajax/login.php"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 22.0
 	},
 	"find_in_files":
 	{
@@ -842,7 +865,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 7,
 			"sheets":
 			[
 				{
@@ -882,62 +905,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "Assets/Scripts/ObjectLoader/ModelDescription.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1263,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								711,
-								711
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"0,5": "Unnecessary using directive.",
-								"1114,1119": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"115,131": "The namespace '<global namespace>' already contains a definition for 'ModelDescription'",
-								"26,31": "Unnecessary using directive.",
-								"332,348": "Type 'ModelDescription' already defines a member called '.ctor' with the same parameter types",
-								"555,571": "Type 'ModelDescription' already defines a member called '.ctor' with the same parameter types",
-								"726,736": "Ambiguity between 'ModelDescription.identifier' and 'ModelDescription.identifier'"
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "Assets/Scripts/ObjectLoader/ObjectLoader.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 6523,
+						"buffer_size": 8205,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								429,
-								429
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1003,6 +988,201 @@
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
 						},
 						"translation.x": 0.0,
+						"translation.y": 689.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Assets/Scripts/World/World.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 10650,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10022,
+								10022
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3094.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Assets/Scripts/World/WorldGenerator.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3621,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3617,
+								3221
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 663.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Assets/Scripts/Mics/Utils.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5487,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1531,
+								1531
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"26,31": "Unnecessary using directive.",
+								"5467,5469": "Operator '+' cannot be applied to operands of type 'float[*,*]' and 'float[*,*]'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 97.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "Assets/Scripts/World Gen Viewer/Noise.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3936,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2399,
+								1693
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 637.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Assets/Scripts/World Gen Viewer/MapGenerator.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								193,
+								193
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"26,31": "Unnecessary using directive.",
+								"543,548": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"593,598": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"717,722": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
+								"824,834": "The type 'MapDisplay' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapDisplay.cs' conflicts with the imported type 'MapDisplay' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapDisplay.cs'.",
+								"862,872": "The type 'MapDisplay' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapDisplay.cs' conflicts with the imported type 'MapDisplay' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapDisplay.cs'."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Assets/Scripts/World/Biome/Biome.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 282,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								282,
+								282
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"102,107": "The namespace '<global namespace>' already contains a definition for 'Biome'",
+								"26,31": "Unnecessary using directive.",
+								"60,65": "Unnecessary using directive."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
@@ -1010,7 +1190,106 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 8,
+					"file": "Assets/Scripts/World/Biome/Biomes/IceBiome.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 284,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								284,
+								284
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"104,109": "The type 'Biome' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Biomes\\Biome.cs' conflicts with the imported type 'Biome' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Biomes\\Biome.cs'.",
+								"26,31": "Unnecessary using directive.",
+								"60,65": "Unnecessary using directive.",
+								"93,101": "'IceBiome' does not implement inherited abstract member 'Biome.getBiome()'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Assets/Scripts/World Gen Viewer/Editor/MapGeneratorEditor.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								241,
+								241
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"198,210": "The type 'MapGenerator' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs' conflicts with the imported type 'MapGenerator' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs'.",
+								"221,233": "The type 'MapGenerator' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs' conflicts with the imported type 'MapGenerator' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs'.",
+								"87,99": "The type 'MapGenerator' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs' conflicts with the imported type 'MapGenerator' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World Gen Viewer\\MapGenerator.cs'."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Assets/Scripts/World Gen Viewer/MapDisplay.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								493,
+								493
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
 					"file": "Assets/Scripts/Mics/Debug.cs",
 					"semi_transient": false,
 					"settings":
@@ -1043,93 +1322,16 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "Assets/Scripts/ObjectLoader/ModelCube.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1046,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								882,
-								882
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"0,5": "Unnecessary using directive.",
-								"1004,1009": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"1032,1034": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
-								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelCube'",
-								"201,210": "Type 'ModelCube' already defines a member called '.ctor' with the same parameter types",
-								"26,31": "Unnecessary using directive.",
-								"330,339": "Type 'ModelCube' already defines a member called '.ctor' with the same parameter types",
-								"390,396": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
-								"448,452": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'",
-								"498,500": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
-								"665,671": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
-								"719,723": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'",
-								"765,767": "Ambiguity between 'ModelCube.uv' and 'ModelCube.uv'",
-								"838,843": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"866,872": "Ambiguity between 'ModelCube.origin' and 'ModelCube.origin'",
-								"923,928": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"951,955": "Ambiguity between 'ModelCube.size' and 'ModelCube.size'"
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
+					"buffer": 12,
 					"file": "Assets/StreamingAssets/character.json",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3399,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								75,
-								64
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "Assets/Scripts/Player/BlockInteration.cs",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 4212,
+						"buffer_size": 3336,
 						"regions":
 						{
 						},
@@ -1142,7 +1344,7 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"syntax": "Packages/JavaScript/JSON.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1150,165 +1352,6 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "Assets/Scripts/Mics/Utils.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1226,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1121,
-								1121
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "Assets/Scripts/ObjectLoader/ModelGeometry.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 458,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								194,
-								194
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"0,5": "Unnecessary using directive.",
-								"115,128": "The namespace '<global namespace>' already contains a definition for 'ModelGeometry'",
-								"138,154": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"176,185": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"204,217": "Type 'ModelGeometry' already defines a member called '.ctor' with the same parameter types",
-								"320,333": "Type 'ModelGeometry' already defines a member called '.ctor' with the same parameter types",
-								"334,350": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"369,378": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"394,405": "Ambiguity between 'ModelGeometry.description' and 'ModelGeometry.description'",
-								"428,433": "Ambiguity between 'ModelGeometry.bones' and 'ModelGeometry.bones'",
-								"60,65": "Unnecessary using directive."
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "Assets/Scripts/ObjectLoader/ModelFile.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 514,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								476,
-								476
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"0,5": "Unnecessary using directive.",
-								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelFile'",
-								"167,180": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"199,215": "The type 'ModelDescription' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelDescription' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"237,246": "The type 'ModelBone' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelBone' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"415,428": "The type 'ModelGeometry' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelGeometry' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"444,458": "Ambiguity between 'ModelFile.format_version' and 'ModelFile.format_version'",
-								"60,65": "Unnecessary using directive.",
-								"81,87": "Duplicate 'System.Serializable' attribute"
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "Assets/Scripts/ObjectLoader/ModelBone.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 914,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								909,
-								909
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"0,5": "Unnecessary using directive.",
-								"115,124": "The namespace '<global namespace>' already contains a definition for 'ModelBone'",
-								"201,210": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"229,238": "Type 'ModelBone' already defines a member called '.ctor' with the same parameter types",
-								"369,378": "Type 'ModelBone' already defines a member called '.ctor' with the same parameter types",
-								"427,436": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"452,456": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
-								"472,478": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
-								"496,501": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'",
-								"549,554": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
-								"673,682": "The type 'ModelCube' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs' conflicts with the imported type 'ModelCube' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Player\\CreateObject.cs'.",
-								"698,702": "Ambiguity between 'ModelBone.name' and 'ModelBone.name'",
-								"718,724": "Ambiguity between 'ModelBone.parent' and 'ModelBone.parent'",
-								"742,747": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'",
-								"812,817": "Ambiguity between 'ModelBone.cubes' and 'ModelBone.cubes'",
-								"874,879": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"902,907": "Ambiguity between 'ModelBone.pivot' and 'ModelBone.pivot'"
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 11.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 10,
 					"type": "text"
 				}
 			]

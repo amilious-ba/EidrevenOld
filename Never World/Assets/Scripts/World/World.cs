@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -9,6 +9,12 @@ using UnityEngine.UI;
  * @type {[type]}
  */
 public class World : MonoBehaviour {
+
+
+    [Header("World Seed")]
+    public string seed;
+    public int seedVal;
+	[Space(10)]
 
 	public GameObject player;
 	public Material blockTextures;
@@ -126,7 +132,7 @@ public class World : MonoBehaviour {
 		Chunk chunk;
 		//if chunk does not exists
 		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
-			chunk = new Chunk(chunkPosition, blockTextures, fluidTextures);
+			chunk = new Chunk(chunkPosition,seedVal, blockTextures, fluidTextures);
 			chunk.getSolids().transform.parent = this.transform;
 			chunk.getFluids().transform.parent = this.transform;
 			loadedChunks.TryAdd(chunkName, chunk);
@@ -287,10 +293,14 @@ public class World : MonoBehaviour {
 		hudCanvas.gameObject.SetActive(false);		
 		player.SetActive(false);
 		loadingProgress.gameObject.SetActive(false);
-		loadingText.gameObject.SetActive(false);		
+		loadingText.gameObject.SetActive(false);
+				
 		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
 		firstbuild = true;
 		loadedChunks = new ConcurrentDictionary<string, Chunk>();
+
+		//generate world seed
+		seedVal = Utils.getSeedValue(seed);
 		this.clickPlay();		
 	}
 	

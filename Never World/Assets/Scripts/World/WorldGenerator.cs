@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,9 +11,46 @@ public class WorldGenerator {
 	static float smooth = 0.01f;
 	static int octaves = 4;
 	static float persistence = 0.5f;
-    
-	public static Block[,,] generateChunkBlocks(Chunk chunk){
+
+
+	/*public static Block[,,] generateChunkBlocks(Chunk chunk, int seed){
+		//build block matrix
+		Block[,,]blocks = new Block[global.ChunkSize,ChunkSize,ChunkSize];
+		//generate chunk heatValue
+		float heatValue = Utils.FBM(chunk.position.x, chunk.position.z, seed, smooth, octaves, persistance, 2f);
+		//generate chunk humidvalue
+		float humidValue = Utils.FBM(chunk.position.x, chunk.position.z,seed+1,smooth,octaves,persistance,2f);
+		//get the biome
+		Biome biome = Biome.getBiome(Biome.getBiomeType(humidValue, heatValue));
+		//generate heightmaps
+		int[,] height = GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight, smooth, octaves, persistence, 2f);
+		int[,] stoneHeight =  GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight-7, smooth, octaves+1, persistence, 2f);
+
+
+	}
+
+	public static int GenerateHM(float cX, float cZ,int seed, int min, int max, float sm, int oc, float per, float lac){
+		int[,] heightMap = new int[Global.ChunkSize,Global.ChunkSize];
+		//first generate a noise map
+		float[,] noiseMap = Utils.FBM_Map(cX, cZ, Global.ChunkSize, seed, sm, oc, per, lac);
+		//convert the heightmap
+		for(int x=0;x<Global.ChunkSize;x++)for(int y=0;y<Global.ChunkSize;y++){
+			heightMap[x,z] = (int)(Utils.Map(min,max,0,1,noiseMap[x,z]));
+		}
+		//return the heightmap
+		return heightMap;
+	}*/
+
+
+	public static Block[,,] generateChunkBlocks(Chunk chunk, int seed){
 		Block[,,] blocks = new Block[Global.ChunkSize, Global.ChunkSize,Global.ChunkSize];
+
+		//gerate heightmap
+
+		//generate heatmap
+		//generate mositure map
+		
+
 
 		for(int y = 0; y < Global.ChunkSize; y++){
 			//check to see if past max generated height
@@ -67,6 +104,8 @@ public class WorldGenerator {
 		}
 		return blocks;
 	}
+
+
 
 	public static int GenerateStoneHeight(float x, float z){
 		float height = Map(0,maxHeight-7,0,1,FBM(x*smooth*2,z*smooth*2,octaves+1,persistence));
