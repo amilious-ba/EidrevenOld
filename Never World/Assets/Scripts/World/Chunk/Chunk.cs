@@ -202,4 +202,35 @@ public class Chunk {
 		return (int)chunkPosition.x +"_"+chunkPosition.y+"_"+chunkPosition.z;
 	}
 
+
+
+	//below here is the new chunk position and name code
+
+	
+	public static string ChunkNameFromIndex(Vector3 index){
+		return (int)index.x+"_"+(int)index.y+"_"+(int)index.z;
+	}
+
+	public static string ChunkNameFromPosition(Vector3 position){
+		return ChunkNameFromIndex(ChunkIndexAtPosition(position));
+	}
+
+	public static Vector3 ChunkIndexAtPosition(Vector3 position){
+		int x = (int)(position.x/Global.ChunkSize);
+		int y = (int)(position.y/Global.ChunkSize);
+		int z = (int)(position.z/Global.ChunkSize);
+		return new Vector3(x,y,z);
+	}
+
+	public static Vector3 ChunkIndexAtPosition(Vector3 position, out Vector3 blockPosition){
+		int x = (int)(position.x/Global.ChunkSize);
+		int y = (int)(position.y/Global.ChunkSize);
+		int z = (int)(position.z/Global.ChunkSize);
+		int bx = (int)(position.x%Global.ChunkSize);
+		int by = (int)(position.y%Global.ChunkSize);
+		int bz = (int)(position.z%Global.ChunkSize);
+		blockPosition = new Vector3(bx,by,bz);
+		return new Vector3(x,y,z);
+	}
+
 }
