@@ -13,33 +13,67 @@ public class WorldGenerator {
 	static float persistence = 0.5f;
 
 
-	/*public static Block[,,] generateChunkBlocks(Chunk chunk, int seed){
+	public static Block[,,] generateChunkBlocksNew(Chunk chunk, int seed){
 		//build block matrix
-		Block[,,]blocks = new Block[global.ChunkSize,ChunkSize,ChunkSize];
-		//generate chunk heatValue
-		float heatValue = Utils.FBM(chunk.position.x, chunk.position.z, seed, smooth, octaves, persistance, 2f);
-		//generate chunk humidvalue
-		float humidValue = Utils.FBM(chunk.position.x, chunk.position.z,seed+1,smooth,octaves,persistance,2f);
+		Block[,,]blocks = new Block[Global.ChunkSize,Global.ChunkSize,Global.ChunkSize];
 		//get the biome
-		Biome biome = Biome.getBiome(Biome.getBiomeType(humidValue, heatValue));
+		Biome biome = Biome.getBiome(Biome.getBiomeType(seed,(int)chunk.position.x,(int)chunk.position.z));
+		
+
+		//this will change in the future, for now I am trying to replicate the
+		//old style
+
 		//generate heightmaps
 		int[,] height = GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight, smooth, octaves, persistence, 2f);
 		int[,] stoneHeight =  GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight-7, smooth, octaves+1, persistence, 2f);
 
+		for(int y=0;y<Global.ChunkSize;y++){
+			for(int z=0;z<Global.ChunkSize;z++){
+				for(int x=0;x<Global.ChunkSize;x++){
 
+					//setPositions
+					Vector3 cP = new Vector3(x,y,z);
+					Vector3 wP = chunk.getChunkBlocksWorldPosition(cP);
+
+					//generate bedrock
+					if(wP.y == 0)blocks[x,y,z] = Block.CreateBlock(BlockType.BEDROCK, cP, chunk);
+					//generate stone layer
+					else if(wP.y<=stoneHeight[x,z]){
+						blocks[x,y,z] = Block.CreateBlock(BlockType.STONE,cP,chunk);
+					}
+					//generate grass
+					else if(wP.y == height[x,z]&&wP.y>=Global.SeaLevel-1){
+						blocks[x,y,z] = Block.CreateBlock(BlockType.GRASS,cP,chunk);
+					}
+					//generate dirt
+					else if(wP.y<=height[x,z])blocks[x,y,z] = Block.CreateBlock(BlockType.DIRT,cP,chunk);
+					//generate sea and sky
+					else{
+						if(wP.y<Global.SeaLevel){//fill with water
+							blocks[x,y,z] = Block.CreateBlock(BlockType.WATER, cP, chunk);
+						}else{//fill with air
+							blocks[x,y,z] = Block.CreateBlock(BlockType.AIR, cP, chunk);
+						}
+					}
+
+				}
+			}
+		}
+
+		return blocks;
 	}
 
-	public static int GenerateHM(float cX, float cZ,int seed, int min, int max, float sm, int oc, float per, float lac){
+	public static int[,] GenerateHM(float cX, float cZ,int seed, int min, int max, float sm, int oc, float per, float lac){
 		int[,] heightMap = new int[Global.ChunkSize,Global.ChunkSize];
 		//first generate a noise map
 		float[,] noiseMap = Utils.FBM_Map(cX, cZ, Global.ChunkSize, seed, sm, oc, per, lac);
 		//convert the heightmap
-		for(int x=0;x<Global.ChunkSize;x++)for(int y=0;y<Global.ChunkSize;y++){
+		for(int x=0;x<Global.ChunkSize;x++)for(int z=0;z<Global.ChunkSize;z++){
 			heightMap[x,z] = (int)(Utils.Map(min,max,0,1,noiseMap[x,z]));
 		}
 		//return the heightmap
 		return heightMap;
-	}*/
+	}
 
 
 	public static Block[,,] generateChunkBlocks(Chunk chunk, int seed){

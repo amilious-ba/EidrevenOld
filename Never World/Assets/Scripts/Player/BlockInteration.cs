@@ -64,6 +64,7 @@ public class BlockInteration : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		DebugScript.setPlayerPos(this.transform.position);
 		RaycastHit looking;
 		if(Physics.Raycast(cam.transform.position, cam.transform.forward, out looking,10)){
 			Vector3 lookBlock = looking.point - looking.normal/2.0f;
@@ -71,11 +72,13 @@ public class BlockInteration : MonoBehaviour {
 				int lX = (int)(Mathf.Round(lookBlock.x)-looking.collider.gameObject.transform.position.x);
 				int lY = (int)(Mathf.Round(lookBlock.y)-looking.collider.gameObject.transform.position.y);
 				int lZ = (int)(Mathf.Round(lookBlock.z)-looking.collider.gameObject.transform.position.z);
-				debugText.text = "looking at x:"+Mathf.Round(lookBlock.x)+" y:"+Mathf.Round(lookBlock.y)+" z:"+Mathf.Round(lookBlock.z);
+				DebugScript.setPlayerLookingAt(lookBlock);
+				//debugText.text = "looking at x:"+Mathf.Round(lookBlock.x)+" y:"+Mathf.Round(lookBlock.y)+" z:"+Mathf.Round(lookBlock.z);
 				Vector3 chunkPos = new Vector3(Mathf.Round(lookBlock.x/Global.ChunkSize),Mathf.Round(lookBlock.y/Global.ChunkSize),Mathf.Round(lookBlock.z/Global.ChunkSize));
-				debugText.text=debugText.text+"\nChunk Name: "+World.BuildChunkName(chunkPos);
+				//debugText.text=debugText.text+"\nChunk Name: "+Chunk.BuildName(chunkPos);
 		}else{
-			debugText.text = "";
+			DebugScript.setPlayerLookingAt("-");
+			//debugText.text = "";
 		}
 
 		if(Input.GetKeyDown("1"))
@@ -97,25 +100,36 @@ public class BlockInteration : MonoBehaviour {
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 10)){
 				Vector3 hitBlock = hit.point - hit.normal/2.0f;
 				Block block = World.getBlock(hitBlock);
-				if(block!=null)block.HitBlock();
+				if(block!=null){
+					block.HitBlock();
+					Debug.Log(block.chunk.position);
+				}
 			}
 		}
 		if(Input.GetMouseButtonDown(1)){
 			RaycastHit hit2;
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit2, 10)){
-				Vector3 hitBlock2 = hit2.point + hit2.normal/2.0f;
+				Vector3 hitBlock2 = hit2.point + hit2.normal/2.0f;			
 				Block block = World.getBlock(hitBlock2);
-				if(block!=null)block.setBlock(buildType);
+				//do not build block if standing on it
+					
+				int px = (int)this.transform.position.x;
+				int py = (int)this.transform.position.y;
+				int pz = (int)this.transform.position.z;
+				//first check y
+								
+				if(block.worldPosition.y>py-1&&((int)block.worldPosition.x)==px&&((int)block.worldPosition.z)==pz){
+					return;
+				}
+				if(block!=null){
+					block.setBlock(buildType);
+				}
 			}
 		}
 
 	}
 
-	void hitBlock(){
-
-	}
-
-	void buildBlock(){
-
+	private bool canBuild(){
+		return false;
 	}
 }

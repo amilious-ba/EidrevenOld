@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum BiomeType
-{
+public enum BiomeType{
     Desert,
     Savanna,
     TropicalRainforest,
@@ -38,6 +37,8 @@ public abstract class Biome {
 	protected static TundraBiome tundra = new TundraBiome();
 	protected static IceBiome ice = new IceBiome();
 
+
+
 	public static BiomeType getBiomeType(float moisture, float temperature){
 		int m = (int)Utils.Map(0,BiomeTable.GetLength(0),0,1,moisture);
 		int t = (int)Utils.Map(0,BiomeTable.GetLength(1),0,1,temperature);
@@ -64,6 +65,29 @@ public abstract class Biome {
 	}
 
 	public abstract Color getMapColor();
+	public abstract int getHeight(int seed, int x, int z);
+	public abstract int getStoneHeight(int seed, int x, int z);
+
 	//public abstract Block[,,] generateChunkBlocks(Vector2 position, int seed, int maxHeight);
+	
+	public static int getHeight(BiomeType biome, int seed, int x, int z){
+		return getBiome(biome).getHeight(seed, x, z);
+	}
+
+	public static int getStoneHeight(BiomeType biome, int seed, int x, int z){
+		return getBiome(biome).getStoneHeight(seed, x, z);
+	}
+
+	public static int getTopHeight(BiomeType biome, int seed, int x, int z){
+		int height = getBiome(biome).getHeight(seed, x, z);
+		int stoneHeight = getBiome(biome).getStoneHeight(seed, x, z);
+		return (height>=stoneHeight)?height:stoneHeight;
+	}
+
+	public static BiomeType getBiomeType( int seed, int x, int z){
+		float heat = Utils.FBM(x, z, seed, Global.HeatSettings);
+		float humid = Utils.FBM(x,z,seed,Global.HumiditySettings);
+		return getBiomeType(humid, heat);
+	}
 
 }

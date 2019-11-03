@@ -12,30 +12,37 @@ public class World : MonoBehaviour {
 
 
     [Header("World Seed")]
-    public string seed;
-    public int seedVal;
+    [SerializeField]
+    private string seed = "0";
+    private string lastSeed = "0";
+    [SerializeField]
+    private int seedVal = 0;
+    private int lastSeedVal = 0;
+    [SerializeField]
+    private GameObject player;
 	[Space(10)]
 
-	public GameObject player;
+	[Header("Texture Maps")]
 	public Material blockTextures;
 	public Material fluidTextures;
+	[Space(10)]
 
-	public static ConcurrentDictionary<string, Chunk> loadedChunks;
-	public Vector3 lastbuildPos;
-	public static CoroutineQueue processQueue;
-	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
-	//public static List<string> toRemove = new List<string>();
-
+	[Header("Hud Objects")]
 	public Slider loadingProgress;
 	public Text loadingText;
 	public Camera menuCamera;
 	public Canvas menuCanvas;
-	public Canvas hudCanvas;
-	//public Button playButton;
-	bool firstbuild = true;
-	bool building = false;
-	public int buildStep;
-	public int buildSteps;
+	public Canvas hudCanvas;	
+	
+	//private variables
+	private bool firstbuild = true;
+	private bool building = false;
+	private int buildStep;
+	private int buildSteps;
+	private static ConcurrentDictionary<string, Chunk> loadedChunks;
+	private Vector3 lastbuildPos;
+	public static CoroutineQueue processQueue;
+	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
 
 	/**
@@ -49,13 +56,60 @@ public class World : MonoBehaviour {
 
 
 	/**
-	 * This method is used to get the name of a chunk
-	 * based on its position
-	 * @param Vector3 chunkPosition the chunks position in game.
+	 * This method is called to initialize the world
+	 * object.
 	 */
-	public static string BuildChunkName(Vector3 chunkPosition){
-		return (int)chunkPosition.x +"_"+chunkPosition.y+"_"+chunkPosition.z;
+	void Start () {	
+		hudCanvas.gameObject.SetActive(false);		
+		player.SetActive(false);
+		loadingProgress.gameObject.SetActive(false);
+		loadingText.gameObject.SetActive(false);
+				
+		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
+		firstbuild = true;
+		loadedChunks = new ConcurrentDictionary<string, Chunk>();
+
+		//generate world seed
+		seedVal = Utils.getSeedValue(seed);
+		this.clickPlay();		
 	}
+	
+	/**
+	 * This method is called once per frame.
+	 */
+	void Update () {
+		if(building)return;
+		if(firstbuild){
+			if(processQueue==null)return;
+			processQueue.Run(DrawChunks());
+			return;
+		}
+		Vector3 movement = lastbuildPos - player.transform.position;
+		if(Global.BuildOnChunkChange){
+			if(movement.magnitude > Global.ChunkSize * Global.BuildWhenMovedXChunks){
+				lastbuildPos = player.transform.position;
+				BuildNearPlayer();
+			}
+		}else{
+			lastbuildPos = player.transform.position;
+			BuildNearPlayer();
+		}
+		//Draw Chunks
+		processQueue.Run(DrawChunks());
+		//remove unneeded chunks
+		processQueue.Run(RemoveOldChunks());
+	}
+
+	/**
+	 * This method is called when the game object
+	 * is edited in the editor
+	 */
+	public void OnValidate(){
+	 	if(!seed.Equals(lastSeed)||seedVal!=lastSeedVal){
+	 		lastSeed = seed;
+	 		seedVal = lastSeedVal = Utils.getSeedValue(seed);
+	 	}
+	 }
 
 	/**
 	 * This method returns the block at the given world position.
@@ -69,7 +123,7 @@ public class World : MonoBehaviour {
 		int x = (int) Mathf.Abs((float)Math.Round(pos.x) - chunkPos.x);
 		int y = (int) Mathf.Abs((float)Math.Round(pos.y) - chunkPos.y);
 		int z = (int) Mathf.Abs((float)Math.Round(pos.z) - chunkPos.z);
-		string chunkName = BuildChunkName(chunkPos);
+		string chunkName = Chunk.BuildName(chunkPos);
 		Chunk chunk = null;
 		if(loadedChunks.TryGetValue(chunkName, out chunk))
 			return chunk.chunkBlocks[x,y,z];
@@ -83,7 +137,7 @@ public class World : MonoBehaviour {
 	 */
 	public static Chunk GetWorldChunk(Vector3 pos){
 		Vector3 chunkPosition = WorldToChunkWorldPosistion(pos);
-		string chunkName = BuildChunkName(chunkPosition);
+		string chunkName = Chunk.BuildName(chunkPosition);
 		Chunk chunk;
 		if(loadedChunks.TryGetValue(chunkName, out chunk)){
 			return chunk;
@@ -99,7 +153,6 @@ public class World : MonoBehaviour {
 	 * @returns Vector3 The position of the containing chunk.
 	 */
 	public static Vector3 WorldToChunkWorldPosistion(Vector3 worldPos){
-
 		int cx, cy, cz;		
 		if(worldPos.x < 0)cx = (int) ((Mathf.Round(worldPos.x-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;
 		else cx = (int) (Mathf.Round(worldPos.x)/(float)Global.ChunkSize) * Global.ChunkSize;		
@@ -109,6 +162,22 @@ public class World : MonoBehaviour {
 		else cz = (int) (Mathf.Round(worldPos.z)/(float)Global.ChunkSize) * Global.ChunkSize;
 		return new Vector3(cx,cy,cz);
 	}
+
+	/**
+	 * This is a wrapper function used to get loaded chunks.
+	 * @param  string name The name of the chunk you want to try
+	 * get.
+	 * @param  out    Chunk	chunk This variable will be set to the
+	 * desired chunk if it is found, otherwise it will be set to
+	 * null.		
+	 * @return boolean returns true if the chunk was found in the
+	 * loaded chunks, otherwise returns false.
+	 */
+	public bool getLoadedChunk(string name, out Chunk chunk){
+		if(loadedChunks.TryGetValue(name, out chunk))return true;
+		else{chunk = null;return false;}
+	}
+
 
 	/**
 	 * This method takes a world position and gives you the blocks
@@ -125,14 +194,19 @@ public class World : MonoBehaviour {
 		return new Vector3(x,y,z);
 	}
 
-
+	/**
+	 * This method is called to build a chunk in the given position.
+	 * @param int x The starting x position to build the chunk.
+	 * @param int y The starting y position to build the chunk.
+	 * @param int z The starting z position to build the chunk.
+	 */
 	private bool BuildChunkAt(int x, int y, int z){
 		Vector3 chunkPosition = new Vector3(x*Global.ChunkSize,y*Global.ChunkSize,z*Global.ChunkSize);
-		string chunkName = BuildChunkName(chunkPosition);
+		string chunkName = Chunk.BuildName(chunkPosition);
 		Chunk chunk;
 		//if chunk does not exists
 		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
-			chunk = new Chunk(chunkPosition,seedVal, blockTextures, fluidTextures);
+			chunk = new Chunk(chunkPosition,this);
 			chunk.getSolids().transform.parent = this.transform;
 			chunk.getFluids().transform.parent = this.transform;
 			loadedChunks.TryAdd(chunkName, chunk);
@@ -140,32 +214,8 @@ public class World : MonoBehaviour {
 		}return false;
 	}
 
-	public int calculateSteps(int y, int radius){
-		int chunkCount = calculateLayerSteps(radius);
-		//calculate up
-		int up = y+radius; int upRad = radius-1;
-		if(up>Global.ChunksTall)up=Global.ChunksTall;
-		for(int i=y+1;i<up;i++)
-			chunkCount += calculateLayerSteps(upRad--);
-		//calculate down
-		int down = y-radius;  int downRad = radius-1;
-		if(down<0)down=0;
-		for(int i=y-1;i>=down;i--)
-			chunkCount+= calculateLayerSteps(downRad--);
-		return chunkCount;
-	}
-
-
-	public int calculateLayerSteps(int radius){
-		int calc = 0;
-		for(int i=(radius*2)-1;i>0;i-=2)calc+=i;
-		calc*=2;calc+=((radius*2)+1);
-		return calc;
-	}
-
 	IEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){
-		if(rad<=0){yield break;}
-		rad--;
+		if(rad<=0){yield break;}rad--;
 		if(y>=0&&y<=Global.ChunksTall+1){
 			
 			//build chunk forward
@@ -239,8 +289,15 @@ public class World : MonoBehaviour {
 		loadingProgress.gameObject.SetActive(true);
 		loadingText.gameObject.SetActive(true);	
 		Vector3 ppos = player.transform.position;
+		/*
+		Vector3 ppos = player.transform.position;
+		Vector3 cpos = WorldToChunkWorldPosistion(player.transform.position);
+		//set the player above the ground
+		Biome biome = Biome.getBiome(Biome.getBiomeType(seedVal, (int)cpos.x, (int)cpos.z));
+		player.transform.position = new Vector3(ppos.x,biome.getHeight(seedVal,(int)ppos.x,(int)ppos.z)+1,ppos.z);*/
 		//set the player above the ground
 		player.transform.position = new Vector3(ppos.x,WorldGenerator.GenerateHeight(ppos.x,ppos.z)+1,ppos.z);
+		//player.transform.position = new Vector3(ppos.x,150,ppos.z);
 		ppos = player.transform.position;
 		lastbuildPos = ppos;		
 		//set up the world
@@ -287,44 +344,35 @@ public class World : MonoBehaviour {
 		}
 	}
 
-	// Use this for initialization
-	void Start () {			
-
-		hudCanvas.gameObject.SetActive(false);		
-		player.SetActive(false);
-		loadingProgress.gameObject.SetActive(false);
-		loadingText.gameObject.SetActive(false);
-				
-		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
-		firstbuild = true;
-		loadedChunks = new ConcurrentDictionary<string, Chunk>();
-
-		//generate world seed
-		seedVal = Utils.getSeedValue(seed);
-		this.clickPlay();		
+	public int calculateSteps(int y, int radius){
+		int chunkCount = calculateLayerSteps(radius);
+		//calculate up
+		int up = y+radius; int upRad = radius-1;
+		if(up>Global.ChunksTall)up=Global.ChunksTall;
+		for(int i=y+1;i<up;i++)
+			chunkCount += calculateLayerSteps(upRad--);
+		//calculate down
+		int down = y-radius;  int downRad = radius-1;
+		if(down<0)down=0;
+		for(int i=y-1;i>=down;i--)
+			chunkCount+= calculateLayerSteps(downRad--);
+		return chunkCount;
 	}
+
+
+	public int calculateLayerSteps(int radius){
+		int calc = 0;
+		for(int i=(radius*2)-1;i>0;i-=2)calc+=i;
+		calc*=2;calc+=((radius*2)+1);
+		return calc;
+	}
+
 	
-	// Update is called once per frame
-	void Update () {
-		if(building)return;
-		if(firstbuild){
-			if(processQueue==null)return;
-			processQueue.Run(DrawChunks());
-			return;
-		}
-		Vector3 movement = lastbuildPos - player.transform.position;
-		if(Global.BuildOnChunkChange){
-			if(movement.magnitude > Global.ChunkSize * Global.BuildWhenMovedXChunks){
-				lastbuildPos = player.transform.position;
-				BuildNearPlayer();
-			}
-		}else{
-			lastbuildPos = player.transform.position;
-			BuildNearPlayer();
-		}
-		//Draw Chunks
-		processQueue.Run(DrawChunks());
-		//remove unneeded chunks
-		processQueue.Run(RemoveOldChunks());
-	}
+
+
+
+	 public int getSeed(){return seedVal;}
+	 public Material getFluidMaterial(){return this.fluidTextures;}
+	 public Material getBlockMaterial(){return this.blockTextures;}
+
 }

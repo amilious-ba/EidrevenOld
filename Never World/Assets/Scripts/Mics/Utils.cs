@@ -58,6 +58,10 @@ public class Utils {
 		}
 	}
 
+	public static float FBM(float x, float z, int seed, GenValues genValues){
+		return FBM(x,z,seed,genValues.Smooth,genValues.Octaves,genValues.Persistance,genValues.Lacunarity);
+	}
+
 	public static float FBM(float x, float z, int seed, float smooth, int octaves, float persistance, float lacunarity){
 		float total = 0;
 		float freq = 1;
@@ -79,6 +83,10 @@ public class Utils {
 			freq*=lacunarity;
 		}
 		return total/maxVal;
+	}
+
+	public static float[,] FBM_Map(float x, float z, int chunkSize, int seed, GenValues genValues){
+		return FBM_Map(x,z,chunkSize,seed,genValues.Smooth,genValues.Octaves,genValues.Persistance,genValues.Lacunarity);
 	}
 
 	/**
@@ -118,6 +126,10 @@ public class Utils {
 		return noiseMap;
 	}
 
+	public static float FBM3D(float x, float y,float z,int seed,GenValues genValues){
+		return FBM3D(x,y,z,seed,genValues.Smooth,genValues.Octaves,genValues.Persistance,genValues.Lacunarity);
+	}
+
 	public static float FBM3D(float x, float y, float z, int seed, float smooth, int octaves, float persistance, float lacunarity){
 		float XY = FBM(x, y,seed,smooth,octaves,persistance,lacunarity);
 		float YZ = FBM(y, z,seed,smooth,octaves,persistance,lacunarity);
@@ -128,7 +140,11 @@ public class Utils {
 		return (XY+YZ+XZ+YX+ZY+ZX)/6.0f;
 	}
 
-	public static float[,] FBM3_Map(float x, float y, float z, int chunkSize, int seed, float smooth, int octaves, float persistance, float lacunarity){
+	public static float[,] FBM3D_Map(float x, float y, float z, int size, int seed, GenValues genValues){
+		return FBM3D_Map(x,y,z,size,seed,genValues.Smooth,genValues.Octaves,genValues.Persistance,genValues.Lacunarity);
+	}
+
+	public static float[,] FBM3D_Map(float x, float y, float z, int chunkSize, int seed, float smooth, int octaves, float persistance, float lacunarity){
 		float[,] XY = FBM_Map(x, y,chunkSize,seed,smooth,octaves,persistance,lacunarity);
 		float[,] YZ = FBM_Map(y, z,chunkSize,seed,smooth,octaves,persistance,lacunarity);
 		float[,] XZ = FBM_Map(x, z,chunkSize,seed,smooth,octaves,persistance,lacunarity);
@@ -144,6 +160,23 @@ public class Utils {
 
 	public static float Map(float newMin, float newMax, float oldMin, float oldMax, float value){
 		return Mathf.Lerp(newMin,newMax,Mathf.InverseLerp(oldMin,oldMax, value));
+	}
+
+	public static int getHeight(float x, float z, int seed, int min, int max, GenValues genValues){
+		float rawHeight = FBM(x, z, seed, genValues);
+		return (int)Map(min,max,0,1,rawHeight);
+	}
+
+	public static int[,] GenerateHM(float x, float z, int size, int seed, int min, int max, GenValues genValues){
+		int[,] heightMap = new int[size,size];
+		//first generate a noise map
+		float[,] noiseMap = Utils.FBM_Map(x, z, size, seed, genValues);
+		//convert the heightmap
+		for(int cx=0;cx<size;cx++)for(int cz=0;cz<size;cz++){
+			heightMap[cx,cz] = (int)(Map(min,max,0,1,noiseMap[cx,cz]));
+		}
+		//return the heightmap
+		return heightMap;
 	}
 
 

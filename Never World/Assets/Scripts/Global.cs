@@ -7,6 +7,7 @@ public static class Global {
 	//general settings
 	public static bool AllowSave = false;
 	public static bool AllowLoad = false;
+	public static float version = 0.01f;
 	
 
 	//World Generation Settings
@@ -15,6 +16,8 @@ public static class Global {
 	public static int ChunksTall = 16;				//this is the number of chunks tall the world is
 	public static int SeaLevel = 70;					//This sets the worlds sea level.
 	public static int MaxGeneratedHeight = 150;		//This is the max height that the terian will generate
+	public static GenValues HumiditySettings = new GenValues(0.038f,2,0.5f,2f);
+	public static GenValues HeatSettings = new GenValues(0.027f,2,0.5f,2f);
 
 
 	//Preformance Settings

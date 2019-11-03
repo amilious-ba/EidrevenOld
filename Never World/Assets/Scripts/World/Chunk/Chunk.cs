@@ -8,17 +8,17 @@ public enum ChunkStatus{DRAW, DONE, KEEP}
 
 public class Chunk {
 
-	public Material cubeMaterial;
-	public Material fluidMaterial;
-	public Block[,,] chunkBlocks;
+	private World world;
 	private GameObject solidGameObject;
 	private GameObject fluidGameObject;
-	public ChunkStatus status;
-	public ChunkMB mb;
 	public Vector3 position;
+	public ChunkMB mb;
+
+	
+	public Block[,,] chunkBlocks;
+	public ChunkStatus status;
 	SaveData saveData;
 	public bool changed = false;
-	private int seed = 0;
 
 	public GameObject getSolids(){
 		return this.solidGameObject;
@@ -67,7 +67,7 @@ public class Chunk {
 
 	void BuildChunk(){
 		if(Load()) chunkBlocks = saveData.loadBlocks(this);
-		else chunkBlocks = WorldGenerator.generateChunkBlocks(this,seed);
+		else chunkBlocks = WorldGenerator.generateChunkBlocksNew(this,world.getSeed());
 		status = ChunkStatus.DRAW;
 	}
 
@@ -89,27 +89,24 @@ public class Chunk {
 				{
 					chunkBlocks[x,y,z].Draw();
 				}
-		CombineQuads(solidGameObject.gameObject, ShadowCastingMode.On, cubeMaterial);
+		CombineQuads(solidGameObject.gameObject, ShadowCastingMode.On, world.getBlockMaterial());
 		MeshCollider collider = solidGameObject.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
 		collider.sharedMesh = solidGameObject.transform.GetComponent<MeshFilter>().mesh;
 
-		CombineQuads(fluidGameObject.gameObject, ShadowCastingMode.Off, fluidMaterial);
+		CombineQuads(fluidGameObject.gameObject, ShadowCastingMode.Off, world.getFluidMaterial());
 		status = ChunkStatus.DONE;
 	}
 
-	public Chunk(){}
 	// Use this for initialization
-	public Chunk (Vector3 position, int seed, Material c, Material t) {
-		this.seed = seed;
-		solidGameObject = new GameObject(World.BuildChunkName(position));
+	public Chunk (Vector3 position, World world) {
+		this.world = world;
+		solidGameObject = new GameObject(BuildName(position));
 		solidGameObject.transform.position = position;
-		fluidGameObject = new GameObject(World.BuildChunkName(position)+"_F");
+		fluidGameObject = new GameObject(BuildName(position)+"_F");
 		fluidGameObject.transform.position = position;
 		this.position = position;
 		mb = solidGameObject.AddComponent<ChunkMB>();
 		mb.SetOwner(this);
-		cubeMaterial = c;
-		fluidMaterial = t;
 		BuildChunk();
 	}
 
@@ -122,24 +119,24 @@ public class Chunk {
 	public Chunk getNeighbor(Direction direction){
 		string neighborName = getNeighborName(direction);
 		Chunk c = null;
-		World.loadedChunks.TryGetValue(neighborName, out c);
+		world.getLoadedChunk(neighborName, out c);
 		return c;
 	}
 
 	public string getNeighborName(Direction direction){
 		switch(direction){
 			case Direction.WEST:
-				return World.BuildChunkName(new Vector3(position.x-Global.ChunkSize,position.y,position.z));
+				return BuildName(new Vector3(position.x-Global.ChunkSize,position.y,position.z));
 			case Direction.EAST:
-				return World.BuildChunkName(new Vector3(position.x+Global.ChunkSize,position.y,position.z));
+				return BuildName(new Vector3(position.x+Global.ChunkSize,position.y,position.z));
 			case Direction.UP:
-				return World.BuildChunkName(new Vector3(position.x,position.y+Global.ChunkSize,position.z));
+				return BuildName(new Vector3(position.x,position.y+Global.ChunkSize,position.z));
 			case Direction.DOWN:
-				return World.BuildChunkName(new Vector3(position.x,position.y-Global.ChunkSize,position.z));
+				return BuildName(new Vector3(position.x,position.y-Global.ChunkSize,position.z));
 			case Direction.NORTH:
-				return World.BuildChunkName(new Vector3(position.x,position.y,position.z+Global.ChunkSize));
+				return BuildName(new Vector3(position.x,position.y,position.z+Global.ChunkSize));
 			case Direction.SOUTH:
-				return World.BuildChunkName(new Vector3(position.x,position.y,position.z-Global.ChunkSize));
+				return BuildName(new Vector3(position.x,position.y,position.z-Global.ChunkSize));
 			default:
 				return "unknown chunk";
 		}
@@ -194,6 +191,15 @@ public class Chunk {
 
 	public Vector3 getChunkBlocksWorldPosition(Vector3 blocksChunkPosition){
 		return position + blocksChunkPosition;
+	}
+
+	/**
+	 * This method is used to get the name of a chunk
+	 * based on its position
+	 * @param Vector3 chunkPosition the chunks position in game.
+	 */
+	public static string BuildName(Vector3 chunkPosition){
+		return (int)chunkPosition.x +"_"+chunkPosition.y+"_"+chunkPosition.z;
 	}
 
 }

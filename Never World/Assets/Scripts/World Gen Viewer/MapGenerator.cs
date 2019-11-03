@@ -39,8 +39,8 @@ public class MapGenerator : MonoBehaviour{
 
     public void GenerateMap(){
     	seedValue = Utils.getSeedValue(seed);
-    	float[,] heatMap = Utils.FBM_Map(offset.x, offset.y, chunkSize, seedValue, heatSmooth, heatOctaves, heatPersistance, heatLacunarity);
-    	float[,] humidMap = Utils.FBM_Map(offset.x, offset.y, chunkSize, seedValue+1, humidSmooth, humidOctaves, humidPersistance, humidLacunarity);
+    	float[,] heatMap = Utils.FBM_Map((int)offset.x, (int)offset.y, chunkSize, seedValue, heatSmooth, heatOctaves, heatPersistance, heatLacunarity);
+    	float[,] humidMap = Utils.FBM_Map((int)offset.x, (int)offset.y, chunkSize, seedValue+1, humidSmooth, humidOctaves, humidPersistance, humidLacunarity);
 
     	MapDisplay display = FindObjectOfType<MapDisplay>();
     	switch(draw){

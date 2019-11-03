@@ -431,7 +431,6 @@ GameObject:
   - component: {fileID: 439772703}
   - component: {fileID: 439772702}
   - component: {fileID: 439772701}
-  - component: {fileID: 439772705}
   m_Layer: 5
   m_Name: PlayerHudCanvas
   m_TagString: Untagged
@@ -520,18 +519,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &439772705
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 439772700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b695407c7cf0cd468d9d64c13dfed01, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &456493457
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,6 +717,10 @@ PrefabInstance:
       propertyPath: m_Height
       value: 1.7
       objectReference: {fileID: 0}
+    - target: {fileID: 2000000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
+      propertyPath: near clip plane
+      value: 0.1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e9e851c0e142814dac026a256ba2ac0, type: 3}
 --- !u!1 &873329226
@@ -761,17 +752,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3efa0a8bf6f0ccb4490da6a5e33d530b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  seed: 0
+  seedVal: 0
   player: {fileID: 1446591297}
   blockTextures: {fileID: 2100000, guid: c09baebc416d6134e96495dca799840c, type: 2}
   fluidTextures: {fileID: 2100000, guid: 6cbd92f39fce9a447a2838534528a18a, type: 2}
-  lastbuildPos: {x: 0, y: 0, z: 0}
   loadingProgress: {fileID: 1468006808}
   loadingText: {fileID: 213341974}
   menuCamera: {fileID: 2018626142}
   menuCanvas: {fileID: 456493460}
   hudCanvas: {fileID: 439772703}
-  buildStep: 0
-  buildSteps: 0
 --- !u!4 &873329228
 Transform:
   m_ObjectHideFlags: 0
@@ -870,6 +860,7 @@ GameObject:
   - component: {fileID: 1377021386}
   - component: {fileID: 1377021388}
   - component: {fileID: 1377021387}
+  - component: {fileID: 1377021389}
   m_Layer: 5
   m_Name: Panel
   m_TagString: Untagged
@@ -933,6 +924,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1377021385}
   m_CullTransparentMesh: 0
+--- !u!114 &1377021389
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1377021385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b695407c7cf0cd468d9d64c13dfed01, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hudCanvas: {fileID: 439772703}
+  panel: {fileID: 1377021385}
+  debugText: {fileID: 2037040866}
 --- !u!1 &1444817268
 GameObject:
   m_ObjectHideFlags: 0
