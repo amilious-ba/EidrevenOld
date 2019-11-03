@@ -230,7 +230,7 @@ public abstract class Block {
 		if(pic.x<0||pic.y<0||pic.z<0||pic.x>=Global.ChunkSize||
 			pic.y>=Global.ChunkSize||pic.z>=Global.ChunkSize){
 			return World.getBlock(chunk.position+pic);			
-		}else{//the block is in a neighbor chunk
+		}else{//the block is in this chunk
 			return chunk.getBlock(pic);
 		}
 	}

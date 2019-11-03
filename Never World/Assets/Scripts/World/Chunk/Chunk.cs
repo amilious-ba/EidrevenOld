@@ -12,6 +12,7 @@ public class Chunk {
 	private GameObject solidGameObject;
 	private GameObject fluidGameObject;
 	public Vector3 position;
+	private Vector3 index;
 	public ChunkMB mb;
 
 	
@@ -19,6 +20,7 @@ public class Chunk {
 	public ChunkStatus status;
 	SaveData saveData;
 	public bool changed = false;
+	private bool drawn = false;
 
 	public GameObject getSolids(){
 		return this.solidGameObject;
@@ -71,8 +73,15 @@ public class Chunk {
 		status = ChunkStatus.DRAW;
 	}
 
-	public void Redraw()
-	{
+	public void redrawNeighbors(){
+		for(int i=1;i<7;i++){
+			Chunk chunk = getNeighbor((Direction)i);
+			if(chunk!=null){chunk.Redraw();}
+		}
+	}
+
+	public void Redraw(){
+		if(!drawn)return;
 		GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshFilter>());
 		GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshRenderer>());
 		GameObject.DestroyImmediate(solidGameObject.GetComponent<Collider>());
@@ -81,8 +90,7 @@ public class Chunk {
 		DrawChunk();
 	}
 
-	public void DrawChunk()
-	{
+	public void DrawChunk()	{
 		for(int z = 0; z < Global.ChunkSize; z++)
 			for(int y = 0; y < Global.ChunkSize; y++)
 				for(int x = 0; x < Global.ChunkSize; x++)
@@ -95,19 +103,27 @@ public class Chunk {
 
 		CombineQuads(fluidGameObject.gameObject, ShadowCastingMode.Off, world.getFluidMaterial());
 		status = ChunkStatus.DONE;
+		drawn = true;
 	}
 
 	// Use this for initialization
-	public Chunk (Vector3 position, World world) {
+	public Chunk (Vector3 chunkIndex, World world) {
 		this.world = world;
-		solidGameObject = new GameObject(BuildName(position));
-		solidGameObject.transform.position = position;
-		fluidGameObject = new GameObject(BuildName(position)+"_F");
-		fluidGameObject.transform.position = position;
-		this.position = position;
+		this.index = chunkIndex;
+		this.position =  Utils.ScaleVector3(chunkIndex,Global.ChunkSize);
+
+		solidGameObject = new GameObject(ChunkNameFromIndex(chunkIndex));
+		solidGameObject.transform.position =this.position;
+		solidGameObject.transform.parent = world.transform;
+
+		fluidGameObject = new GameObject(ChunkNameFromIndex(chunkIndex)+"_F");
+		fluidGameObject.transform.position = this.position;
+		fluidGameObject.transform.parent = world.transform;
+		
 		mb = solidGameObject.AddComponent<ChunkMB>();
 		mb.SetOwner(this);
 		BuildChunk();
+		redrawNeighbors();
 	}
 
 	public void Destroy(){
@@ -124,6 +140,10 @@ public class Chunk {
 	}
 
 	public string getNeighborName(Direction direction){
+		return ChunkNameFromIndex(Directions.moveDirection(index,direction,1));
+	}
+
+	/*public string getNeighborName(Direction direction){
 		switch(direction){
 			case Direction.WEST:
 				return BuildName(new Vector3(position.x-Global.ChunkSize,position.y,position.z));
@@ -140,7 +160,7 @@ public class Chunk {
 			default:
 				return "unknown chunk";
 		}
-	}
+	}*/
 	
 	public void CombineQuads(GameObject o, UnityEngine.Rendering.ShadowCastingMode shadow, Material m)
 	{
@@ -198,9 +218,9 @@ public class Chunk {
 	 * based on its position
 	 * @param Vector3 chunkPosition the chunks position in game.
 	 */
-	public static string BuildName(Vector3 chunkPosition){
+	/*public static string BuildName(Vector3 chunkPosition){
 		return (int)chunkPosition.x +"_"+chunkPosition.y+"_"+chunkPosition.z;
-	}
+	}*/
 
 
 
@@ -216,19 +236,20 @@ public class Chunk {
 	}
 
 	public static Vector3 ChunkIndexAtPosition(Vector3 position){
-		int x = (int)(position.x/Global.ChunkSize);
-		int y = (int)(position.y/Global.ChunkSize);
-		int z = (int)(position.z/Global.ChunkSize);
+		int x = (int)Mathf.Round(position.x); int y = (int)Mathf.Round(position.y); int z = (int)Mathf.Round(position.z);
+		if(x<0){x=x-Global.ChunkSize+1;}if(y<0){y=y-Global.ChunkSize+1;}if(z<0){z=z-Global.ChunkSize+1;}
+		x/=Global.ChunkSize;y/=Global.ChunkSize;z/=Global.ChunkSize;
 		return new Vector3(x,y,z);
 	}
 
 	public static Vector3 ChunkIndexAtPosition(Vector3 position, out Vector3 blockPosition){
-		int x = (int)(position.x/Global.ChunkSize);
-		int y = (int)(position.y/Global.ChunkSize);
-		int z = (int)(position.z/Global.ChunkSize);
-		int bx = (int)(position.x%Global.ChunkSize);
-		int by = (int)(position.y%Global.ChunkSize);
-		int bz = (int)(position.z%Global.ChunkSize);
+		int x = (int)Mathf.Round(position.x); int y = (int)Mathf.Round(position.y); int z = (int)Mathf.Round(position.z);
+		int bx = x%Global.ChunkSize; int by = y%Global.ChunkSize; int bz = z%Global.ChunkSize;
+		if(x<0){x=x-Global.ChunkSize+1;}if(y<0){y=y-Global.ChunkSize+1;}if(z<0){z=z-Global.ChunkSize+1;}
+		if(bx<0){bx=Global.ChunkSize+bx;}
+		if(by<0){by=Global.ChunkSize+by;}
+		if(bz<0){bz=Global.ChunkSize+bz;}
+		x/=Global.ChunkSize;y/=Global.ChunkSize;z/=Global.ChunkSize;
 		blockPosition = new Vector3(bx,by,bz);
 		return new Vector3(x,y,z);
 	}

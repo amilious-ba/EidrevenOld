@@ -60,12 +60,9 @@ public class DebugScript : MonoBehaviour {
     }
 
     private static string getChunkString(Vector3 pos){
-        int x = (int)(pos.x/Global.ChunkSize);
-        int y = (int)(pos.y/Global.ChunkSize);
-        int z = (int)(pos.z/Global.ChunkSize);
-        int cx = (int)(pos.x%Global.ChunkSize);        
-        int cy = (int)(pos.y%Global.ChunkSize);
-        int cz = (int)(pos.z%Global.ChunkSize);
-        return x+", "+y+", "+z+" ||"+cx+", "+cy+", "+cz;
+        Vector3 blockIndex;
+        Vector3 chunkIndex = Chunk.ChunkIndexAtPosition(pos, out blockIndex);
+        return (int)chunkIndex.x+", "+(int)chunkIndex.y+", "+(int)chunkIndex.z+" || "
+        +(int)blockIndex.x+", "+(int)blockIndex.y+", "+(int)blockIndex.z;
     }
 }

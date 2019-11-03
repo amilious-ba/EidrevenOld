@@ -64,7 +64,7 @@ public class BlockInteration : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		DebugScript.setPlayerPos(this.transform.position);
+		//DebugScript.setPlayerPos(this.transform.position);
 		RaycastHit looking;
 		if(Physics.Raycast(cam.transform.position, cam.transform.forward, out looking,10)){
 			Vector3 lookBlock = looking.point - looking.normal/2.0f;
@@ -72,12 +72,12 @@ public class BlockInteration : MonoBehaviour {
 				int lX = (int)(Mathf.Round(lookBlock.x)-looking.collider.gameObject.transform.position.x);
 				int lY = (int)(Mathf.Round(lookBlock.y)-looking.collider.gameObject.transform.position.y);
 				int lZ = (int)(Mathf.Round(lookBlock.z)-looking.collider.gameObject.transform.position.z);
-				DebugScript.setPlayerLookingAt(lookBlock);
+				//DebugScript.setPlayerLookingAt(lookBlock);
 				//debugText.text = "looking at x:"+Mathf.Round(lookBlock.x)+" y:"+Mathf.Round(lookBlock.y)+" z:"+Mathf.Round(lookBlock.z);
-				Vector3 chunkPos = new Vector3(Mathf.Round(lookBlock.x/Global.ChunkSize),Mathf.Round(lookBlock.y/Global.ChunkSize),Mathf.Round(lookBlock.z/Global.ChunkSize));
+				//Vector3 chunkPos = new Vector3(Mathf.Round(lookBlock.x/Global.ChunkSize),Mathf.Round(lookBlock.y/Global.ChunkSize),Mathf.Round(lookBlock.z/Global.ChunkSize));
 				//debugText.text=debugText.text+"\nChunk Name: "+Chunk.BuildName(chunkPos);
 		}else{
-			DebugScript.setPlayerLookingAt("-");
+			//DebugScript.setPlayerLookingAt("-");
 			//debugText.text = "";
 		}
 
@@ -102,7 +102,6 @@ public class BlockInteration : MonoBehaviour {
 				Block block = World.getBlock(hitBlock);
 				if(block!=null){
 					block.HitBlock();
-					Debug.Log(block.chunk.position);
 				}
 			}
 		}
