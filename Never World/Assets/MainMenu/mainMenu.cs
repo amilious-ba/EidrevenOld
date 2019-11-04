@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor.SceneManagement;
+//using UnityEditor.SceneManagement;
 
 public class mainMenu : MonoBehaviour
 {
@@ -19,6 +19,6 @@ public class mainMenu : MonoBehaviour
 
     public void play_Clicked(){
     	//Application.LoadLevel("game");
-    	EditorSceneManager.LoadScene("game");
+    	//EditorSceneManager.LoadScene("game");
     }
 }
