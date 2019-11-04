@@ -44,6 +44,8 @@ public class World : MonoBehaviour {
 	public static CoroutineQueue processQueue;
 	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
+	private static int counter=0;
+
 
 	/**
 	 * Project notes
@@ -78,6 +80,7 @@ public class World : MonoBehaviour {
 	 * This method is called once per frame.
 	 */
 	void Update () {
+		counter++;if(counter<100){return;}counter = 0;
 		if(building)return;
 		if(firstbuild){
 			if(processQueue==null)return;
@@ -214,6 +217,40 @@ public class World : MonoBehaviour {
 		}return false;
 	}
 
+	private bool BuildChunkAt(Vector3 chunkIndex){
+		Vector3 chunkPosition = Utils.ScaleVector3(chunkIndex, Global.ChunkSize);
+		string chunkName = Chunk.BuildName(chunkPosition);
+		Chunk chunk;
+		//if chunk does not exists
+		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
+			chunk = new Chunk(chunkPosition,this);
+			chunk.getSolids().transform.parent = this.transform;
+			chunk.getFluids().transform.parent = this.transform;
+			loadedChunks.TryAdd(chunkName, chunk);
+			return true;
+		}return false;
+	}
+
+	IEnumerator BuildRecursiveWorld(Vector3 chunkIndex, int rad){
+		if(rad<=0){yield break;}rad--;
+		if(chunkIndex.y>=0||chunkIndex.y<Global.ChunksTall){
+			if(BuildChunkAt(chunkIndex))updateFirstBuild("building "+chunkIndex);
+			yield return null;
+		}
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.NORTH, 1f), rad);
+		yield return null;
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.SOUTH, 1f), rad);
+		yield return null;
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.EAST, 1f), rad);
+		yield return null;
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.WEST, 1f), rad);
+		yield return null;
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.UP, 1f), rad);
+		yield return null;
+		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.DOWN, 1f), rad);
+		yield return null;
+	}
+
 	IEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){
 		if(rad<=0){yield break;}rad--;
 		if(y>=0&&y<=Global.ChunksTall+1){
@@ -260,7 +297,9 @@ public class World : MonoBehaviour {
 				unloadChunks.Enqueue(chunk.Key);
 			}
 			else if(chunk.Value.status == ChunkStatus.DRAW){
-				chunk.Value.DrawChunk();
+				try{
+					chunk.Value.DrawChunk();
+				}catch(MissingReferenceException mre){}
 				updateFirstBuild("drawing x:"+(chunk.Value.position.x/Global.ChunkSize)+" y:"+(chunk.Value.position.y/Global.ChunkSize)+" z:"+(chunk.Value.position.z/Global.ChunkSize));
 			}
 
@@ -289,6 +328,7 @@ public class World : MonoBehaviour {
 		loadingProgress.gameObject.SetActive(true);
 		loadingText.gameObject.SetActive(true);	
 		Vector3 ppos = player.transform.position;
+		DebugScript.startTimer();
 		/*
 		Vector3 ppos = player.transform.position;
 		Vector3 cpos = WorldToChunkWorldPosistion(player.transform.position);
@@ -324,6 +364,7 @@ public class World : MonoBehaviour {
 	}
 
 	public void updateFirstBuild(string status){
+		DebugScript.setLoadedChunks(loadedChunks.Count);
 		if(!firstbuild)return;
 		buildStep++;
 		//this.loadingText.text = status;
@@ -337,6 +378,7 @@ public class World : MonoBehaviour {
 		}else if(buildStep==buildSteps){
 			firstbuild=false;
 			//activate player
+			DebugScript.stopTimer("start Time");
 			player.SetActive(true);
 			menuCanvas.gameObject.SetActive(false);
 			menuCamera.gameObject.SetActive(false);
