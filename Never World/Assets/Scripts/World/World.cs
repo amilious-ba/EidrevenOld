@@ -23,8 +23,10 @@ public class World : MonoBehaviour {
 	[Space(10)]
 
 	[Header("Texture Maps")]
-	public Material blockTextures;
-	public Material fluidTextures;
+	[SerializeField]
+	private Material blockTextures;
+	[SerializeField]
+	private Material fluidTextures;
 	[Space(10)]
 
 	[Header("Hud Objects")]
@@ -35,7 +37,7 @@ public class World : MonoBehaviour {
 	public Canvas hudCanvas;	
 	
 	//private variables
-	private bool firstbuild = true;
+	private bool firstLoad = true;
 	private bool building = false;
 	private int buildStep;
 	private int buildSteps;
@@ -45,6 +47,8 @@ public class World : MonoBehaviour {
 	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
 	private static int counter=0;
+
+	public bool FirstLoad{get{return firstLoad;}set{firstLoad=value;}}
 
 
 	/**
@@ -68,7 +72,7 @@ public class World : MonoBehaviour {
 		loadingText.gameObject.SetActive(false);
 				
 		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
-		firstbuild = true;
+		firstLoad = true;
 		loadedChunks = new ConcurrentDictionary<string, Chunk>();
 
 		//generate world seed
@@ -82,7 +86,7 @@ public class World : MonoBehaviour {
 	void Update () {
 		counter++;if(counter<100){return;}counter = 0;
 		if(building)return;
-		if(firstbuild){
+		if(firstLoad){
 			if(processQueue==null)return;
 			processQueue.Run(DrawChunks());
 			return;
@@ -203,21 +207,27 @@ public class World : MonoBehaviour {
 	 * @param int y The starting y position to build the chunk.
 	 * @param int z The starting z position to build the chunk.
 	 */
-	private bool BuildChunkAt(int x, int y, int z){
-		Vector3 chunkPosition = new Vector3(x*Global.ChunkSize,y*Global.ChunkSize,z*Global.ChunkSize);
-		string chunkName = Chunk.BuildName(chunkPosition);
-		Chunk chunk;
-		//if chunk does not exists
-		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
-			chunk = new Chunk(chunkPosition,this);
-			chunk.getSolids().transform.parent = this.transform;
-			chunk.getFluids().transform.parent = this.transform;
-			loadedChunks.TryAdd(chunkName, chunk);
-			return true;
-		}return false;
+	private bool BuildChunk(int x, int y, int z){
+		return BuildChunk(new GamePoint(x,y,z));
 	}
 
-	private bool BuildChunkAt(Vector3 chunkIndex){
+	private bool BuildChunk(GamePoint ChunkIndex){
+		//convert to chunk position
+		GamePoint chunkPos = ChunkIndex*Global.ChunkSize;
+		string chunkName = Chunk.BuildName(chunkPos); Chunk chunk;
+		//if chunk does not exist
+		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
+			chunk = new Chunk(chunkPos, this);
+			//try to add chunk
+			if(loadedChunks.TryAdd(chunkName, chunk)){
+				//chunk was added so build it
+				chunk.Build(); return true;
+			} // the chunk was not added so destory it
+			else chunk.Destroy();
+		} return false;
+	}
+
+	/*private bool BuildChunkAt(Vector3 chunkIndex){
 		Vector3 chunkPosition = Utils.ScaleVector3(chunkIndex, Global.ChunkSize);
 		string chunkName = Chunk.BuildName(chunkPosition);
 		Chunk chunk;
@@ -234,7 +244,7 @@ public class World : MonoBehaviour {
 	IEnumerator BuildRecursiveWorld(Vector3 chunkIndex, int rad){
 		if(rad<=0){yield break;}rad--;
 		if(chunkIndex.y>=0||chunkIndex.y<Global.ChunksTall){
-			if(BuildChunkAt(chunkIndex))updateFirstBuild("building "+chunkIndex);
+			if(BuildChunkAt(chunkIndex))updatefirstLoad("building "+chunkIndex);
 			yield return null;
 		}
 		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.NORTH, 1f), rad);
@@ -249,58 +259,58 @@ public class World : MonoBehaviour {
 		yield return null;
 		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.DOWN, 1f), rad);
 		yield return null;
-	}
+	}*/
 
 	IEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){
 		if(rad<=0){yield break;}rad--;
 		if(y>=0&&y<=Global.ChunksTall+1){
 			
 			//build chunk forward
-			if(BuildChunkAt(x, y, z+1)){updateFirstBuild("building x:"+x+" y:"+y+" z:"+(z+1));}
+			if(BuildChunk(x, y, z+1)){updatefirstLoad("building x:"+x+" y:"+y+" z:"+(z+1));}
 			processQueue.Run(BuildRecursiveWorld(x, y, z+1, rad));
 			yield return null;
 			
 			//build chunk backward
-			if(BuildChunkAt(x, y, z-1)){updateFirstBuild("building x:"+x+" y:"+y+" z:"+(z-1));}
+			if(BuildChunk(x, y, z-1)){updatefirstLoad("building x:"+x+" y:"+y+" z:"+(z-1));}
 			processQueue.Run(BuildRecursiveWorld(x, y, z-1, rad));
 			yield return null;
 			
 			//build chunk left
-			if(BuildChunkAt(x-1, y, z)){updateFirstBuild("building x:"+(x-1)+" y:"+y+" z:"+z);}
+			if(BuildChunk(x-1, y, z)){updatefirstLoad("building x:"+(x-1)+" y:"+y+" z:"+z);}
 			processQueue.Run(BuildRecursiveWorld(x-1, y, z, rad));
 			yield return null;
 			
 			//build chunk right
-			if(BuildChunkAt(x+1, y,z)){updateFirstBuild("building x:"+(x+1)+" y:"+y+" z:"+z);}
+			if(BuildChunk(x+1, y,z)){updatefirstLoad("building x:"+(x+1)+" y:"+y+" z:"+z);}
 			processQueue.Run(BuildRecursiveWorld(x+1, y, z, rad));
 			yield return null;
 		}
 		//build chunk up
 		if(y+1<Global.ChunksTall+1){
-			if(BuildChunkAt(x, y+1, z)){updateFirstBuild("building x:"+x+" y:"+(y+1)+" z:"+z);}
+			if(BuildChunk(x, y+1, z)){updatefirstLoad("building x:"+x+" y:"+(y+1)+" z:"+z);}
 			processQueue.Run(BuildRecursiveWorld(x, y+1, z, rad));
 			yield return null;
 		}
 		//build chunk down
 		if(y-1>=0){
-			if(BuildChunkAt(x, y-1, z)){updateFirstBuild("building x:"+x+" y:"+(y-1)+" z:"+z);}
+			if(BuildChunk(x, y-1, z)){updatefirstLoad("building x:"+x+" y:"+(y-1)+" z:"+z);}
 			processQueue.Run(BuildRecursiveWorld(x, y-1, z, rad));
 			yield return null;
 		}
 	}
 
 	IEnumerator DrawChunks(){
-		foreach(KeyValuePair<string, Chunk> chunk in loadedChunks){
-
-			if(chunk.Value.getSolids() && Vector3.Distance(player.transform.position,
-				chunk.Value.getSolids().transform.position)>Global.LoadRadius*Global.ChunkSize){
-				unloadChunks.Enqueue(chunk.Key);
+		foreach(KeyValuePair<string, Chunk> value in loadedChunks){
+			Chunk chunk = value.Value;
+			if(Vector3.Distance(player.transform.position,
+				chunk.position)>Global.LoadRadius*Global.ChunkSize){
+				unloadChunks.Enqueue(value.Key);
 			}
-			else if(chunk.Value.status == ChunkStatus.DRAW){
-				try{
-					chunk.Value.DrawChunk();
-				}catch(MissingReferenceException mre){}
-				updateFirstBuild("drawing x:"+(chunk.Value.position.x/Global.ChunkSize)+" y:"+(chunk.Value.position.y/Global.ChunkSize)+" z:"+(chunk.Value.position.z/Global.ChunkSize));
+			else if(chunk.Status == ChunkStatus.DRAW){
+				//try{
+					chunk.Draw();
+				//}catch(MissingReferenceException mre){}
+				updatefirstLoad("drawing x:"+(chunk.position.x/Global.ChunkSize)+" y:"+(chunk.position.y/Global.ChunkSize)+" z:"+(chunk.position.z/Global.ChunkSize));
 			}
 
 			yield return null;
@@ -348,8 +358,9 @@ public class World : MonoBehaviour {
 		this.loadingProgress.maxValue = buildSteps;
 		//build and draw the starting chunk
 		building = true;
-		BuildChunkAt((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
+		BuildChunk((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
 		//processQueue.Run(DrawChunks());
+		Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
 		processQueue.Run(BuildRecursiveWorld((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize),Global.LoadRadius));
 	}
 
@@ -363,9 +374,9 @@ public class World : MonoBehaviour {
 			Global.LoadRadius));
 	}
 
-	public void updateFirstBuild(string status){
+	public void updatefirstLoad(string status){
 		DebugScript.setLoadedChunks(loadedChunks.Count);
-		if(!firstbuild)return;
+		if(!firstLoad)return;
 		buildStep++;
 		//this.loadingText.text = status;
 		this.loadingText.text = buildStep+"/"+buildSteps+" "+status;
@@ -376,7 +387,7 @@ public class World : MonoBehaviour {
 			buildSteps-=(buildSteps/15);
 			loadingProgress.maxValue = buildSteps;
 		}else if(buildStep==buildSteps){
-			firstbuild=false;
+			firstLoad=false;
 			//activate player
 			DebugScript.stopTimer("start Time");
 			player.SetActive(true);

@@ -24,7 +24,7 @@ public static class Global {
 	public static uint MaxCoroutines = 2000;			//This value sets the max number of coroutines
 	public static bool BuildOnChunkChange = true;	//If true the chunk building will be locked until you change chunks
 	public static int BuildWhenMovedXChunks = 1;		//This value sets the distance moved before chunks are redrawn
-	public static int LoadRadius = 5;			//This is the distance chunks will be loaded
+	public static int LoadRadius = 6;			//This is the distance chunks will be loaded
 	
 
 	//methods

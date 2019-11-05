@@ -93,10 +93,10 @@ public abstract class Block {
 		if(chunk==null)return;
 		this.matterState = matterState;
 		if(matterState == BlockMatterState.LIQUID){
-			this.parent = chunk.getFluids().gameObject;
+			this.parent = chunk.Fluids.gameObject;
 			isLiquid = true;
 		}else{
-			this.parent = chunk.getSolids().gameObject;
+			this.parent = chunk.Solids.gameObject;
 			if(blockType!=BlockType.AIR)solid=true;
 		}
 		this.positionInChunk = position;
@@ -121,7 +121,7 @@ public abstract class Block {
 			float maxHealth = blockHealthMax[(int)bType];
 			cType = (CrackType)((int)(4-(currentHealth / maxHealth * 4)));
 		}
-		chunk.Redraw();
+		chunk.Draw();
 		return false;
 	}
 
@@ -135,7 +135,7 @@ public abstract class Block {
 		if(positionInChunk.z==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.WEST));
 		foreach(Chunk uChunk in updates){
 			if(uChunk==null)continue;
-			uChunk.Redraw();
+			uChunk.Draw();
 		}
 	}
 
@@ -146,7 +146,7 @@ public abstract class Block {
 	public bool setBlock(BlockType b){
 		chunk.chunkBlocks[(int)positionInChunk.x,(int)positionInChunk.y,(int)positionInChunk.z] = 
 			Block.CreateBlock(b, positionInChunk, chunk);
-		chunk.Redraw();
+		chunk.Draw();
 		UpdateNeighborChunks();
 		chunk.changed = true;
 		return true;
@@ -155,7 +155,7 @@ public abstract class Block {
 	public void Reset(){
 		cType = CrackType.NOCRACK;
 		currentHealth = blockHealthMax[(int)bType];
-		chunk.Redraw();
+		chunk.Draw();
 	}
 
 	public BlockMatterState getMatterState(){
@@ -167,8 +167,10 @@ public abstract class Block {
 	 * blocks.
 	 * @param Direction side The side of the block you
 	 * want to create.
+	 * @return returns false if not able to create the quad,
+	 * otherwise returns true.
 	 */
-	private void CreateQuad(Direction side){
+	private bool CreateQuad(Direction side){
 		Mesh mesh = new Mesh();
 		mesh.name = "ScriptedMesh";
 		Vector3[] verts = new Vector3[4];
@@ -213,41 +215,50 @@ public abstract class Block {
 		mesh.triangles = new int[] {3,1,0,3,2,1};
 		mesh.RecalculateBounds();
 		GameObject quad = new GameObject("Quad");
+		try{
+			quad.transform.parent = parent.gameObject.transform;
+		}catch(MissingReferenceException mre){
+			GameObject.DestroyImmediate(quad);
+			return false;
+		}
 		if(blockSize==1){
 			quad.transform.position = positionInChunk;
 		}else{			
 			quad.transform.position = Utils.ScaleVector3(positionInChunk, blockSize);
 		}
-		quad.transform.parent = parent.gameObject.transform;
 		MeshFilter meshFilter = (MeshFilter) quad.AddComponent(typeof(MeshFilter));
 		meshFilter.mesh = mesh;
+		return true;
 	}
 
 	public Block getNeighbor(Direction direction){
 		//get the neighbors position in this chunk
 		Vector3 pic = Directions.moveDirection(positionInChunk,direction,1);
-		//check to see if the neighbor is in this chunk
-		if(pic.x<0||pic.y<0||pic.z<0||pic.x>=Global.ChunkSize||
-			pic.y>=Global.ChunkSize||pic.z>=Global.ChunkSize){
-			return World.getBlock(chunk.position+pic);			
-		}else{//the block is in a neighbor chunk
+		//check to see if in different chunk
+		if(pic.x<0){pic.x += Global.ChunkSize;
+		}else if(pic.x>=Global.ChunkSize){pic.x -= Global.ChunkSize;
+		}else if(pic.y<0){pic.y += Global.ChunkSize;
+		}else if(pic.y>=Global.ChunkSize){pic.y -= Global.ChunkSize;
+		}else if(pic.z<0){pic.z += Global.ChunkSize;
+		}else if(pic.z>=Global.ChunkSize){pic.z -= Global.ChunkSize;			
+		}else{//the block is in this chunk
 			return chunk.getBlock(pic);
-		}
+		}//the block is in another chunk
+		Chunk neighbor = chunk.getNeighbor(direction);
+		if(neighbor==null)return null;
+		return neighbor.getBlock(pic);
 	}
 
 	protected bool shouldRenderQuad(Direction direction){
-		//if has hole or transparent return false
-		//here in the future
-		//Vector3 cubePos = Directions.moveDirection(positionInChunk,
-			//direction,1);
-		try{
-			//Block b = GetBlock(cubePos);
+		//this should check for all matter states
 			Block b = getNeighbor(direction);
 			if(b!=null){
 				if(b.isSolid())return false;
 				return (this.matterState!=b.getMatterState());
+			}else{
+				return false; //this keeps the seams from being
+				//rendered
 			}
-		}catch(System.IndexOutOfRangeException){}
 		return true;
 	}
 
@@ -255,7 +266,9 @@ public abstract class Block {
 		if(bType==BlockType.AIR) return;
 		for(int i=1;i<=6;i++){
 			Direction dir = (Direction)i;
-			if(shouldRenderQuad(dir))CreateQuad(dir);
+			if(shouldRenderQuad(dir)){
+				if(!CreateQuad(dir))return;
+			}
 		}
 	}
 }
