@@ -19,12 +19,15 @@ public abstract class Block {
 	int[]blockHealthMax = {3,3,8,4,2,3,-1,4,4,0};
 
 	public GameObject parent;
-	public Vector3 positionInChunk;
-	public Vector3 worldPosition;
+	protected GamePoint index;
+	protected GamePoint position;
 	public Chunk chunk;
 	public BlockMatterState matterState;
 	public bool solid;
 	public bool isLiquid;
+
+	public GamePoint Index{get{return index;}}
+	public GamePoint Position{get{return position;}}
 
 	public static Block CreateBlock(BlockType blockType, Vector3 position, Chunk chunk){
 		//https://docs.microsoft.com/en-us/dotnet/api/system.reflection.emit.enumbuilder?view=netframework-4.8
@@ -51,28 +54,6 @@ public abstract class Block {
 	//This method is used to set the metaData when rebuilding the chunk
 	public abstract void setMetaData(int metaData);
 
-	public static Vector2[,] blockUVs = {
-		/*GRASS TOP*/		{new Vector2( 0.125f, 0.375f ), new Vector2( 0.1875f, 0.375f),
-								new Vector2( 0.125f, 0.4375f ),new Vector2( 0.1875f, 0.4375f )},
-		/*GRASS SIDE*/		{new Vector2( 0.1875f, 0.9375f ), new Vector2( 0.25f, 0.9375f),
-								new Vector2( 0.1875f, 1.0f ),new Vector2( 0.25f, 1.0f )},
-		/*DIRT*/			{new Vector2( 0.125f, 0.9375f ), new Vector2( 0.1875f, 0.9375f),
-								new Vector2( 0.125f, 1.0f ),new Vector2( 0.1875f, 1.0f )},
-		/*WATER*/			{ new Vector2(0.875f,0.125f),  new Vector2(0.9375f,0.125f),
- 								new Vector2(0.875f,0.1875f), new Vector2(0.9375f,0.1875f)},
-		/*STONE*/			{new Vector2( 0, 0.875f ), new Vector2( 0.0625f, 0.875f),
-								new Vector2( 0, 0.9375f ),new Vector2( 0.0625f, 0.9375f )},
-		/*SAND*/			{ new Vector2(0.125f,0.875f),  new Vector2(0.1875f,0.875f),
- 								new Vector2(0.125f,0.9375f), new Vector2(0.1875f,0.9375f)},
- 		/*GOLD*/			{ new Vector2(0f,0.8125f),  new Vector2(0.0625f,0.8125f),
- 								new Vector2(0f,0.875f), new Vector2(0.0625f,0.875f)},
-		/*BEDROCK*/			{new Vector2( 0.3125f, 0.8125f ), new Vector2( 0.375f, 0.8125f),
-								new Vector2( 0.3125f, 0.875f ),new Vector2( 0.375f, 0.875f )},
-		/*REDSTONE*/		{new Vector2( 0.1875f, 0.75f ), new Vector2( 0.25f, 0.75f),
-								new Vector2( 0.1875f, 0.8125f ),new Vector2( 0.25f, 0.8125f )},
-		/*DIAMOND*/			{new Vector2( 0.125f, 0.75f ), new Vector2( 0.1875f, 0.75f),
-								new Vector2( 0.125f, 0.8125f ),new Vector2( 0.1875f, 0.8125f )}
-	};
 
 	Vector2[,] crackUvs = {
 		/*NOCRACK*/			{new Vector2( 0.6875f, 0f ), new Vector2( 0.75f, 0f),
@@ -87,7 +68,7 @@ public abstract class Block {
  								new Vector2(0.1875f,0.0625f), new Vector2(0.25f,0.0625f)}
 	};
 
-	public Block(BlockType blockType, BlockMatterState matterState, int maxHealth, Vector3 position, Chunk chunk){
+	public Block(BlockType blockType, BlockMatterState matterState, int maxHealth, GamePoint index, Chunk chunk){
 
 		this.bType = blockType;
 		if(chunk==null)return;
@@ -99,8 +80,8 @@ public abstract class Block {
 			this.parent = chunk.Solids.gameObject;
 			if(blockType!=BlockType.AIR)solid=true;
 		}
-		this.positionInChunk = position;
-		this.worldPosition = chunk.getPosition()+position;
+		this.index = index;
+		this.position = chunk.Position+Index;
 		this.chunk = chunk;
 		this.currentHealth = maxHealth;
 		this.maxHealth = maxHealth;
@@ -112,7 +93,7 @@ public abstract class Block {
 		currentHealth--;
 		//crappy heal that should be removed
 		if(currentHealth == (blockHealthMax[(int)bType]-1)){
-			chunk.mb.StartCoroutine(chunk.mb.HealBlock(positionInChunk));
+			chunk.mb.StartCoroutine(chunk.mb.HealBlock(index));
 		}
 		if(currentHealth<=0){
 			setBlock(BlockType.AIR);
@@ -127,12 +108,12 @@ public abstract class Block {
 
 	public void UpdateNeighborChunks(){
 		List<Chunk> updates = new List<Chunk>();
-		if(positionInChunk.x==0)updates.Add(chunk.getNeighbor(Direction.WEST));
-		if(positionInChunk.x==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.EAST));
-		if(positionInChunk.y==0)updates.Add(chunk.getNeighbor(Direction.DOWN));
-		if(positionInChunk.y==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.UP));
-		if(positionInChunk.z==0)updates.Add(chunk.getNeighbor(Direction.SOUTH));
-		if(positionInChunk.z==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.WEST));
+		if(index.x==0)updates.Add(chunk.getNeighbor(Direction.WEST));
+		if(index.x==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.EAST));
+		if(index.y==0)updates.Add(chunk.getNeighbor(Direction.DOWN));
+		if(index.y==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.UP));
+		if(index.z==0)updates.Add(chunk.getNeighbor(Direction.SOUTH));
+		if(index.z==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.WEST));
 		foreach(Chunk uChunk in updates){
 			if(uChunk==null)continue;
 			uChunk.Draw();
@@ -144,11 +125,9 @@ public abstract class Block {
 	}
 
 	public bool setBlock(BlockType b){
-		chunk.chunkBlocks[(int)positionInChunk.x,(int)positionInChunk.y,(int)positionInChunk.z] = 
-			Block.CreateBlock(b, positionInChunk, chunk);
+		chunk.setBlock(index,Block.CreateBlock(b,index,chunk));
 		chunk.Draw();
 		UpdateNeighborChunks();
-		chunk.changed = true;
 		return true;
 	}
 
@@ -217,14 +196,14 @@ public abstract class Block {
 		GameObject quad = new GameObject("Quad");
 		try{
 			quad.transform.parent = parent.gameObject.transform;
-		}catch(MissingReferenceException mre){
+		}catch(MissingReferenceException){
 			GameObject.DestroyImmediate(quad);
 			return false;
 		}
 		if(blockSize==1){
-			quad.transform.position = positionInChunk;
+			quad.transform.position = index;
 		}else{			
-			quad.transform.position = Utils.ScaleVector3(positionInChunk, blockSize);
+			quad.transform.position = Utils.ScaleVector3(index, blockSize);
 		}
 		MeshFilter meshFilter = (MeshFilter) quad.AddComponent(typeof(MeshFilter));
 		meshFilter.mesh = mesh;
@@ -233,7 +212,7 @@ public abstract class Block {
 
 	public Block getNeighbor(Direction direction){
 		//get the neighbors position in this chunk
-		Vector3 pic = Directions.moveDirection(positionInChunk,direction,1);
+		Vector3 pic = Directions.moveDirection(index,direction,1);
 		//check to see if in different chunk
 		if(pic.x<0){pic.x += Global.ChunkSize;
 		}else if(pic.x>=Global.ChunkSize){pic.x -= Global.ChunkSize;
@@ -251,15 +230,11 @@ public abstract class Block {
 
 	protected bool shouldRenderQuad(Direction direction){
 		//this should check for all matter states
-			Block b = getNeighbor(direction);
-			if(b!=null){
-				if(b.isSolid())return false;
-				return (this.matterState!=b.getMatterState());
-			}else{
-				return false; //this keeps the seams from being
-				//rendered
-			}
-		return true;
+		Block b = getNeighbor(direction);
+		if(b!=null){
+			if(b.isSolid())return false;
+			return (this.matterState!=b.getMatterState());
+		}else return false; 			
 	}
 
 	public void Draw(){
@@ -270,5 +245,9 @@ public abstract class Block {
 				if(!CreateQuad(dir))return;
 			}
 		}
+	}
+
+	public static GamePoint IndexInChunk(GamePoint position){
+		return position.getIndexInParent(Global.ChunkSize);
 	}
 }

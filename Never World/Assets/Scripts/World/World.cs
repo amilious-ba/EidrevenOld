@@ -19,14 +19,14 @@ public class World : MonoBehaviour {
     private int seedVal = 0;
     private int lastSeedVal = 0;
     [SerializeField]
-    private GameObject player;
+    private GameObject player = null;
 	[Space(10)]
 
 	[Header("Texture Maps")]
 	[SerializeField]
-	private Material blockTextures;
+	private Material blockTextures = null;
 	[SerializeField]
-	private Material fluidTextures;
+	private Material fluidTextures = null;
 	[Space(10)]
 
 	[Header("Hud Objects")]
@@ -42,23 +42,11 @@ public class World : MonoBehaviour {
 	private int buildStep;
 	private int buildSteps;
 	private static ConcurrentDictionary<string, Chunk> loadedChunks;
-	private Vector3 lastbuildPos;
+	private GamePoint lastbuildPos;
 	public static CoroutineQueue processQueue;
 	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
 	private static int counter=0;
-
-	public bool FirstLoad{get{return firstLoad;}set{firstLoad=value;}}
-
-
-	/**
-	 * Project notes
-	 *
-	 * only use position when talking about the world coords
-	 * other wise use index. index is the location of the object
-	 * in another object. position or location is the location in the world
-	 */
-
 
 
 	/**
@@ -91,10 +79,11 @@ public class World : MonoBehaviour {
 			processQueue.Run(DrawChunks());
 			return;
 		}
-		Vector3 movement = lastbuildPos - player.transform.position;
+		GamePoint playerPosition = GamePoint.getParentIndex(player.transform.position,Global.ChunkSize);
+		GamePoint movement = lastbuildPos - playerPosition;
 		if(Global.BuildOnChunkChange){
-			if(movement.magnitude > Global.ChunkSize * Global.BuildWhenMovedXChunks){
-				lastbuildPos = player.transform.position;
+			if(movement.magnitude > Global.BuildWhenMovedXChunks){
+				lastbuildPos = playerPosition;
 				BuildNearPlayer();
 			}
 		}else{
@@ -124,33 +113,12 @@ public class World : MonoBehaviour {
 	 * @returns Vector3 containing the block at the given
 	 * position, otherwise returns null.
 	 */
-	public static Block getBlock(Vector3 pos){
-		Vector3 chunkPos = WorldToChunkWorldPosistion(pos);
-		//get location in chunk
-		int x = (int) Mathf.Abs((float)Math.Round(pos.x) - chunkPos.x);
-		int y = (int) Mathf.Abs((float)Math.Round(pos.y) - chunkPos.y);
-		int z = (int) Mathf.Abs((float)Math.Round(pos.z) - chunkPos.z);
-		string chunkName = Chunk.BuildName(chunkPos);
-		Chunk chunk = null;
-		if(loadedChunks.TryGetValue(chunkName, out chunk))
-			return chunk.chunkBlocks[x,y,z];
+	public static Block getBlock(GamePoint pos){
+		//get the chunk
+		string chunkName = Chunk.NameFromPosition(pos);
+		Chunk chunk = null; if(loadedChunks.TryGetValue(chunkName, out chunk))
+			return chunk.getBlock(Block.IndexInChunk(pos));
 		else return null;
-	}
-
-	/**
-	 * This method returns the chunk at the given world position.
-	 * @param Vector3 pos The position in the world.
-	 * @returns Chunk containing the chunk at the given position
-	 */
-	public static Chunk GetWorldChunk(Vector3 pos){
-		Vector3 chunkPosition = WorldToChunkWorldPosistion(pos);
-		string chunkName = Chunk.BuildName(chunkPosition);
-		Chunk chunk;
-		if(loadedChunks.TryGetValue(chunkName, out chunk)){
-			return chunk;
-		}else{
-			return null;
-		}
 	}
 
 	/**
@@ -210,91 +178,60 @@ public class World : MonoBehaviour {
 	private bool BuildChunk(int x, int y, int z){
 		return BuildChunk(new GamePoint(x,y,z));
 	}
-
 	private bool BuildChunk(GamePoint ChunkIndex){
-		//convert to chunk position
-		GamePoint chunkPos = ChunkIndex*Global.ChunkSize;
-		string chunkName = Chunk.BuildName(chunkPos); Chunk chunk;
-		//if chunk does not exist
+		//get chunk name
+		string chunkName = Chunk.NameFromIndex(ChunkIndex);
+		Chunk chunk = null;
+		//if chunk does not exist create it
 		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
-			chunk = new Chunk(chunkPos, this);
+			chunk = new Chunk(ChunkIndex, this);
 			//try to add chunk
-			if(loadedChunks.TryAdd(chunkName, chunk)){
-				//chunk was added so build it
+			if(loadedChunks.TryAdd(chunkName,chunk)){
 				chunk.Build(); return true;
-			} // the chunk was not added so destory it
-			else chunk.Destroy();
-		} return false;
-	}
+			}else chunk.Destroy();
+		}return false; //the chunk exists
+	}	
 
-	/*private bool BuildChunkAt(Vector3 chunkIndex){
-		Vector3 chunkPosition = Utils.ScaleVector3(chunkIndex, Global.ChunkSize);
-		string chunkName = Chunk.BuildName(chunkPosition);
-		Chunk chunk;
-		//if chunk does not exists
-		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
-			chunk = new Chunk(chunkPosition,this);
-			chunk.getSolids().transform.parent = this.transform;
-			chunk.getFluids().transform.parent = this.transform;
-			loadedChunks.TryAdd(chunkName, chunk);
-			return true;
-		}return false;
-	}
-
-	IEnumerator BuildRecursiveWorld(Vector3 chunkIndex, int rad){
+	IEnumerator BuildRecursiveWorld(GamePoint index, int rad){
 		if(rad<=0){yield break;}rad--;
-		if(chunkIndex.y>=0||chunkIndex.y<Global.ChunksTall){
-			if(BuildChunkAt(chunkIndex))updatefirstLoad("building "+chunkIndex);
-			yield return null;
-		}
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.NORTH, 1f), rad);
-		yield return null;
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.SOUTH, 1f), rad);
-		yield return null;
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.EAST, 1f), rad);
-		yield return null;
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.WEST, 1f), rad);
-		yield return null;
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.UP, 1f), rad);
-		yield return null;
-		BuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.DOWN, 1f), rad);
-		yield return null;
-	}*/
-
-	IEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){
-		if(rad<=0){yield break;}rad--;
-		if(y>=0&&y<=Global.ChunksTall+1){
+		if(index.y>=0&&index.y<=Global.ChunksTall+1){
 			
 			//build chunk forward
-			if(BuildChunk(x, y, z+1)){updatefirstLoad("building x:"+x+" y:"+y+" z:"+(z+1));}
-			processQueue.Run(BuildRecursiveWorld(x, y, z+1, rad));
+			GamePoint forward = new GamePoint(index.x,index.y,index.z+1);
+			if(BuildChunk(forward)){updatefirstLoad("building "+forward);}
+			processQueue.Run(BuildRecursiveWorld(forward, rad));
 			yield return null;
 			
 			//build chunk backward
-			if(BuildChunk(x, y, z-1)){updatefirstLoad("building x:"+x+" y:"+y+" z:"+(z-1));}
-			processQueue.Run(BuildRecursiveWorld(x, y, z-1, rad));
+			GamePoint back = new GamePoint(index.x,index.y,index.z-1);
+			if(BuildChunk(back)){updatefirstLoad("building "+back);}
+			processQueue.Run(BuildRecursiveWorld(back, rad));
 			yield return null;
 			
 			//build chunk left
-			if(BuildChunk(x-1, y, z)){updatefirstLoad("building x:"+(x-1)+" y:"+y+" z:"+z);}
-			processQueue.Run(BuildRecursiveWorld(x-1, y, z, rad));
+			GamePoint left = new GamePoint(index.x-1,index.y,index.z);
+			if(BuildChunk(left)){updatefirstLoad("building "+left);}
+			processQueue.Run(BuildRecursiveWorld(left, rad));
 			yield return null;
 			
 			//build chunk right
-			if(BuildChunk(x+1, y,z)){updatefirstLoad("building x:"+(x+1)+" y:"+y+" z:"+z);}
-			processQueue.Run(BuildRecursiveWorld(x+1, y, z, rad));
+			GamePoint right = new GamePoint(index.x+1,index.y,index.z);
+			if(BuildChunk(right)){updatefirstLoad("building "+right);}
+			processQueue.Run(BuildRecursiveWorld(right, rad));
 			yield return null;
 		}
 		//build chunk up
-		if(y+1<Global.ChunksTall+1){
-			if(BuildChunk(x, y+1, z)){updatefirstLoad("building x:"+x+" y:"+(y+1)+" z:"+z);}
-			processQueue.Run(BuildRecursiveWorld(x, y+1, z, rad));
+		if(index.y+1<Global.ChunksTall+1){
+			GamePoint up = new GamePoint(index.x,index.y+1,index.z);
+			if(BuildChunk(up)){updatefirstLoad("building "+up);}
+			processQueue.Run(BuildRecursiveWorld(up, rad));
 			yield return null;
 		}
 		//build chunk down
-		if(y-1>=0){
-			if(BuildChunk(x, y-1, z)){updatefirstLoad("building x:"+x+" y:"+(y-1)+" z:"+z);}
-			processQueue.Run(BuildRecursiveWorld(x, y-1, z, rad));
+		if(index.y-1>=0){
+			GamePoint down = new GamePoint(index.x,index.y-1,index.z);
+			if(BuildChunk(down)){updatefirstLoad("building "+down);}
+			processQueue.Run(BuildRecursiveWorld(down, rad));
 			yield return null;
 		}
 	}
@@ -303,14 +240,14 @@ public class World : MonoBehaviour {
 		foreach(KeyValuePair<string, Chunk> value in loadedChunks){
 			Chunk chunk = value.Value;
 			if(Vector3.Distance(player.transform.position,
-				chunk.position)>Global.LoadRadius*Global.ChunkSize){
+				chunk.Position)>Global.LoadRadius*Global.ChunkSize){
 				unloadChunks.Enqueue(value.Key);
 			}
 			else if(chunk.Status == ChunkStatus.DRAW){
 				//try{
 					chunk.Draw();
 				//}catch(MissingReferenceException mre){}
-				updatefirstLoad("drawing x:"+(chunk.position.x/Global.ChunkSize)+" y:"+(chunk.position.y/Global.ChunkSize)+" z:"+(chunk.position.z/Global.ChunkSize));
+				updatefirstLoad("drawing "+(chunk.Index));
 			}
 
 			yield return null;
@@ -337,40 +274,31 @@ public class World : MonoBehaviour {
 		//playButton.gameObject.SetActive(false);
 		loadingProgress.gameObject.SetActive(true);
 		loadingText.gameObject.SetActive(true);	
-		Vector3 ppos = player.transform.position;
+		GamePoint playerPosition = GamePoint.roundVector3(player.transform.position);
+		playerPosition.y = WorldGenerator.GenerateHeight(playerPosition.x,playerPosition.y)+1;
 		DebugScript.startTimer();
-		/*
-		Vector3 ppos = player.transform.position;
-		Vector3 cpos = WorldToChunkWorldPosistion(player.transform.position);
 		//set the player above the ground
-		Biome biome = Biome.getBiome(Biome.getBiomeType(seedVal, (int)cpos.x, (int)cpos.z));
-		player.transform.position = new Vector3(ppos.x,biome.getHeight(seedVal,(int)ppos.x,(int)ppos.z)+1,ppos.z);*/
-		//set the player above the ground
-		player.transform.position = new Vector3(ppos.x,WorldGenerator.GenerateHeight(ppos.x,ppos.z)+1,ppos.z);
-		//player.transform.position = new Vector3(ppos.x,150,ppos.z);
-		ppos = player.transform.position;
-		lastbuildPos = ppos;		
+		player.transform.position = playerPosition;
+		lastbuildPos = Chunk.IndexAtPosition(playerPosition);
+
 		//set up the world
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;
 		//caculate build steps
-		this.buildSteps = calculateSteps((int)(ppos.y/Global.ChunkSize),Global.LoadRadius);
+		this.buildSteps = calculateSteps(lastbuildPos.y,Global.LoadRadius);
 		this.loadingProgress.maxValue = buildSteps;
 		//build and draw the starting chunk
 		building = true;
-		BuildChunk((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
+		BuildChunk(lastbuildPos);
 		//processQueue.Run(DrawChunks());
-		Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
-		processQueue.Run(BuildRecursiveWorld((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize),Global.LoadRadius));
+		//Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
+		processQueue.Run(BuildRecursiveWorld(lastbuildPos,Global.LoadRadius));
 	}
 
 	public void BuildNearPlayer(){
-		Vector3 ppos = player.transform.position;
 		StopCoroutine("BuildRecursiveWorld");
 		processQueue.Run(BuildRecursiveWorld(
-			(int)(ppos.x/Global.ChunkSize),
-			(int)(ppos.y/Global.ChunkSize),
-			(int)(ppos.z/Global.ChunkSize),
+			lastbuildPos,
 			Global.LoadRadius));
 	}
 
@@ -420,12 +348,8 @@ public class World : MonoBehaviour {
 		return calc;
 	}
 
-	
-
-
-
-	 public int getSeed(){return seedVal;}
-	 public Material getFluidMaterial(){return this.fluidTextures;}
-	 public Material getBlockMaterial(){return this.blockTextures;}
-
+	 public int Seed{get{return seedVal;}}
+	 public Material FluidMaterial{get{return this.fluidTextures;}}
+	 public Material BlockMaterial{get{return this.blockTextures;}}
+	 public bool FirstLoad{get{return firstLoad;}}
 }

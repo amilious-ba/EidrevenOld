@@ -11,14 +11,10 @@ public class ChunkMB : MonoBehaviour {
 		InvokeRepeating("SaveProgress",10,1000);
 	}
 
-	public IEnumerator HealBlock(Vector3 bpos){
+	public IEnumerator HealBlock(GamePoint index){
 		yield return new WaitForSeconds(3);
-		int x = (int)bpos.x;
-		int y = (int)bpos.y;
-		int z = (int)bpos.z;
-		if(chunk.chunkBlocks[x,y,z].bType != BlockType.AIR){
-			chunk.chunkBlocks[x,y,z].Reset();
-		}
+		if(chunk.getBlock(index).bType != BlockType.AIR)
+			chunk.getBlock(index).Reset();
 	}
 
 	public IEnumerator Flow(Block b, BlockType bt, int strength, int maxsize){
@@ -56,9 +52,8 @@ public class ChunkMB : MonoBehaviour {
 	}*/
 
 	void SaveProgress(){
-		if(chunk.changed){
+		if(chunk.Changed){
 			chunk.Save();
-			chunk.changed = false;
 		}
 	}
 

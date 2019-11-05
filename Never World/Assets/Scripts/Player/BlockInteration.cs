@@ -98,19 +98,19 @@ public class BlockInteration : MonoBehaviour {
 		if(Input.GetMouseButtonDown(0)){
 			RaycastHit hit;
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 10)){
-				Vector3 hitBlock = hit.point - hit.normal/2.0f;
+				GamePoint hitBlock = GamePoint.roundVector3(hit.point - hit.normal/2.0f);
 				Block block = World.getBlock(hitBlock);
 				if(block!=null){
 					block.HitBlock();
-					Debug.Log(block.chunk.position);
 				}
 			}
 		}
 		if(Input.GetMouseButtonDown(1)){
 			RaycastHit hit2;
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit2, 10)){
-				Vector3 hitBlock2 = hit2.point + hit2.normal/2.0f;			
+				GamePoint hitBlock2 = GamePoint.roundVector3(hit2.point + hit2.normal/2.0f);			
 				Block block = World.getBlock(hitBlock2);
+
 				//do not build block if standing on it
 					
 				int px = (int)this.transform.position.x;
@@ -118,7 +118,7 @@ public class BlockInteration : MonoBehaviour {
 				int pz = (int)this.transform.position.z;
 				//first check y
 								
-				if(block.worldPosition.y>py-1&&((int)block.worldPosition.x)==px&&((int)block.worldPosition.z)==pz){
+				if(block.Position.y>py-1&&block.Position.x==px&&block.Position.z==pz){
 					return;
 				}
 				if(block!=null){

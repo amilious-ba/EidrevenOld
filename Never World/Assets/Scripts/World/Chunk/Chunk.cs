@@ -14,23 +14,21 @@ public class Chunk {
 	private bool drawn = false;
 	private bool built = false;
 
-	public Vector3 position;
+	private GamePoint position;
+	private GamePoint index;
 	public ChunkMB mb;
 	
-	public Block[,,] chunkBlocks;
+	private Block[,,] blocks;
 	public ChunkStatus status = ChunkStatus.NOTBUILT;
 	SaveData saveData;
-	public bool changed = false;
-
-	public ChunkStatus Status{get{return status;}set{status=value;}}
-	public GameObject Solids{get{return this.solidGameObject;}}
-	public GameObject Fluids{get{return this.fluidGameObject;}}
+	private bool changed = false;
 
 
 	// Use this for initialization
-	public Chunk (Vector3 position, World world) {
+	public Chunk (GamePoint index, World world) {
 		this.world = world;
-		this.position = position;	
+		this.index = index;
+		this.position = index * Global.ChunkSize;	
 	}	
 
 	public void Build(){
@@ -38,18 +36,18 @@ public class Chunk {
 		built = true;
 		if(status==ChunkStatus.DEAD)return;
 		//set up		
-		solidGameObject = new GameObject(BuildName(position));
+		solidGameObject = new GameObject(NameFromIndex(index));
 		solidGameObject.transform.position = position;
 		solidGameObject.transform.parent = world.transform;
-		fluidGameObject = new GameObject(BuildName(position)+"_F");
+		fluidGameObject = new GameObject(NameFromIndex(index)+"_F");
 		fluidGameObject.transform.position = position;
 		fluidGameObject.transform.parent = world.transform;
 		mb = solidGameObject.AddComponent<ChunkMB>();
 		mb.SetOwner(this);	
 		//build
 		status = ChunkStatus.BUILDING;
-		if(Load()) chunkBlocks = saveData.loadBlocks(this);
-		else chunkBlocks = WorldGenerator.generateChunkBlocksNew(this,world.getSeed());
+		if(Load()) blocks = saveData.loadBlocks(this);
+		else blocks = WorldGenerator.generateChunkBlocksNew(this,world.Seed);
 		status = ChunkStatus.DRAW;
 		if(!world.FirstLoad){for(int i=1;i<7;i++){
 			Chunk neighbor = getNeighbor((Direction)i);
@@ -62,22 +60,22 @@ public class Chunk {
 		status = ChunkStatus.DRAWING;
 		try{
 			if(drawn){
-				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshFilter>());}catch(MissingReferenceException mre){}
-				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshRenderer>());}catch(MissingReferenceException mre){}
-				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<Collider>());}catch(MissingReferenceException mre){}
-				try{GameObject.DestroyImmediate(fluidGameObject.GetComponent<MeshFilter>());}catch(MissingReferenceException mre){}
-				try{GameObject.DestroyImmediate(fluidGameObject.GetComponent<MeshRenderer>());}catch(MissingReferenceException mre){}
+				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshFilter>());}catch(MissingReferenceException){}
+				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<MeshRenderer>());}catch(MissingReferenceException){}
+				try{GameObject.DestroyImmediate(solidGameObject.GetComponent<Collider>());}catch(MissingReferenceException){}
+				try{GameObject.DestroyImmediate(fluidGameObject.GetComponent<MeshFilter>());}catch(MissingReferenceException){}
+				try{GameObject.DestroyImmediate(fluidGameObject.GetComponent<MeshRenderer>());}catch(MissingReferenceException){}
 			}
 			for(int z = 0; z < Global.ChunkSize; z++)for(int y = 0; y < Global.ChunkSize; y++)
-			for(int x = 0; x < Global.ChunkSize; x++)chunkBlocks[x,y,z].Draw();
-			CombineQuads(solidGameObject.gameObject, ShadowCastingMode.On, world.getBlockMaterial());
+			for(int x = 0; x < Global.ChunkSize; x++)blocks[x,y,z].Draw();
+			CombineQuads(solidGameObject.gameObject, ShadowCastingMode.On, world.BlockMaterial);
 			MeshCollider collider = solidGameObject.gameObject.AddComponent(typeof(MeshCollider)) as MeshCollider;
 			collider.sharedMesh = solidGameObject.transform.GetComponent<MeshFilter>().mesh;
 
-			CombineQuads(fluidGameObject.gameObject, ShadowCastingMode.Off, world.getFluidMaterial());
+			CombineQuads(fluidGameObject.gameObject, ShadowCastingMode.Off, world.FluidMaterial);
 			status = ChunkStatus.GOOD;
 			drawn = true;		
- 		}catch(MissingReferenceException mre){return false;}
+ 		}catch(MissingReferenceException){return false;}
  		return true;
 	}
 
@@ -112,6 +110,7 @@ public class Chunk {
 
 	public void Save(){
 		if(!Global.AllowSave)return;
+		changed = false;
 		string chunkFile = getFileName(position);
 		
 		if(!File.Exists(chunkFile))
@@ -120,7 +119,7 @@ public class Chunk {
 		}
 		BinaryFormatter bf = new BinaryFormatter();
 		FileStream file = File.Open(chunkFile, FileMode.OpenOrCreate);
-		saveData = new SaveData(chunkBlocks);
+		saveData = new SaveData(blocks);
 		bf.Serialize(file, saveData);
 		file.Close();
 		//Debug.Log("Saving chunk from file: " + chunkFile);
@@ -132,7 +131,7 @@ public class Chunk {
 	}
 
 	public string getNeighborName(Direction direction){
-		return BuildName(Directions.moveDirection(position,direction,Global.ChunkSize));
+		return NameFromIndex(index.moveDirection(direction,1));
 	}
 	
 	public void CombineQuads(GameObject o, UnityEngine.Rendering.ShadowCastingMode shadow, Material m){		
@@ -165,68 +164,46 @@ public class Chunk {
 
 	}
 
-	public Block getBlock(Vector3 index){
-		try{
-			return chunkBlocks[(int)index.x,(int)index.y,(int)index.z];
-		}catch(IndexOutOfRangeException){
-			return null;
-		}
+	public Block getBlock(GamePoint index){
+		try{ return blocks[index.x,index.y,index.z];}
+		catch(IndexOutOfRangeException) {return null;}
 	}
 
-	public Vector3 getPosition(){
-		return position;
+	public bool setBlock(GamePoint index, Block block){
+		if(index<0||index>Global.ChunkSize)return false;
+		blocks[index.x,index.y,index.z] = block;
+		changed = true; return true;
 	}
 
-	public Vector3 getChunkBlocksWorldPosition(int x, int y, int z){
-		return getChunkBlocksWorldPosition(new Vector3(x,y,z));
+	public Vector3 getBlockPosition(int x, int y, int z){
+		return getBlockPosition(new GamePoint(x,y,z));
 	}
 
-	public Vector3 getChunkBlocksWorldPosition(Vector3 blocksChunkPosition){
-		return position + blocksChunkPosition;
+	public GamePoint getBlockPosition(GamePoint blockIndex){
+		return position + blockIndex;
 	}
-
-	/**
-	 * This method is used to get the name of a chunk
-	 * based on its position
-	 * @param Vector3 chunkPosition the chunks position in game.
-	 */
-	public static string BuildName(Vector3 chunkPosition){
-		return (int)chunkPosition.x +"_"+chunkPosition.y+"_"+chunkPosition.z;
-	}
-
-
-
-	//below here is the new chunk position and name code
-
 	
-	public static string ChunkNameFromIndex(Vector3 index){
-		return (int)index.x+"_"+(int)index.y+"_"+(int)index.z;
+	public static string NameFromIndex(GamePoint index){
+		return index.x+"_"+index.y+"_"+index.z;
 	}
 
-	public static string ChunkNameFromPosition(Vector3 position){
-		return ChunkNameFromIndex(ChunkIndexAtPosition(position));
+	public static string NameFromPosition(GamePoint position){
+		return NameFromIndex(IndexAtPosition(position));
 	}
 
-	public static Vector3 ChunkIndexAtPosition(Vector3 position){
-		int x = (int)(position.x/Global.ChunkSize);
-		int y = (int)(position.y/Global.ChunkSize);
-		int z = (int)(position.z/Global.ChunkSize);
-		return new Vector3(x,y,z);
+	public static GamePoint IndexAtPosition(GamePoint position){
+		return position.getParentIndex(Global.ChunkSize);
 	}
 
-	public static Vector3 ChunkPositionAtIndex(Vector3 index){
-		return new Vector3(index.x*Global.ChunkSize,index.y*Global.ChunkSize,index.z*Global.ChunkSize);
+	public static GamePoint PositionFromIndex(GamePoint index){
+		return index*Global.ChunkSize;
 	}
 
-	public static Vector3 ChunkIndexAtPosition(Vector3 position, out Vector3 blockPosition){
-		int x = (int)(position.x/Global.ChunkSize);
-		int y = (int)(position.y/Global.ChunkSize);
-		int z = (int)(position.z/Global.ChunkSize);
-		int bx = (int)(position.x%Global.ChunkSize);
-		int by = (int)(position.y%Global.ChunkSize);
-		int bz = (int)(position.z%Global.ChunkSize);
-		blockPosition = new Vector3(bx,by,bz);
-		return new Vector3(x,y,z);
-	}
+	public GamePoint Position{get{return position;}}
+	public GamePoint Index{get{return index;}}
+	public ChunkStatus Status{get{return status;}set{status=value;}}
+	public bool Changed{get{return changed;}}
+	public GameObject Solids{get{return this.solidGameObject;}}
+	public GameObject Fluids{get{return this.fluidGameObject;}}
 
 }

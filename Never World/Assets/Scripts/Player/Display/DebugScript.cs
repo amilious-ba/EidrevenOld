@@ -71,7 +71,7 @@ public class DebugScript : MonoBehaviour {
     }
 
     public static void setDebugging(bool debug){
-    	debug = debug;
+    	DebugScript.debug = debug;
     }
 
     public static void startTimer(){

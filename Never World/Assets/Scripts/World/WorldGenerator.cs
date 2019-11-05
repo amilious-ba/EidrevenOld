@@ -17,23 +17,23 @@ public class WorldGenerator {
 		//build block matrix
 		Block[,,]blocks = new Block[Global.ChunkSize,Global.ChunkSize,Global.ChunkSize];
 		//get the biome
-		Biome biome = Biome.getBiome(Biome.getBiomeType(seed,(int)chunk.position.x,(int)chunk.position.z));
+		Biome biome = Biome.getBiome(Biome.getBiomeType(seed,chunk.Position.x,chunk.Position.z));
 		
 
 		//this will change in the future, for now I am trying to replicate the
 		//old style
 
 		//generate heightmaps
-		int[,] height = GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight, smooth, octaves, persistence, 2f);
-		int[,] stoneHeight =  GenerateHM(chunk.position.x, chunk.position.z, seed, 0, maxHeight-7, smooth, octaves+1, persistence, 2f);
+		int[,] height = GenerateHM(chunk.Position.x, chunk.Position.z, seed, 0, maxHeight, smooth, octaves, persistence, 2f);
+		int[,] stoneHeight =  GenerateHM(chunk.Position.x, chunk.Position.z, seed, 0, maxHeight-7, smooth, octaves+1, persistence, 2f);
 
 		for(int y=0;y<Global.ChunkSize;y++){
 			for(int z=0;z<Global.ChunkSize;z++){
 				for(int x=0;x<Global.ChunkSize;x++){
 
 					//setPositions
-					Vector3 cP = new Vector3(x,y,z);
-					Vector3 wP = chunk.getChunkBlocksWorldPosition(cP);
+					GamePoint cP = new GamePoint(x,y,z);
+					GamePoint wP = chunk.getBlockPosition(cP);
 
 					//generate bedrock
 					if(wP.y == 0)blocks[x,y,z] = Block.CreateBlock(BlockType.BEDROCK, cP, chunk);
@@ -90,15 +90,15 @@ public class WorldGenerator {
 			//check to see if past max generated height
 			if(y>maxHeight){
 				for(int z=0;z<Global.ChunkSize; z++)for(int x=0;x<Global.ChunkSize;x++){
-					blocks[x,y,z] = Block.CreateBlock(BlockType.AIR, new Vector3(x,y,z), chunk);
+					blocks[x,y,z] = Block.CreateBlock(BlockType.AIR, new GamePoint(x,y,z), chunk);
 				}continue;
 			}
 			for(int z = 0; z < Global.ChunkSize; z++){
 				for(int x = 0; x < Global.ChunkSize; x++){
 					//position in chunk
-					Vector3 cP = new Vector3(x,y,z);
+					GamePoint cP = new GamePoint(x,y,z);
 					//position in world
-					Vector3 wP = chunk.getChunkBlocksWorldPosition(cP);
+					GamePoint wP = chunk.getBlockPosition(cP);
 
 					int surfaceHeight = GenerateHeight(wP.x,wP.z);
 					
