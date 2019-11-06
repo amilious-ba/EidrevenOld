@@ -41,10 +41,10 @@ public class World : MonoBehaviour {
 	private bool building = false;
 	private int buildStep;
 	private int buildSteps;
-	private static ConcurrentDictionary<string, Chunk> loadedChunks;
+	private ConcurrentDictionary<string, Chunk> loadedChunks;
 	private GamePoint lastbuildPos;
-	public static CoroutineQueue processQueue;
-	public static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
+	private CoroutineQueue processQueue;
+	private LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
 	private static int counter=0;
 
@@ -58,7 +58,7 @@ public class World : MonoBehaviour {
 		player.SetActive(false);
 		loadingProgress.gameObject.SetActive(false);
 		loadingText.gameObject.SetActive(false);
-				
+		BlockInteration.setWorld(this);
 		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
 		firstLoad = true;
 		loadedChunks = new ConcurrentDictionary<string, Chunk>();
@@ -113,29 +113,12 @@ public class World : MonoBehaviour {
 	 * @returns Vector3 containing the block at the given
 	 * position, otherwise returns null.
 	 */
-	public static Block getBlock(GamePoint pos){
+	public Block getBlock(GamePoint pos){
 		//get the chunk
 		string chunkName = Chunk.NameFromPosition(pos);
 		Chunk chunk = null; if(loadedChunks.TryGetValue(chunkName, out chunk))
 			return chunk.getBlock(Block.IndexInChunk(pos));
 		else return null;
-	}
-
-	/**
-	 * This method takes a world position and gives you the containing
-	 * chunks position.
-	 * @param Vector3 worldPos The position in the world.
-	 * @returns Vector3 The position of the containing chunk.
-	 */
-	public static Vector3 WorldToChunkWorldPosistion(Vector3 worldPos){
-		int cx, cy, cz;		
-		if(worldPos.x < 0)cx = (int) ((Mathf.Round(worldPos.x-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;
-		else cx = (int) (Mathf.Round(worldPos.x)/(float)Global.ChunkSize) * Global.ChunkSize;		
-		if(worldPos.y < 0) cy = (int) ((Mathf.Round(worldPos.y-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;
-		else cy = (int) (Mathf.Round(worldPos.y)/(float)Global.ChunkSize) * Global.ChunkSize;		
-		if(worldPos.z < 0) cz = (int) ((Mathf.Round(worldPos.z-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;
-		else cz = (int) (Mathf.Round(worldPos.z)/(float)Global.ChunkSize) * Global.ChunkSize;
-		return new Vector3(cx,cy,cz);
 	}
 
 	/**
@@ -153,32 +136,9 @@ public class World : MonoBehaviour {
 		else{chunk = null;return false;}
 	}
 
-
-	/**
-	 * This method takes a world position and gives you the blocks
-	 * position within the chunk.
-	 * @param Vector3 worldPos The position in the world
-	 * @returns Vector3 the position within its chunk.
-	 */
-	public static Vector3 WorldToChunkPosition(Vector3 worldPos){
-		Vector3 chunkPos = WorldToChunkWorldPosistion(worldPos);
-		//get location in chunk
-		int x = (int) Mathf.Abs((float)Math.Round(worldPos.x) - chunkPos.x);
-		int y = (int) Mathf.Abs((float)Math.Round(worldPos.y) - chunkPos.y);
-		int z = (int) Mathf.Abs((float)Math.Round(worldPos.z) - chunkPos.z);
-		return new Vector3(x,y,z);
-	}
-
-	/**
-	 * This method is called to build a chunk in the given position.
-	 * @param int x The starting x position to build the chunk.
-	 * @param int y The starting y position to build the chunk.
-	 * @param int z The starting z position to build the chunk.
-	 */
-	private bool BuildChunk(int x, int y, int z){
-		return BuildChunk(new GamePoint(x,y,z));
-	}
+	
 	private bool BuildChunk(GamePoint ChunkIndex){
+		if(ChunkIndex.y<0||ChunkIndex.y>Global.ChunksTall)return false;
 		//get chunk name
 		string chunkName = Chunk.NameFromIndex(ChunkIndex);
 		Chunk chunk = null;
@@ -190,9 +150,56 @@ public class World : MonoBehaviour {
 				chunk.Build(); return true;
 			}else chunk.Destroy();
 		}return false; //the chunk exists
-	}	
+	}
 
-	IEnumerator BuildRecursiveWorld(GamePoint index, int rad){
+	IEnumerator BuildWorld(GamePoint index,Direction direction, int rad){
+		if(rad<=0){yield break;}rad--;
+		//first build in the passed direction
+		GamePoint buildPos = index.moveDirection(direction,1);
+		if(BuildChunk(buildPos)){updatefirstLoad("building "+buildPos);}
+		processQueue.Run(BuildWorld(buildPos, direction, rad));
+		yield return null;
+		//build down
+		GamePoint down = index.moveDirection(Direction.DOWN,1);
+		if(BuildChunk(down)){updatefirstLoad("building "+down);}
+		processQueue.Run(BuildWorld(down, direction, rad));
+		yield return null;
+		
+		//then build to the left
+		GamePoint left = index.moveDirection(Directions.rotateNWSE(direction),1);
+		if(BuildChunk(left)){updatefirstLoad("building "+left);}
+		processQueue.Run(BuildWorld(left, direction, rad));
+		yield return null;
+
+		//then build to the right
+		GamePoint right = index.moveDirection(Directions.rotateNESW(direction),1);
+		if(BuildChunk(right)){updatefirstLoad("building "+right);}
+		processQueue.Run(BuildWorld(right, direction, rad));
+		yield return null;
+
+		//build up
+		GamePoint up = index.moveDirection(Direction.UP,1);
+		if(BuildChunk(up)){updatefirstLoad("building "+up);}
+		processQueue.Run(BuildWorld(up, direction, rad));
+		yield return null;
+
+		//then build behind
+		GamePoint invert = index.moveDirection(Directions.invertDirection(direction),1);
+		if(BuildChunk(invert)){updatefirstLoad("building "+invert);}
+		processQueue.Run(BuildWorld(invert, direction, rad));
+		yield return null;
+	}
+
+	public bool isInRange(GamePoint position1, GamePoint position2, int radius){
+    	radius++;radius*=radius;
+    	int dxdx = (int)Mathf.Abs(position1.x-position2.x);dxdx*=dxdx;
+    	int dydy = (int)Mathf.Abs(position1.y-position2.y);dydy*=dydy;
+    	int dzdz = (int)Mathf.Abs(position1.z-position2.z);dzdz*=dzdz;
+    	if(dxdx+dydy+dzdz>=radius)return false;
+    	return true;
+    }	
+
+	/*IEnumerator BuildRecursiveWorld(GamePoint index, int rad){
 		if(rad<=0){yield break;}rad--;
 		if(index.y>=0&&index.y<=Global.ChunksTall+1){
 			
@@ -234,7 +241,7 @@ public class World : MonoBehaviour {
 			processQueue.Run(BuildRecursiveWorld(down, rad));
 			yield return null;
 		}
-	}
+	}*/
 
 	IEnumerator DrawChunks(){
 		foreach(KeyValuePair<string, Chunk> value in loadedChunks){
@@ -292,13 +299,26 @@ public class World : MonoBehaviour {
 		BuildChunk(lastbuildPos);
 		//processQueue.Run(DrawChunks());
 		//Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
-		processQueue.Run(BuildRecursiveWorld(lastbuildPos,Global.LoadRadius));
+		processQueue.Run(BuildWorld(lastbuildPos,getLookingDirection(),Global.LoadRadius));
+	}
+
+	private Direction getLookingDirection(){
+		int looking = (int)player.transform.rotation.eulerAngles.y;
+		looking = (looking+45); if(looking>360)looking-=360;looking/=90;
+		switch(looking){
+			case 0: return Direction.NORTH;
+			case 1: return Direction.EAST;
+			case 2: return Direction.SOUTH;
+			case 3: return Direction.WEST;
+			default: return Direction.NORTH;
+		}
 	}
 
 	public void BuildNearPlayer(){
 		StopCoroutine("BuildRecursiveWorld");
-		processQueue.Run(BuildRecursiveWorld(
+		processQueue.Run(BuildWorld(
 			lastbuildPos,
+			getLookingDirection(),
 			Global.LoadRadius));
 	}
 

@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"N",
+				"NameFromPosition(GamePoint position)\tstring"
+			],
+			[
+				"hit",
+				"hitBlock2\tGamePoint"
+			],
+			[
+				"in",
+				"index\tGamePoint"
+			],
+			[
+				"chunk",
+				"chunkName\tstring"
+			],
+			[
+				"Try",
+				"TryGetValue(string key, out Chunk value)\tbool"
+			],
+			[
+				"chun",
+				"ChunkIndex\tGamePoint"
+			],
+			[
+				"Ch",
+				"ChunkSize\tint"
+			],
+			[
 				"A",
 				"Abs(int value)\tint"
 			],
@@ -36,10 +64,6 @@
 				"updateFirstBuild(string status)\tvoid"
 			],
 			[
-				"Ch",
-				"ChunksTall\tint"
-			],
-			[
 				"Chunk",
 				"ChunkIndexAtPosition(Vector3 position, out Vector3 blockPosition)\tVector3"
 			],
@@ -54,10 +78,6 @@
 			[
 				"Builc",
 				"BuildRecursiveWorld(Vector3 chunkIndex, int rad)\tIEnumerator"
-			],
-			[
-				"chunk",
-				"chunkIndex\tVector3"
 			],
 			[
 				"C",
@@ -384,10 +404,6 @@
 				"IEnumerator\tIEnumerator"
 			],
 			[
-				"chun",
-				"chunkBlocks\tBlock[,,]"
-			],
-			[
 				"buil",
 				"buildType\tBlockType"
 			],
@@ -498,22 +514,6 @@
 			[
 				"avai",
 				"availableOnly"
-			],
-			[
-				"created",
-				"createdBy"
-			],
-			[
-				"pos",
-				"position"
-			],
-			[
-				"upade",
-				"updateLevelInfo"
-			],
-			[
-				"course",
-				"course_id"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "Assets/Scripts/World/Block/Block.cs",
 			"settings":
 			{
-				"buffer_size": 10349,
+				"buffer_size": 8744,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -532,7 +532,7 @@
 			"file": "Assets/Scripts/Player/Display/DebugScript.cs",
 			"settings":
 			{
-				"buffer_size": 3164,
+				"buffer_size": 3176,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -541,7 +541,7 @@
 			"file": "Assets/Scripts/Player/BlockInteration.cs",
 			"settings":
 			{
-				"buffer_size": 4754,
+				"buffer_size": 4740,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -565,23 +565,20 @@
 			}
 		},
 		{
-			"contents": "using System.Collections;\nusing System.Collections.Generic;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;\n\n/**\n * This is the main class used to interact with the world.\n * @type {[type]}\n */\npublic class World : MonoBehaviour {\n\n\n    [Header(\"World Seed\")]\n    [SerializeField]\n    private string seed = \"0\";\n    private string lastSeed = \"0\";\n    [SerializeField]\n    private int seedVal = 0;\n    private int lastSeedVal = 0;\n    [SerializeField]\n    private GameObject player;\n\t[Space(10)]\n\n\t[Header(\"Texture Maps\")]\n\t[SerializeField]\n\tprivate Material blockTextures;\n\t[SerializeField]\n\tprivate Material fluidTextures;\n\t[Space(10)]\n\n\t[Header(\"Hud Objects\")]\n\tpublic Slider loadingProgress;\n\tpublic Text loadingText;\n\tpublic Camera menuCamera;\n\tpublic Canvas menuCanvas;\n\tpublic Canvas hudCanvas;\t\n\t\n\t//private variables\n\tprivate bool firstLoad = true;\n\tprivate bool building = false;\n\tprivate int buildStep;\n\tprivate int buildSteps;\n\tprivate static ConcurrentDictionary<string, Chunk> loadedChunks;\n\tprivate Vector3 lastbuildPos;\n\tpublic static CoroutineQueue processQueue;\n\tpublic static LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();\n\n\tprivate static int counter=0;\n\n\tpublic bool FirstLoad{get{return firstLoad;}set{firstLoad=value;}}\n\n\n\t/**\n\t * Project notes\n\t *\n\t * only use position when talking about the world coords\n\t * other wise use index. index is the location of the object\n\t * in another object. position or location is the location in the world\n\t */\n\n\n\n\t/**\n\t * This method is called to initialize the world\n\t * object.\n\t */\n\tvoid Start () {\t\n\t\thudCanvas.gameObject.SetActive(false);\t\t\n\t\tplayer.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(false);\n\t\tloadingText.gameObject.SetActive(false);\n\t\t\t\t\n\t\tprocessQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);\n\t\tfirstLoad = true;\n\t\tloadedChunks = new ConcurrentDictionary<string, Chunk>();\n\n\t\t//generate world seed\n\t\tseedVal = Utils.getSeedValue(seed);\n\t\tthis.clickPlay();\t\t\n\t}\n\t\n\t/**\n\t * This method is called once per frame.\n\t */\n\tvoid Update () {\n\t\tcounter++;if(counter<100){return;}counter = 0;\n\t\tif(building)return;\n\t\tif(firstLoad){\n\t\t\tif(processQueue==null)return;\n\t\t\tprocessQueue.Run(DrawChunks());\n\t\t\treturn;\n\t\t}\n\t\tVector3 movement = lastbuildPos - player.transform.position;\n\t\tif(Global.BuildOnChunkChange){\n\t\t\tif(movement.magnitude > Global.ChunkSize * Global.BuildWhenMovedXChunks){\n\t\t\t\tlastbuildPos = player.transform.position;\n\t\t\t\tBuildNearPlayer();\n\t\t\t}\n\t\t}else{\n\t\t\tlastbuildPos = player.transform.position;\n\t\t\tBuildNearPlayer();\n\t\t}\n\t\t//Draw Chunks\n\t\tprocessQueue.Run(DrawChunks());\n\t\t//remove unneeded chunks\n\t\tprocessQueue.Run(RemoveOldChunks());\n\t}\n\n\t/**\n\t * This method is called when the game object\n\t * is edited in the editor\n\t */\n\tpublic void OnValidate(){\n\t \tif(!seed.Equals(lastSeed)||seedVal!=lastSeedVal){\n\t \t\tlastSeed = seed;\n\t \t\tseedVal = lastSeedVal = Utils.getSeedValue(seed);\n\t \t}\n\t }\n\n\t/**\n\t * This method returns the block at the given world position.\n\t * @param Vector3 pos The position in the world.\n\t * @returns Vector3 containing the block at the given\n\t * position, otherwise returns null.\n\t */\n\tpublic static Block getBlock(Vector3 pos){\n\t\tVector3 chunkPos = WorldToChunkWorldPosistion(pos);\n\t\t//get location in chunk\n\t\tint x = (int) Mathf.Abs((float)Math.Round(pos.x) - chunkPos.x);\n\t\tint y = (int) Mathf.Abs((float)Math.Round(pos.y) - chunkPos.y);\n\t\tint z = (int) Mathf.Abs((float)Math.Round(pos.z) - chunkPos.z);\n\t\tstring chunkName = Chunk.BuildName(chunkPos);\n\t\tChunk chunk = null;\n\t\tif(loadedChunks.TryGetValue(chunkName, out chunk))\n\t\t\treturn chunk.chunkBlocks[x,y,z];\n\t\telse return null;\n\t}\n\n\t/**\n\t * This method returns the chunk at the given world position.\n\t * @param Vector3 pos The position in the world.\n\t * @returns Chunk containing the chunk at the given position\n\t */\n\tpublic static Chunk GetWorldChunk(Vector3 pos){\n\t\tVector3 chunkPosition = WorldToChunkWorldPosistion(pos);\n\t\tstring chunkName = Chunk.BuildName(chunkPosition);\n\t\tChunk chunk;\n\t\tif(loadedChunks.TryGetValue(chunkName, out chunk)){\n\t\t\treturn chunk;\n\t\t}else{\n\t\t\treturn null;\n\t\t}\n\t}\n\n\t/**\n\t * This method takes a world position and gives you the containing\n\t * chunks position.\n\t * @param Vector3 worldPos The position in the world.\n\t * @returns Vector3 The position of the containing chunk.\n\t */\n\tpublic static Vector3 WorldToChunkWorldPosistion(Vector3 worldPos){\n\t\tint cx, cy, cz;\t\t\n\t\tif(worldPos.x < 0)cx = (int) ((Mathf.Round(worldPos.x-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cx = (int) (Mathf.Round(worldPos.x)/(float)Global.ChunkSize) * Global.ChunkSize;\t\t\n\t\tif(worldPos.y < 0) cy = (int) ((Mathf.Round(worldPos.y-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cy = (int) (Mathf.Round(worldPos.y)/(float)Global.ChunkSize) * Global.ChunkSize;\t\t\n\t\tif(worldPos.z < 0) cz = (int) ((Mathf.Round(worldPos.z-Global.ChunkSize)+1)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\telse cz = (int) (Mathf.Round(worldPos.z)/(float)Global.ChunkSize) * Global.ChunkSize;\n\t\treturn new Vector3(cx,cy,cz);\n\t}\n\n\t/**\n\t * This is a wrapper function used to get loaded chunks.\n\t * @param  string name The name of the chunk you want to try\n\t * get.\n\t * @param  out    Chunk\tchunk This variable will be set to the\n\t * desired chunk if it is found, otherwise it will be set to\n\t * null.\t\t\n\t * @return boolean returns true if the chunk was found in the\n\t * loaded chunks, otherwise returns false.\n\t */\n\tpublic bool getLoadedChunk(string name, out Chunk chunk){\n\t\tif(loadedChunks.TryGetValue(name, out chunk))return true;\n\t\telse{chunk = null;return false;}\n\t}\n\n\n\t/**\n\t * This method takes a world position and gives you the blocks\n\t * position within the chunk.\n\t * @param Vector3 worldPos The position in the world\n\t * @returns Vector3 the position within its chunk.\n\t */\n\tpublic static Vector3 WorldToChunkPosition(Vector3 worldPos){\n\t\tVector3 chunkPos = WorldToChunkWorldPosistion(worldPos);\n\t\t//get location in chunk\n\t\tint x = (int) Mathf.Abs((float)Math.Round(worldPos.x) - chunkPos.x);\n\t\tint y = (int) Mathf.Abs((float)Math.Round(worldPos.y) - chunkPos.y);\n\t\tint z = (int) Mathf.Abs((float)Math.Round(worldPos.z) - chunkPos.z);\n\t\treturn new Vector3(x,y,z);\n\t}\n\n\t/**\n\t * This method is called to build a chunk in the given position.\n\t * @param int x The starting x position to build the chunk.\n\t * @param int y The starting y position to build the chunk.\n\t * @param int z The starting z position to build the chunk.\n\t */\n\tprivate bool BuildChunk(int x, int y, int z){\n\t\treturn BuildChunk(new GamePoint(x,y,z));\n\t}\n\tprivate bool BuildChunk(GamePoint ChunkIndex){\n\t\t//convert to chunk position\n\t\tGamePoint chunkPos = ChunkIndex*Global.ChunkSize;\n\t\tstring chunkName = Chunk.BuildName(chunkPos); Chunk chunk;\n\t\t//if chunk does not exist\n\t\tif(!loadedChunks.TryGetValue(chunkName,out chunk)){\n\t\t\tchunk = new Chunk(chunkPos, this);\n\t\t\t//try to add chunk\n\t\t\tif(loadedChunks.TryAdd(chunkName, chunk)){\n\t\t\t\t//chunk was added so build it\n\t\t\t\tchunk.Build(); return true;\n\t\t\t} // the chunk was not added so destory it\n\t\t\telse chunk.Destroy();\n\t\t} return false;\n\t}\n\n\t/*private bool BuildChunkAt(Vector3 chunkIndex){\n\t\tVector3 chunkPosition = Utils.ScaleVector3(chunkIndex, Global.ChunkSize);\n\t\tstring chunkName = Chunk.BuildName(chunkPosition);\n\t\tChunk chunk;\n\t\t//if chunk does not exists\n\t\tif(!loadedChunks.TryGetValue(chunkName,out chunk)){\n\t\t\tchunk = new Chunk(chunkPosition,this);\n\t\t\tchunk.getSolids().transform.parent = this.transform;\n\t\t\tchunk.getFluids().transform.parent = this.transform;\n\t\t\tloadedChunks.TryAdd(chunkName, chunk);\n\t\t\treturn true;\n\t\t}return false;\n\t}\n\n\tIEnumerator BuildRecursiveWorld(Vector3 chunkIndex, int rad){\n\t\tif(rad<=0){yield break;}rad--;\n\t\tif(chunkIndex.y>=0||chunkIndex.y<Global.ChunksTall){\n\t\t\tif(BuildChunkAt(chunkIndex))updatefirstLoad(\"building \"+chunkIndex);\n\t\t\tyield return null;\n\t\t}\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.NORTH, 1f), rad);\n\t\tyield return null;\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.SOUTH, 1f), rad);\n\t\tyield return null;\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.EAST, 1f), rad);\n\t\tyield return null;\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.WEST, 1f), rad);\n\t\tyield return null;\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.UP, 1f), rad);\n\t\tyield return null;\n\t\tBuildRecursiveWorld(Directions.moveDirection(chunkIndex, Direction.DOWN, 1f), rad);\n\t\tyield return null;\n\t}*/\n\n\tIEnumerator BuildRecursiveWorld(int x, int y, int z, int rad){\n\t\tif(rad<=0){yield break;}rad--;\n\t\tif(y>=0&&y<=Global.ChunksTall+1){\n\t\t\t\n\t\t\t//build chunk forward\n\t\t\tif(BuildChunk(x, y, z+1)){updatefirstLoad(\"building x:\"+x+\" y:\"+y+\" z:\"+(z+1));}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y, z+1, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk backward\n\t\t\tif(BuildChunk(x, y, z-1)){updatefirstLoad(\"building x:\"+x+\" y:\"+y+\" z:\"+(z-1));}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y, z-1, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk left\n\t\t\tif(BuildChunk(x-1, y, z)){updatefirstLoad(\"building x:\"+(x-1)+\" y:\"+y+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x-1, y, z, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk right\n\t\t\tif(BuildChunk(x+1, y,z)){updatefirstLoad(\"building x:\"+(x+1)+\" y:\"+y+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x+1, y, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk up\n\t\tif(y+1<Global.ChunksTall+1){\n\t\t\tif(BuildChunk(x, y+1, z)){updatefirstLoad(\"building x:\"+x+\" y:\"+(y+1)+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y+1, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk down\n\t\tif(y-1>=0){\n\t\t\tif(BuildChunk(x, y-1, z)){updatefirstLoad(\"building x:\"+x+\" y:\"+(y-1)+\" z:\"+z);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(x, y-1, z, rad));\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tIEnumerator DrawChunks(){\n\t\tforeach(KeyValuePair<string, Chunk> value in loadedChunks){\n\t\t\tChunk chunk = value.Value;\n\t\t\tif(Vector3.Distance(player.transform.position,\n\t\t\t\tchunk.position)>Global.LoadRadius*Global.ChunkSize){\n\t\t\t\tunloadChunks.Enqueue(value.Key);\n\t\t\t}\n\t\t\telse if(chunk.Status == ChunkStatus.DRAW){\n\t\t\t\t//try{\n\t\t\t\t\tchunk.Draw();\n\t\t\t\t//}catch(MissingReferenceException mre){}\n\t\t\t\tupdatefirstLoad(\"drawing x:\"+(chunk.position.x/Global.ChunkSize)+\" y:\"+(chunk.position.y/Global.ChunkSize)+\" z:\"+(chunk.position.z/Global.ChunkSize));\n\t\t\t}\n\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tIEnumerator RemoveOldChunks(){\n\t\tstring chunkName = \"\";\n\t\twhile(unloadChunks.Dequeue(out chunkName)){\n\t\t\tprocessQueue.Run(RemoveChunk(chunkName));\n\t\t}yield return null;\n\t}\n\n\tIEnumerator RemoveChunk(string name){\n\t\tChunk chunk;\n\t\tif(loadedChunks.TryGetValue(name,out chunk)){\n\t\t\tchunk.Destroy();\n\t\t\tloadedChunks.TryRemove(name, out chunk);\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tpublic void clickPlay(){\n\t\t//playButton.gameObject.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(true);\n\t\tloadingText.gameObject.SetActive(true);\t\n\t\tVector3 ppos = player.transform.position;\n\t\tDebugScript.startTimer();\n\t\t/*\n\t\tVector3 ppos = player.transform.position;\n\t\tVector3 cpos = WorldToChunkWorldPosistion(player.transform.position);\n\t\t//set the player above the ground\n\t\tBiome biome = Biome.getBiome(Biome.getBiomeType(seedVal, (int)cpos.x, (int)cpos.z));\n\t\tplayer.transform.position = new Vector3(ppos.x,biome.getHeight(seedVal,(int)ppos.x,(int)ppos.z)+1,ppos.z);*/\n\t\t//set the player above the ground\n\t\tplayer.transform.position = new Vector3(ppos.x,WorldGenerator.GenerateHeight(ppos.x,ppos.z)+1,ppos.z);\n\t\t//player.transform.position = new Vector3(ppos.x,150,ppos.z);\n\t\tppos = player.transform.position;\n\t\tlastbuildPos = ppos;\t\t\n\t\t//set up the world\n\t\tthis.transform.position = Vector3.zero;\n\t\tthis.transform.rotation = Quaternion.identity;\n\t\t//caculate build steps\n\t\tthis.buildSteps = calculateSteps((int)(ppos.y/Global.ChunkSize),Global.LoadRadius);\n\t\tthis.loadingProgress.maxValue = buildSteps;\n\t\t//build and draw the starting chunk\n\t\tbuilding = true;\n\t\tBuildChunk((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));\n\t\t//processQueue.Run(DrawChunks());\n\t\tVector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));\n\t\tprocessQueue.Run(BuildRecursiveWorld((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize),Global.LoadRadius));\n\t}\n\n\tpublic void BuildNearPlayer(){\n\t\tVector3 ppos = player.transform.position;\n\t\tStopCoroutine(\"BuildRecursiveWorld\");\n\t\tprocessQueue.Run(BuildRecursiveWorld(\n\t\t\t(int)(ppos.x/Global.ChunkSize),\n\t\t\t(int)(ppos.y/Global.ChunkSize),\n\t\t\t(int)(ppos.z/Global.ChunkSize),\n\t\t\tGlobal.LoadRadius));\n\t}\n\n\tpublic void updatefirstLoad(string status){\n\t\tDebugScript.setLoadedChunks(loadedChunks.Count);\n\t\tif(!firstLoad)return;\n\t\tbuildStep++;\n\t\t//this.loadingText.text = status;\n\t\tthis.loadingText.text = buildStep+\"/\"+buildSteps+\" \"+status;\n\t\tthis.loadingProgress.value = buildStep;\n\t\tif(building&&buildStep==buildSteps){\n\t\t\tbuilding = false;\n\t\t\tbuildStep = 0;\n\t\t\tbuildSteps-=(buildSteps/15);\n\t\t\tloadingProgress.maxValue = buildSteps;\n\t\t}else if(buildStep==buildSteps){\n\t\t\tfirstLoad=false;\n\t\t\t//activate player\n\t\t\tDebugScript.stopTimer(\"start Time\");\n\t\t\tplayer.SetActive(true);\n\t\t\tmenuCanvas.gameObject.SetActive(false);\n\t\t\tmenuCamera.gameObject.SetActive(false);\n\t\t\thudCanvas.gameObject.SetActive(true);\n\t\t}\n\t}\n\n\tpublic int calculateSteps(int y, int radius){\n\t\tint chunkCount = calculateLayerSteps(radius);\n\t\t//calculate up\n\t\tint up = y+radius; int upRad = radius-1;\n\t\tif(up>Global.ChunksTall)up=Global.ChunksTall;\n\t\tfor(int i=y+1;i<up;i++)\n\t\t\tchunkCount += calculateLayerSteps(upRad--);\n\t\t//calculate down\n\t\tint down = y-radius;  int downRad = radius-1;\n\t\tif(down<0)down=0;\n\t\tfor(int i=y-1;i>=down;i--)\n\t\t\tchunkCount+= calculateLayerSteps(downRad--);\n\t\treturn chunkCount;\n\t}\n\n\n\tpublic int calculateLayerSteps(int radius){\n\t\tint calc = 0;\n\t\tfor(int i=(radius*2)-1;i>0;i-=2)calc+=i;\n\t\tcalc*=2;calc+=((radius*2)+1);\n\t\treturn calc;\n\t}\n\n\t\n\n\n\n\t public int getSeed(){return seedVal;}\n\t public Material getFluidMaterial(){return this.fluidTextures;}\n\t public Material getBlockMaterial(){return this.blockTextures;}\n\n}\n",
 			"file": "Assets/Scripts/World/World.cs",
-			"file_size": 14656,
-			"file_write_time": 132174101638451250,
 			"settings":
 			{
-				"buffer_size": 14224,
+				"buffer_size": 9365,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "Assets/Scripts/Mics/GamePoint.cs",
+			"file": "Assets/Scripts/World/WorldGenerator.cs",
 			"settings":
 			{
-				"buffer_size": 5188,
-				"encoding": "UTF-8 with BOM",
+				"buffer_size": 5880,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -598,9 +595,27 @@
 			"file": "Assets/Scripts/World/Chunk/Chunk.cs",
 			"settings":
 			{
-				"buffer_size": 7817,
+				"buffer_size": 7016,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Mics/GamePoint.cs",
+			"settings":
+			{
+				"buffer_size": 9046,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/World/Chunk/ChunkMB.cs",
+			"settings":
+			{
+				"buffer_size": 1697,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
 			}
 		},
 		{
@@ -803,7 +818,7 @@
 	],
 	"find":
 	{
-		"height": 22.0
+		"height": 40.0
 	},
 	"find_in_files":
 	{
@@ -817,6 +832,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"positionInChunk",
 			"firstbuild",
 			"firstbuilc",
 			"new Chunk",
@@ -845,7 +861,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 8,
 			"sheets":
 			[
 				{
@@ -854,103 +870,38 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10349,
+						"buffer_size": 8744,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4691,
-								4691
+								8429,
+								8429
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"1003,1008": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1045,1054": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1074,1084": "The type or namespace name 'GrassBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1116,1125": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1144,1153": "The type or namespace name 'DirtBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1185,1194": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1214,1224": "The type or namespace name 'StoneBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1256,1265": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1284,1293": "The type or namespace name 'SandBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1325,1334": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1354,1364": "The type or namespace name 'WaterBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1396,1405": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1427,1439": "The type or namespace name 'BedrockBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1472,1481": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1503,1515": "The type or namespace name 'GoldOreBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1548,1557": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1583,1599": "The type or namespace name 'RedstoneOreBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1632,1641": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"1666,1681": "The type or namespace name 'DiamondOreBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1728,1736": "The type or namespace name 'AirBlock' could not be found (are you missing a using directive or an assembly reference?)",
-								"1847,1856": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"4349,4358": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"4370,4386": "The type 'BlockMatterState' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockMatterState' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"4433,4438": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"4553,4569": "The type 'BlockMatterState' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockMatterState' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"4719,4728": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"476,485": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"4933,4942": "The type 'CrackType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'CrackType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"501,510": "The type 'CrackType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'CrackType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"5238,5247": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"5340,5349": "The type 'CrackType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'CrackType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"5406,5412": "'Chunk' does not contain a definition for 'Redraw' and no accessible extension method 'Redraw' accepting a first argument of type 'Chunk' could be found (are you missing a using directive or an assembly reference?)",
-								"5480,5485": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"5506,5511": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"5572,5581": "The name 'Direction' does not exist in the current context",
-								"5614,5620": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"5663,5672": "The name 'Direction' does not exist in the current context",
-								"5737,5746": "The name 'Direction' does not exist in the current context",
-								"5779,5785": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"5828,5837": "The name 'Direction' does not exist in the current context",
-								"5900,5909": "The name 'Direction' does not exist in the current context",
-								"5943,5949": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"5992,6001": "The name 'Direction' does not exist in the current context",
-								"6020,6025": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"6085,6091": "'Chunk' does not contain a definition for 'Redraw' and no accessible extension method 'Redraw' accepting a first argument of type 'Chunk' could be found (are you missing a using directive or an assembly reference?)",
-								"6174,6183": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"6284,6289": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"6338,6344": "'Chunk' does not contain a definition for 'Redraw' and no accessible extension method 'Redraw' accepting a first argument of type 'Chunk' could be found (are you missing a using directive or an assembly reference?)",
-								"6449,6458": "The type 'CrackType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'CrackType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"6522,6528": "'Chunk' does not contain a definition for 'Redraw' and no accessible extension method 'Redraw' accepting a first argument of type 'Chunk' could be found (are you missing a using directive or an assembly reference?)",
-								"6544,6560": "The type 'BlockMatterState' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockMatterState' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"6780,6789": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"715,720": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"736,752": "The type 'BlockMatterState' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockMatterState' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"7890,7899": "The name 'Direction' does not exist in the current context",
-								"7956,7965": "The name 'Direction' does not exist in the current context",
-								"8020,8029": "The name 'Direction' does not exist in the current context",
-								"8086,8095": "The name 'Direction' does not exist in the current context",
-								"8152,8161": "The name 'Direction' does not exist in the current context",
-								"825,830": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"8285,8295": "The name 'Directions' does not exist in the current context",
-								"843,852": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"8664,8669": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"882,887": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"8887,8892": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"8905,8914": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"8988,8998": "The name 'Directions' does not exist in the current context",
-								"9132,9138": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"9161,9167": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"9186,9192": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"9215,9220": "The type 'World' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs' conflicts with the imported type 'World' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs'.",
-								"9363,9372": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"9579,9584": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"9814,9823": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"9865,9874": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"9882,9891": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)"
+								"3007,3016": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"654,663": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"682,691": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"7178,7500": "The variable 'mre' is declared but never used",
+								"8087,8242": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
+								"813,822": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"8237,8242": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
+								"8567,8579": "Unreachable code detected",
+								"857,866": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"8788,8797": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"8811,8820": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)"
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 442.0,
+						"translation.y": 1716.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -962,15 +913,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3164,
+						"buffer_size": 3176,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								798,
-								798
+								2178,
+								2178
 							]
 						],
 						"settings":
@@ -989,10 +940,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 156.0,
+						"translation.y": 143.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1001,62 +952,29 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4754,
+						"buffer_size": 4740,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4027,
+								4027
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"1012,1021": "The name 'Direction' does not exist in the current context",
-								"1061,1070": "The name 'Direction' does not exist in the current context",
-								"1118,1127": "The name 'Direction' does not exist in the current context",
-								"1164,1173": "The name 'Direction' does not exist in the current context",
-								"1210,1219": "The name 'Direction' does not exist in the current context",
-								"1256,1265": "The name 'Direction' does not exist in the current context",
-								"1311,1320": "The name 'Direction' does not exist in the current context",
-								"1360,1369": "The name 'Direction' does not exist in the current context",
-								"1410,1419": "The name 'Direction' does not exist in the current context",
-								"1460,1469": "The name 'Direction' does not exist in the current context",
-								"1521,1530": "The name 'Direction' does not exist in the current context",
-								"1570,1579": "The name 'Direction' does not exist in the current context",
-								"1619,1628": "The name 'Direction' does not exist in the current context",
-								"1668,1677": "The name 'Direction' does not exist in the current context",
-								"1726,1735": "The name 'Direction' does not exist in the current context",
-								"1775,1784": "The name 'Direction' does not exist in the current context",
-								"1824,1833": "The name 'Direction' does not exist in the current context",
-								"1873,1882": "The name 'Direction' does not exist in the current context",
-								"1932,1941": "The name 'Direction' does not exist in the current context",
-								"1981,1990": "The name 'Direction' does not exist in the current context",
-								"2030,2039": "The name 'Direction' does not exist in the current context",
-								"2079,2088": "The name 'Direction' does not exist in the current context",
+								"182,186": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
 								"26,31": "Unnecessary using directive.",
-								"279,288": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"301,310": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3279,3288": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3361,3370": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3444,3453": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3532,3541": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3621,3630": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3708,3717": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3926,3931": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3940,3945": "The type 'World' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs' conflicts with the imported type 'World' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs'.",
-								"4227,4232": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"4241,4246": "The type 'World' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs' conflicts with the imported type 'World' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs'.",
-								"426,435": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"487,496": "The type 'BlockType' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'BlockType' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"811,816": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"825,830": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"914,923": "The name 'Direction' does not exist in the current context",
-								"963,972": "The name 'Direction' does not exist in the current context"
+								"3866,3875": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"3887,3896": "The name 'GamePoint' does not exist in the current context",
+								"4225,4234": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4247,4256": "The name 'GamePoint' does not exist in the current context",
+								"79,84": "Unnecessary using directive.",
+								"97,99": "The type or namespace name 'UI' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)"
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"translate_tabs_to_spaces": false
@@ -1065,7 +983,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1102,7 +1020,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
@@ -1131,7 +1049,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
@@ -1140,15 +1058,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14224,
+						"buffer_size": 9365,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6595,
-								6595
+								8989,
+								8989
 							]
 						],
 						"settings":
@@ -1156,7 +1074,10 @@
 							"oops":
 							{
 								"111,113": "The type or namespace name 'UI' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)",
+								"3182,3191": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
 								"678,684": "The type or namespace name 'Slider' could not be found (are you missing a using directive or an assembly reference?)",
+								"6797,6806": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6844,6853": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
 								"710,714": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
 								"93,98": "Unnecessary using directive."
 							},
@@ -1164,40 +1085,51 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1462.0,
+						"translation.y": 1677.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "Assets/Scripts/Mics/GamePoint.cs",
+					"file": "Assets/Scripts/World/WorldGenerator.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5188,
+						"buffer_size": 5880,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2862,
-								2862
+								3011,
+								3011
 							]
 						],
 						"settings":
 						{
+							"oops":
+							{
+								"0,5": "Unnecessary using directive.",
+								"1095,1104": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"1114,1123": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"1137,1146": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"26,31": "Unnecessary using directive.",
+								"3002,3011": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"3171,3180": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"3190,3199": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"3238,3247": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)"
+							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 91.0,
+						"translation.y": 273.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -1307,7 +1239,7 @@
 						"translation.y": 156.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
@@ -1316,82 +1248,114 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7817,
+						"buffer_size": 7016,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6666,
-								6666
+								7013,
+								7013
 							]
 						],
 						"settings":
 						{
 							"oops":
 							{
-								"1106,1114": "The type or namespace name 'SaveData' could not be found (are you missing a using directive or an assembly reference?)",
-								"1133,1141": "The type or namespace name 'SaveData' could not be found (are you missing a using directive or an assembly reference?)",
-								"1304,1310": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"1606,1614": "The type or namespace name 'SaveData' could not be found (are you missing a using directive or an assembly reference?)",
-								"1831,1845": "The type 'WorldGenerator' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\WorldGenerator.cs' conflicts with the imported type 'WorldGenerator' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\WorldGenerator.cs'.",
-								"1903,1914": "The type 'ChunkStatus' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'ChunkStatus' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"1984,1989": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"2011,2020": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"208,213": "The type 'World' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs' conflicts with the imported type 'World' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs'.",
-								"2556,2562": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"2601,2607": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"2647,2653": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"3099,3110": "The type 'ChunkStatus' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'ChunkStatus' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"3204,3209": "The type 'World' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs' conflicts with the imported type 'World' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\World.cs'.",
-								"3287,3292": "The type 'Utils' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs' conflicts with the imported type 'Utils' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Mics\\Utils.cs'.",
-								"3317,3323": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"353,360": "The type or namespace name 'ChunkMB' could not be found (are you missing a using directive or an assembly reference?)",
-								"3733,3740": "The type or namespace name 'ChunkMB' could not be found (are you missing a using directive or an assembly reference?)",
-								"376,381": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"3931,3936": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"3949,3958": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"4025,4030": "The type 'Chunk' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'Chunk' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"407,418": "The type 'ChunkStatus' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs' conflicts with the imported type 'ChunkStatus' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Chunk\\Chunk.cs'.",
-								"4133,4142": "The type or namespace name 'Direction' could not be found (are you missing a using directive or an assembly reference?)",
-								"4183,4193": "The name 'Directions' does not exist in the current context",
-								"428,436": "The type or namespace name 'SaveData' could not be found (are you missing a using directive or an assembly reference?)",
-								"6150,6155": "The type 'Block' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs' conflicts with the imported type 'Block' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\World\\Block\\Block.cs'.",
-								"7395,7401": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7427,7433": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7459,7465": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7485,7491": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7505,7511": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7525,7531": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7795,7801": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7824,7830": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7853,7859": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"787,793": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7885,7891": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7917,7923": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7949,7955": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"7984,7990": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"8020,8026": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"8056,8062": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"8083,8089": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"8103,8109": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"8123,8129": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"816,822": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'.",
-								"875,881": "The type 'Global' in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs' conflicts with the imported type 'Global' in 'Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'. Using the type defined in 'C:\\Users\\brand\\Desktop\\Never_World\\Never World\\Assets\\Scripts\\Global.cs'."
+								"1930,1933": "The variable 'mre' is declared but never used",
+								"2052,2055": "The variable 'mre' is declared but never used",
+								"2170,2173": "The variable 'mre' is declared but never used",
+								"2290,2293": "The variable 'mre' is declared but never used",
+								"2412,2415": "The variable 'mre' is declared but never used",
+								"3044,3047": "The variable 'mre' is declared but never used",
+								"392,401": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"421,430": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5798,5807": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6007,6016": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6038,6047": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6065,6074": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6161,6170": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6264,6273": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6355,6364": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6381,6390": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"642,651": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6473,6482": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6501,6510": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6564,6573": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"6614,6623": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)"
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 312.0,
+						"translation.y": 1632.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "Assets/Scripts/Mics/GamePoint.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9046,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8978,
+								8978
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2392.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 10,
+					"file": "Assets/Scripts/World/Chunk/ChunkMB.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1697,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1569,
+								1569
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
 					"file": "Assets/Scripts/Mics/Utils.cs",
 					"semi_transient": false,
 					"settings":
@@ -1416,7 +1380,7 @@
 						"translation.y": 52.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]

@@ -7,7 +7,7 @@ public class CircleGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        generateCirleMethed1(new Vector3(-7,0,0),7);
+        generateCirleMethed1(new Vector3(0,0,0),10);
     }
 
     // Update is called once per frame
@@ -15,7 +15,7 @@ public class CircleGenerator : MonoBehaviour
     {
         
     }
-
+    //use player transform rotation to choose how to generate the circle
     public void generateCirleMethed1(Vector3 center, int radius){
     	GameObject loadedChunks = new GameObject("Loaded Chunks");
     	radius++;
@@ -51,7 +51,7 @@ public class CircleGenerator : MonoBehaviour
     }*/
 
     public bool isInRange(Vector3 position1, Vector3 position2, int radius){
-    	radius*=radius;
+    	radius++;radius*=radius;
     	int dxdx = (int)Mathf.Abs(position1.x-position2.x);dxdx*=dxdx;
     	int dydy = (int)Mathf.Abs(position1.y-position2.y);dydy*=dydy;
     	int dzdz = (int)Mathf.Abs(position1.z-position2.z);dzdz*=dzdz;

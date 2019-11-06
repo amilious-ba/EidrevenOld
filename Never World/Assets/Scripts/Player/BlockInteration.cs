@@ -11,6 +11,7 @@ public class BlockInteration : MonoBehaviour {
 	private Animator animator;
 	private Mesh mesh;
 	BlockType buildType = BlockType.STONE;
+	private static World world;
 
 	enum HitType{IN,OUT}
 
@@ -61,10 +62,14 @@ public class BlockInteration : MonoBehaviour {
 		mesh.uv = uvs;
 		block = null;
 	}
+
+	public static void setWorld (World world){BlockInteration.world=world;}
 	
 	// Update is called once per frame
 	void Update () {
+		if(world==null)return;
 		DebugScript.setPlayerPos(this.transform.position);
+		DebugScript.setLookingDirection(Directions.getLookingDirection((int)cam.transform.rotation.eulerAngles.x,(int)this.transform.rotation.eulerAngles.y));
 		RaycastHit looking;
 		if(Physics.Raycast(cam.transform.position, cam.transform.forward, out looking,10)){
 			Vector3 lookBlock = looking.point - looking.normal/2.0f;
@@ -99,7 +104,7 @@ public class BlockInteration : MonoBehaviour {
 			RaycastHit hit;
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit, 10)){
 				GamePoint hitBlock = GamePoint.roundVector3(hit.point - hit.normal/2.0f);
-				Block block = World.getBlock(hitBlock);
+				Block block = world.getBlock(hitBlock);
 				if(block!=null){
 					block.HitBlock();
 				}
@@ -109,7 +114,7 @@ public class BlockInteration : MonoBehaviour {
 			RaycastHit hit2;
 			if(Physics.Raycast(cam.transform.position, cam.transform.forward, out hit2, 10)){
 				GamePoint hitBlock2 = GamePoint.roundVector3(hit2.point + hit2.normal/2.0f);			
-				Block block = World.getBlock(hitBlock2);
+				Block block = world.getBlock(hitBlock2);
 
 				//do not build block if standing on it
 					

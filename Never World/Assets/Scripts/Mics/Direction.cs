@@ -50,23 +50,23 @@ public class Directions{
 		if(p.y==0&&p.x==0&&p.z==0)return Direction.NONE;
 		if(p.z==0){//no north or south
 			if(p.x==0){//no east or west
-				if(p.z>0){//up
+				if(p.y>0){//up
 					return Direction.UP;
 				}else{//down
 					return Direction.DOWN;
 				}
 			}else if(p.x>0){//east
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.EAST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_EAST;
 				}else{//down
 					return Direction.DOWN_EAST;
 				}
 			}else{//west
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.WEST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_WEST;
 				}else{//down
 					return Direction.DOWN_WEST;
@@ -74,25 +74,25 @@ public class Directions{
 			}
 		}else if(p.z>0){//north
 			if(p.x==0){//no east or west
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.NORTH;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_NORTH;
 				}else{//down
 					return Direction.DOWN_NORTH;
 				}
 			}else if(p.x>0){//east
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.NORTH_EAST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_NORTH_EAST;
 				}else{//down
 					return Direction.DOWN_NORTH_EAST;
 				}
 			}else{//west
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.NORTH_WEST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_NORTH_WEST;
 				}else{//down
 					return Direction.DOWN_NORTH_WEST;
@@ -100,30 +100,74 @@ public class Directions{
 			}
 		}else{//south
 			if(p.x==0){//no east or west
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.SOUTH;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_SOUTH;
 				}else{//down
 					return Direction.DOWN_SOUTH;
 				}
 			}else if(p.x>0){//east
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.SOUTH_EAST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_SOUTH_EAST;
 				}else{//down
 					return Direction.DOWN_SOUTH_EAST;
 				}
 			}else{//west
-				if(p.z==0){//no up down
+				if(p.y==0){//no up down
 					return Direction.SOUTH_WEST;
-				}else if(p.z>0){//up
+				}else if(p.y>0){//up
 					return Direction.UP_SOUTH_WEST;
 				}else{//down
 					return Direction.DOWN_SOUTH_WEST;
 				}
 			}
+		}
+	}
+
+
+
+	public static Direction getLookingDirection(int x, int y){
+		Vector3 looking = new Vector3(0,0,0);
+		bool invert = false;x+=90; if(x>=360){x-=360;}
+		//get up/ down
+		if(x>180){invert=true; x-=180;}
+		if(x<60){looking.y=1;}else if(x<120){looking.y=0;}
+		else {looking.y = -1;}
+		//y is for nsew 0 to 360 n e s w
+		if((y>-1&&y<23)||(y<361&&y>337)){looking.z = 1;}
+		else if(y>22&&y<68){looking.z=1;looking.x=1;}
+		else if(y>67&&y<113){looking.x=1;}
+		else if(y>112&&y<158){looking.z=-1; looking.x=1;}
+		else if(y>157&&y<203){looking.z=-1;}
+		else if(y>202&&y<248){looking.z=-1; looking.x=-1;}
+		else if(y>247&&y<293){looking.x=-1;}
+		else if(y>292&&y<338){looking.x=-1;looking.z=1;}
+		//invert if needed
+		if(invert){looking.z*=-1;looking.x*=-1;}
+		//return direction
+		return getDirection(looking);
+	}
+
+	public static Direction rotateNESW(Direction direction){
+		switch(direction){
+			case Direction.NORTH: return Direction.EAST;
+			case Direction.EAST: return Direction.SOUTH;
+			case Direction.SOUTH: return Direction.WEST;
+			case Direction.WEST: return Direction.NORTH;
+			default: return direction;
+		}
+	}
+
+	public static Direction rotateNWSE(Direction direction){
+		switch(direction){
+			case Direction.NORTH: return Direction.WEST;
+			case Direction.WEST: return Direction.SOUTH;
+			case Direction.SOUTH: return Direction.EAST;
+			case Direction.EAST: return Direction.NORTH;
+			default: return direction;
 		}
 	}
 

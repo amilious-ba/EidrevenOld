@@ -113,7 +113,7 @@ public abstract class Block {
 		if(index.y==0)updates.Add(chunk.getNeighbor(Direction.DOWN));
 		if(index.y==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.UP));
 		if(index.z==0)updates.Add(chunk.getNeighbor(Direction.SOUTH));
-		if(index.z==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.WEST));
+		if(index.z==Global.ChunkSize-1)updates.Add(chunk.getNeighbor(Direction.NORTH));
 		foreach(Chunk uChunk in updates){
 			if(uChunk==null)continue;
 			uChunk.Draw();

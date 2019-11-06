@@ -23,7 +23,7 @@ public class DebugScript : MonoBehaviour {
     private static DateTime startTime;
     private static int loadedChunks=0;
     private static int counter=0;
-
+    private static Direction looking = Direction.NORTH;
 
 
     // Start is called before the first frame update
@@ -34,13 +34,20 @@ public class DebugScript : MonoBehaviour {
 
     // Update is called once per frame
     void Update(){
-        counter++;if(counter<100){return;}counter = 0;
+        counter++;if(counter<20){return;}counter = 0;
         if(!updated||!debug||debugText == null)return;
         updated = false;
         debugText.text = "Position:\t\t"+playerPositionString;
         debugText.text += "\nLooking at:\t"+playerLookingAt;
         debugText.text += "\nLoaded Chunks:\t"+loadedChunks;
         debugText.text += "\n"+timerValue;
+        debugText.text += "\nLooking "+looking.ToString();
+    }
+
+    public static void setLookingDirection(Direction direction){
+        if(looking!=direction)
+        DebugScript.looking = direction;
+        updated = true;
     }
 
     public static void setPlayerPos(Vector3 pos){
