@@ -21,6 +21,8 @@ public class World : MonoBehaviour, WorldLoaderListener {
     [SerializeField]
     private GameObject player = null;
 	[Space(10)]
+	[SerializeField]
+	private LoaderType loaderType = LoaderType.Standard;
 
 	[Header("Texture Maps")]
 	[SerializeField]
@@ -41,19 +43,22 @@ public class World : MonoBehaviour, WorldLoaderListener {
 	private bool building = false;
 	private int buildStep;
 	private int buildSteps;
-	private ConcurrentDictionary<string, Chunk> loadedChunks;
+	//private ConcurrentDictionary<string, Chunk> loadedChunks;
 	private GamePoint lastbuildPos;
 	private CoroutineQueue processQueue;
 	private LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();
 
 	private static int counter=0;
+	private WorldLoader worldLoader;
 
+
+	public GameObject Player{get{return player;}}
 
 	/**
 	 * This method is called to initialize the world
 	 * object.
 	 */
-	void Start () {	
+	void Start () {
 		hudCanvas.gameObject.SetActive(false);		
 		player.SetActive(false);
 		loadingProgress.gameObject.SetActive(false);
@@ -61,10 +66,11 @@ public class World : MonoBehaviour, WorldLoaderListener {
 		BlockInteration.setWorld(this);
 		processQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);
 		firstLoad = true;
-		loadedChunks = new ConcurrentDictionary<string, Chunk>();
-
+		//loadedChunks = new ConcurrentDictionary<string, Chunk>();
 		//generate world seed
 		seedVal = Utils.getSeedValue(seed);
+		//create world loader
+		worldLoader = WorldLoader.CreateLoader(this,loaderType);
 		this.clickPlay();		
 	}
 	
@@ -72,7 +78,11 @@ public class World : MonoBehaviour, WorldLoaderListener {
 	 * This method is called once per frame.
 	 */
 	void Update () {
-		counter++;if(counter<100){return;}counter = 0;
+		//call the update method on the world loader
+		if(worldLoader!=null)worldLoader.update();
+
+
+		/*counter++;if(counter<100){return;}counter = 0;
 		if(building)return;
 		if(firstLoad){
 			if(processQueue==null)return;
@@ -93,7 +103,7 @@ public class World : MonoBehaviour, WorldLoaderListener {
 		//Draw Chunks
 		processQueue.Run(DrawChunks());
 		//remove unneeded chunks
-		processQueue.Run(RemoveOldChunks());
+		processQueue.Run(RemoveOldChunks());*/
 	}
 
 	/**
@@ -107,10 +117,6 @@ public class World : MonoBehaviour, WorldLoaderListener {
 	 	}
 	 }
 
-	 public  void updateStatus(int value, int maxValue, string status){
-
-	 }
-
 	/**
 	 * This method returns the block at the given world position.
 	 * @param Vector3 pos The position in the world.
@@ -119,8 +125,13 @@ public class World : MonoBehaviour, WorldLoaderListener {
 	 */
 	public Block getBlock(GamePoint pos){
 		//get the chunk
-		string chunkName = Chunk.NameFromPosition(pos);
+		/*string chunkName = Chunk.NameFromPosition(pos);
 		Chunk chunk = null; if(loadedChunks.TryGetValue(chunkName, out chunk))
+			return chunk.getBlock(Block.IndexInChunk(pos));
+		else return null;*/
+		GamePoint chunkIndex = Chunk.IndexAtPosition(pos);
+		Chunk chunk = null;
+		if(getLoadedChunk(chunkIndex, out chunk))
 			return chunk.getBlock(Block.IndexInChunk(pos));
 		else return null;
 	}
@@ -135,13 +146,19 @@ public class World : MonoBehaviour, WorldLoaderListener {
 	 * @return boolean returns true if the chunk was found in the
 	 * loaded chunks, otherwise returns false.
 	 */
-	public bool getLoadedChunk(string name, out Chunk chunk){
+	/*public bool getLoadedChunk(string name, out Chunk chunk){
 		if(loadedChunks.TryGetValue(name, out chunk))return true;
 		else{chunk = null;return false;}
+	}*/
+
+	public bool getLoadedChunk(GamePoint index, out Chunk chunk){
+		if(worldLoader==null){chunk=null;return false;}
+		chunk = worldLoader.getLoadedChunk(index);
+		if(chunk==null){return false;}return true;
 	}
 
 	
-	private bool BuildChunk(GamePoint ChunkIndex){
+	/*private bool BuildChunk(GamePoint ChunkIndex){
 		if(ChunkIndex.y<0||ChunkIndex.y>Global.ChunksTall)return false;
 		//get chunk name
 		string chunkName = Chunk.NameFromIndex(ChunkIndex);
@@ -192,16 +209,16 @@ public class World : MonoBehaviour, WorldLoaderListener {
 		if(BuildChunk(invert)){updatefirstLoad("building "+invert);}
 		processQueue.Run(BuildWorld(invert, direction, rad));
 		yield return null;
-	}
+	}*/
 
-	public bool isInRange(GamePoint position1, GamePoint position2, int radius){
+	/*public bool isInRange(GamePoint position1, GamePoint position2, int radius){
     	radius++;radius*=radius;
     	int dxdx = (int)Mathf.Abs(position1.x-position2.x);dxdx*=dxdx;
     	int dydy = (int)Mathf.Abs(position1.y-position2.y);dydy*=dydy;
     	int dzdz = (int)Mathf.Abs(position1.z-position2.z);dzdz*=dzdz;
     	if(dxdx+dydy+dzdz>=radius)return false;
     	return true;
-    }	
+    }*/	
 
 	/*IEnumerator BuildRecursiveWorld(GamePoint index, int rad){
 		if(rad<=0){yield break;}rad--;
@@ -247,7 +264,7 @@ public class World : MonoBehaviour, WorldLoaderListener {
 		}
 	}*/
 
-	IEnumerator DrawChunks(){
+	/*IEnumerator DrawChunks(){
 		foreach(KeyValuePair<string, Chunk> value in loadedChunks){
 			Chunk chunk = value.Value;
 			if(Vector3.Distance(player.transform.position,
@@ -279,34 +296,35 @@ public class World : MonoBehaviour, WorldLoaderListener {
 			loadedChunks.TryRemove(name, out chunk);
 			yield return null;
 		}
-	}
+	}*/
 
 	public void clickPlay(){
 		//playButton.gameObject.SetActive(false);
 		loadingProgress.gameObject.SetActive(true);
 		loadingText.gameObject.SetActive(true);	
-		GamePoint playerPosition = GamePoint.roundVector3(player.transform.position);
+		/*GamePoint playerPosition = GamePoint.roundVector3(player.transform.position);
 		playerPosition.y = WorldGenerator.GenerateHeight(playerPosition.x,playerPosition.y)+1;
 		DebugScript.startTimer();
 		//set the player above the ground
 		player.transform.position = playerPosition;
-		lastbuildPos = Chunk.IndexAtPosition(playerPosition);
+		lastbuildPos = Chunk.IndexAtPosition(playerPosition);*/
 
 		//set up the world
 		this.transform.position = Vector3.zero;
 		this.transform.rotation = Quaternion.identity;
 		//caculate build steps
-		this.buildSteps = calculateSteps(lastbuildPos.y,Global.LoadRadius);
-		this.loadingProgress.maxValue = buildSteps;
+		/*this.buildSteps = calculateSteps(lastbuildPos.y,Global.LoadRadius);
+		this.loadingProgress.maxValue = buildSteps;*/
 		//build and draw the starting chunk
-		building = true;
-		BuildChunk(lastbuildPos);
+		/*building = true;
+		BuildChunk(lastbuildPos);*/
 		//processQueue.Run(DrawChunks());
 		//Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));
-		processQueue.Run(BuildWorld(lastbuildPos,getLookingDirection(),Global.LoadRadius));
+		/*processQueue.Run(BuildWorld(lastbuildPos,getLookingDirection(),Global.LoadRadius));*/
+		worldLoader.initalizeAndDraw();
 	}
 
-	private Direction getLookingDirection(){
+	/*private Direction getLookingDirection(){
 		int looking = (int)player.transform.rotation.eulerAngles.y;
 		looking = (looking+45); if(looking>360)looking-=360;looking/=90;
 		switch(looking){
@@ -316,17 +334,17 @@ public class World : MonoBehaviour, WorldLoaderListener {
 			case 3: return Direction.WEST;
 			default: return Direction.NORTH;
 		}
-	}
+	}*/
 
-	public void BuildNearPlayer(){
+	/*public void BuildNearPlayer(){
 		StopCoroutine("BuildRecursiveWorld");
 		processQueue.Run(BuildWorld(
 			lastbuildPos,
 			getLookingDirection(),
 			Global.LoadRadius));
-	}
+	}*/
 
-	public void updatefirstLoad(string status){
+	/*public void updatefirstLoad(string status){
 		DebugScript.setLoadedChunks(loadedChunks.Count);
 		if(!firstLoad)return;
 		buildStep++;
@@ -347,9 +365,30 @@ public class World : MonoBehaviour, WorldLoaderListener {
 			menuCamera.gameObject.SetActive(false);
 			hudCanvas.gameObject.SetActive(true);
 		}
+	}*/
+
+
+
+	public  void updateStatus(int value, int maxValue, string status){
+		this.loadingText.text = maxValue+"/"+value+" "+status;
+		this.loadingProgress.maxValue = maxValue;
+		this.loadingProgress.value = value;
 	}
 
-	public int calculateSteps(int y, int radius){
+	public void worldInitLoadComplete(){
+		DebugScript.stopTimer("start Time");
+		player.SetActive(true);
+		menuCanvas.gameObject.SetActive(false);
+		menuCamera.gameObject.SetActive(false);
+		hudCanvas.gameObject.SetActive(true);
+	}
+
+	public void Exicute(IEnumerator process){
+		processQueue.Run(process);
+	}
+
+
+	/*public int calculateSteps(int y, int radius){
 		int chunkCount = calculateLayerSteps(radius);
 		//calculate up
 		int up = y+radius; int upRad = radius-1;
@@ -370,10 +409,15 @@ public class World : MonoBehaviour, WorldLoaderListener {
 		for(int i=(radius*2)-1;i>0;i-=2)calc+=i;
 		calc*=2;calc+=((radius*2)+1);
 		return calc;
-	}
+	}*/
 
 	 public int Seed{get{return seedVal;}}
 	 public Material FluidMaterial{get{return this.fluidTextures;}}
 	 public Material BlockMaterial{get{return this.blockTextures;}}
-	 public bool FirstLoad{get{return firstLoad;}}
+	 public bool FirstLoad{
+	 	get{
+	 		if(worldLoader==null)return false;
+	 		return !(worldLoader.CompletedInitialBuild&&worldLoader.CompletedInitialDraw);
+	 	}
+	 }
 }

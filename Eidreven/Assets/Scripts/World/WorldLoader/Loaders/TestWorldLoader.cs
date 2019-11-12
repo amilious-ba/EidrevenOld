@@ -2,21 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StandardWorldLoader : WorldLoader{
+public class TestWorldLoader : WorldLoader{
 
 	//private variables
 	private bool firstLoad = true;
 	private bool building = false;
 	private int buildStep;
 	private int buildSteps;
-	private ConcurrentDictionary<string, Chunk> loadedChunks;
+	private ConcurrentDictionary<GamePoint, Chunk> loadedChunks;
 	private GamePoint lastbuildPos;
-	private LockFreeQueue<string> unloadChunks = new LockFreeQueue<string>();
+	private LockFreeQueue<GamePoint> unloadChunks;
 	private int steps=0, progress=0;
 	private int counter = 0;
     
-	public StandardWorldLoader(World world):base(world){		
-		loadedChunks = new ConcurrentDictionary<string, Chunk>();
+	public TestWorldLoader(World world):base(world){		
+		loadedChunks = new ConcurrentDictionary<GamePoint, Chunk>();
+		unloadChunks = new LockFreeQueue<GamePoint>();
 	}
 
 	public override void initalizeAndDraw(){
@@ -33,9 +34,8 @@ public class StandardWorldLoader : WorldLoader{
 	}
 
 	public override Chunk getLoadedChunk(GamePoint index){
-		string chunkName = Chunk.NameFromIndex(index);
 		Chunk chunk = null;
-		loadedChunks.TryGetValue(chunkName, out chunk);
+		loadedChunks.TryGetValue(index, out chunk);
 		return chunk;
 	}
 
@@ -84,14 +84,12 @@ public class StandardWorldLoader : WorldLoader{
 
 	private bool BuildChunk(GamePoint ChunkIndex){
 		if(ChunkIndex.y<0||ChunkIndex.y>Global.ChunksTall)return false;
-		//get chunk name
-		string chunkName = Chunk.NameFromIndex(ChunkIndex);
 		Chunk chunk = null;
 		//if chunk does not exist create it
-		if(!loadedChunks.TryGetValue(chunkName,out chunk)){
+		if(!loadedChunks.TryGetValue(ChunkIndex,out chunk)){
 			chunk = new Chunk(ChunkIndex, world);
 			//try to add chunk
-			if(loadedChunks.TryAdd(chunkName,chunk)){
+			if(loadedChunks.TryAdd(ChunkIndex,chunk)){
 				chunk.Build(); return true;
 			}else chunk.Destroy();
 		}return false; //the chunk exists
@@ -173,35 +171,30 @@ public class StandardWorldLoader : WorldLoader{
 	}
 
 	IEnumerator DrawChunks(){
-		foreach(KeyValuePair<string, Chunk> value in loadedChunks){
+		foreach(KeyValuePair<GamePoint, Chunk> value in loadedChunks){
 			Chunk chunk = value.Value;
 			if(Vector3.Distance(world.Player.transform.position,
 				chunk.Position)>Global.LoadRadius*Global.ChunkSize){
 				unloadChunks.Enqueue(value.Key);
-			}
-			else if(chunk.Status == ChunkStatus.DRAW){
-				//try{
-					chunk.Draw();
-				//}catch(MissingReferenceException mre){}
+			} else if(chunk.Status == ChunkStatus.DRAW){
+				chunk.Draw();
 				updatefirstLoad("drawing "+(chunk.Index));
-			}
-
-			yield return null;
+			} yield return null;
 		}
 	}
 
 	IEnumerator RemoveOldChunks(){
-		string chunkName = "";
-		while(unloadChunks.Dequeue(out chunkName)){
-			world.Exicute(RemoveChunk(chunkName));
+		GamePoint chunkIndex = new GamePoint(0,0,0);
+		while(unloadChunks.Dequeue(out chunkIndex)){
+			world.Exicute(RemoveChunk(chunkIndex));
 		}yield return null;
 	}
 
-	IEnumerator RemoveChunk(string name){
+	IEnumerator RemoveChunk(GamePoint index){
 		Chunk chunk;
-		if(loadedChunks.TryGetValue(name,out chunk)){
+		if(loadedChunks.TryGetValue(index,out chunk)){
 			chunk.Destroy();
-			loadedChunks.TryRemove(name, out chunk);
+			loadedChunks.TryRemove(index, out chunk);
 			yield return null;
 		}
 	}

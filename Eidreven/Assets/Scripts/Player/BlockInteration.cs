@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class BlockInteration : MonoBehaviour {
 
 	public GameObject cam;
-	public Text debugText;
 	public GameObject displayCube;
 	private Animator animator;
 	private Mesh mesh;
@@ -68,7 +67,7 @@ public class BlockInteration : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(world==null)return;
-		DebugScript.setPlayerPos(this.transform.position);
+		/*DebugScript.setPlayerPos(this.transform.position);
 		DebugScript.setLookingDirection(Directions.getLookingDirection((int)cam.transform.rotation.eulerAngles.x,(int)this.transform.rotation.eulerAngles.y));
 		RaycastHit looking;
 		if(Physics.Raycast(cam.transform.position, cam.transform.forward, out looking,10)){
@@ -84,7 +83,7 @@ public class BlockInteration : MonoBehaviour {
 		}else{
 			DebugScript.setPlayerLookingAt("-");
 			//debugText.text = "";
-		}
+		}*/
 
 		if(Input.GetKeyDown("1"))
 			StartCoroutine(updateDisplayCube(BlockType.SAND));

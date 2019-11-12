@@ -13,6 +13,7 @@ public class Chunk {
 	private GameObject fluidGameObject;
 	private bool drawn = false;
 	private bool built = false;
+	private bool forceLoad = false;
 
 	private GamePoint position;
 	private GamePoint index;
@@ -126,8 +127,10 @@ public class Chunk {
 	}	
 
 	public Chunk getNeighbor(Direction direction){
-		string neighborName = getNeighborName(direction);Chunk c = null;
-		world.getLoadedChunk(neighborName, out c);return c;
+		/*string neighborName = getNeighborName(direction);Chunk c = null;
+		world.getLoadedChunk(neighborName, out c);return c;*/
+		Chunk c = null; world.getLoadedChunk(index.moveDirection(direction,1), out c);
+		return c;
 	}
 
 	public string getNeighborName(Direction direction){
@@ -205,5 +208,6 @@ public class Chunk {
 	public bool Changed{get{return changed;}}
 	public GameObject Solids{get{return this.solidGameObject;}}
 	public GameObject Fluids{get{return this.fluidGameObject;}}
+	public bool ForceLoad{get{return forceLoad;}set{forceLoad = value;}}
 
 }
