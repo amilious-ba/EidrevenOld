@@ -1,0 +1,825 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"de",
+				"default\tdefault"
+			],
+			[
+				"ro",
+				"rotation\tQuaternion"
+			],
+			[
+				"No",
+				"NORTH\tDirection"
+			],
+			[
+				"direction",
+				"Direction\tDirection"
+			],
+			[
+				"Block",
+				"BlockInteration\tBlockInteration"
+			],
+			[
+				"N",
+				"NameFromPosition(GamePoint position)\tstring"
+			],
+			[
+				"hit",
+				"hitBlock2\tGamePoint"
+			],
+			[
+				"in",
+				"index\tGamePoint"
+			],
+			[
+				"chunk",
+				"chunkName\tstring"
+			],
+			[
+				"Try",
+				"TryGetValue(string key, out Chunk value)\tbool"
+			],
+			[
+				"chun",
+				"ChunkIndex\tGamePoint"
+			],
+			[
+				"Ch",
+				"ChunkSize\tint"
+			],
+			[
+				"A",
+				"Abs(int value)\tint"
+			],
+			[
+				"p",
+				"processQueue\tCoroutineQueue"
+			],
+			[
+				"Vec",
+				"Vector3()\tVector3()"
+			],
+			[
+				"deb",
+				"debugText\tText"
+			],
+			[
+				"St",
+				"stopTimer()\tvoid"
+			],
+			[
+				"Debug",
+				"DebugScript\tDebugScript"
+			],
+			[
+				"timer",
+				"timerValue\tstring"
+			],
+			[
+				"update",
+				"updateFirstBuild(string status)\tvoid"
+			],
+			[
+				"Chunk",
+				"ChunkIndexAtPosition(Vector3 position, out Vector3 blockPosition)\tVector3"
+			],
+			[
+				"Math",
+				"Mathf\tMathf"
+			],
+			[
+				"Chun",
+				"ChunkSize\tint"
+			],
+			[
+				"Builc",
+				"BuildRecursiveWorld(Vector3 chunkIndex, int rad)\tIEnumerator"
+			],
+			[
+				"C",
+				"ChunkNameFromIndex(Vector3 index)\tstring"
+			],
+			[
+				"Vect",
+				"Vector3\tVector3"
+			],
+			[
+				"set",
+				"setPlayerLookingAt(string str)\tvoid"
+			],
+			[
+				"look",
+				"lookBlock\tVector3"
+			],
+			[
+				"se",
+				"setPlayerLookingAt(Vector3 pos)\tvoid"
+			],
+			[
+				"pla",
+				"playerPositionString\tstring"
+			],
+			[
+				"get",
+				"getBiomeType(int seed, int x, int z)\tBiomeType"
+			],
+			[
+				"ge",
+				"getHeight(int seed, int x, int z)\tint"
+			],
+			[
+				"H",
+				"HumiditySettings\tGenValues"
+			],
+			[
+				"st",
+				"stoneSettings\tGenValues"
+			],
+			[
+				"getB",
+				"getBiomeType(float moisture, float temperature)\tBiomeType"
+			],
+			[
+				"hu",
+				"humidSmooth\tfloat"
+			],
+			[
+				"gen",
+				"genValues\tgenValues"
+			],
+			[
+				"GenVa",
+				"GenValues\tGenValues"
+			],
+			[
+				"ne",
+				"neighborName\tstring"
+			],
+			[
+				"Ser",
+				"SerializeField\tSerializeField"
+			],
+			[
+				"lastS",
+				"lastSeedVal\tstring"
+			],
+			[
+				"E",
+				"Equals(string value)\tbool"
+			],
+			[
+				"las",
+				"lastSeedVal\tstring"
+			],
+			[
+				"f",
+				"fluidTextures\tMaterial"
+			],
+			[
+				"seed",
+				"seedVal\tint"
+			],
+			[
+				"Get",
+				"getBiomeType(float moisture, float temperature)\tBiomeType"
+			],
+			[
+				"heigh",
+				"heightMap\tint[,]"
+			],
+			[
+				"FB",
+				"FBM_Map(float x, float z, int chunkSize, int seed, float smooth, int octaves, float persistance, float lacunarity)\tfloat[,]"
+			],
+			[
+				"y",
+				"yoff\tint"
+			],
+			[
+				"ch",
+				"chunkSize\tint"
+			],
+			[
+				"BiomeT",
+				"BiomeType\tBiomeType"
+			],
+			[
+				"Tun",
+				"TundraBiome()\tTundraBiome()"
+			],
+			[
+				"Borea",
+				"BorealForestBiome()\tBorealForestBiome()"
+			],
+			[
+				"bore",
+				"borealForest\tborealForest"
+			],
+			[
+				"tem",
+				"temperateRainforest\ttemperateRainforest"
+			],
+			[
+				"Sea",
+				"SeasonalForestBiome()\tSeasonalForestBiome()"
+			],
+			[
+				"sea",
+				"seasonalForest\tseasonalForest"
+			],
+			[
+				"Gras",
+				"GrasslandBiome()\tGrasslandBiome()"
+			],
+			[
+				"Tropical",
+				"TropicalRainforestBiome()\tTropicalRainforestBiome()"
+			],
+			[
+				"Biom",
+				"BiomeType\tBiomeType"
+			],
+			[
+				"noise",
+				"noiseScale\tint"
+			],
+			[
+				"noi",
+				"noiseScale\tint"
+			],
+			[
+				"map",
+				"mapHeight\tint"
+			],
+			[
+				"F",
+				"FBM_Map(float x, float z, int mapWidth, int mapHeight, int seed, int octaves, float persistance, float lacunarity)\tfloat[,]"
+			],
+			[
+				"oc",
+				"octaves\tint"
+			],
+			[
+				"octa",
+				"octaveOffsets\tVector2[]"
+			],
+			[
+				"offs",
+				"offsetY\tfloat"
+			],
+			[
+				"ma",
+				"maxNoiseHeight\tfloat"
+			],
+			[
+				"GUILa",
+				"GUILayout()\tGUILayout()"
+			],
+			[
+				"Uni",
+				"UnityEditor\tUnityEditor"
+			],
+			[
+				"tex",
+				"textureRenderer\tRenderer"
+			],
+			[
+				"sa",
+				"sampleY\tfloat"
+			],
+			[
+				"model",
+				"modelFile\tModelFile"
+			],
+			[
+				"te",
+				"textureHeight\tint"
+			],
+			[
+				"vec",
+				"Vector3\tVector3"
+			],
+			[
+				"Vector",
+				"Vector2\tVector2"
+			],
+			[
+				"con",
+				"convertArrayToVector3(float[] array)\tVector3"
+			],
+			[
+				"ReadAll",
+				"ReadAllText(string path)\tstring"
+			],
+			[
+				"Mode",
+				"ModelFile\tModelFile"
+			],
+			[
+				"e",
+				"Exists(string path)\tbool"
+			],
+			[
+				"stre",
+				"streamingAssetsPath\tstring"
+			],
+			[
+				"UnityE",
+				"UnityEngine\tUnityEngine"
+			],
+			[
+				"pi",
+				"pivotZ\tfloat"
+			],
+			[
+				"uv",
+				"uvY\tfloat"
+			],
+			[
+				"s",
+				"sizeZ\tfloat"
+			],
+			[
+				"si",
+				"sizeX\tfloat"
+			],
+			[
+				"or",
+				"originZ\tfloat"
+			],
+			[
+				"ori",
+				"originX\tfloat"
+			],
+			[
+				"mode",
+				"modelBone\tModelBone"
+			],
+			[
+				"c",
+				"Count\tint"
+			],
+			[
+				"v",
+				"Vector3\tVector3"
+			],
+			[
+				"vis",
+				"visibleBoundsOffset\tVector3"
+			],
+			[
+				"explo",
+				"explosionPos\tVector3"
+			],
+			[
+				"expl",
+				"explosionPos\tVector3"
+			],
+			[
+				"cubesP",
+				"cubesPivot\tVector3"
+			],
+			[
+				"cubesPivo",
+				"cubesPivotDistance\tfloat"
+			],
+			[
+				"cube",
+				"cubesPivotDistance\tfloat"
+			],
+			[
+				"cubes",
+				"cubesInRow\tint"
+			],
+			[
+				"Stat",
+				"StatModifierType\tStatModifierType"
+			],
+			[
+				"P",
+				"Percent_FROM_BASE\tStatModifierType"
+			],
+			[
+				"remo",
+				"Remove(StatModifier item)\tbool"
+			],
+			[
+				"stat",
+				"statModifiers\tstatModifiers"
+			],
+			[
+				"build",
+				"buildSteps\tint"
+			],
+			[
+				"load",
+				"loadedChunks\tConcurrentDictionary<string, Chunk>"
+			],
+			[
+				"IEnum",
+				"IEnumerator\tIEnumerator"
+			],
+			[
+				"buil",
+				"buildType\tBlockType"
+			],
+			[
+				"bl",
+				"blockUVs\tVector2[,]"
+			],
+			[
+				"blo",
+				"BlockType\tBlockType"
+			],
+			[
+				"G",
+				"GRASS\tBlockType"
+			],
+			[
+				"IEnu",
+				"IEnumerator\tIEnumerator"
+			],
+			[
+				"fil",
+				"fillData\tbyte[]"
+			],
+			[
+				"Wao",
+				"WaitForSeconds\tWaitForSeconds"
+			],
+			[
+				"bloc",
+				"blockType\tBlockType"
+			],
+			[
+				"loadin",
+				"loadingText\tText"
+			],
+			[
+				"play",
+				"playButton\tButton"
+			],
+			[
+				"bui",
+				"buildSteps\tint"
+			],
+			[
+				"colm",
+				"ColumnHeight\tint"
+			],
+			[
+				"chu",
+				"ChunkSize\tint"
+			],
+			[
+				"max",
+				"maxWidth\tint"
+			],
+			[
+				"l",
+				"loadingText\tText"
+			],
+			[
+				"step",
+				"buildSteps\tint"
+			],
+			[
+				"getC",
+				"getChunkSize()\tint"
+			],
+			[
+				"Start",
+				"StartCoroutine"
+			],
+			[
+				"chan",
+				"channel"
+			],
+			[
+				"cons",
+				"console"
+			],
+			[
+				"updated",
+				"updatedOn"
+			],
+			[
+				"crea",
+				"createdOn"
+			],
+			[
+				"level",
+				"level_id"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: Ins",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: ",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/C/Users/brand/Desktop/Eidreven/Eidreven/Assets/Scripts",
+		"/C/Users/brand/Desktop/Eidreven/Eidreven/Assets/Scripts/World"
+	],
+	"file_history":
+	[
+		"/C/Users/brand/Desktop/Eidreven/Docfx/docfx.exe.config",
+		"/E/sys/config.g",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics/GamePoint.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/World.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/WoodLandBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/TundraBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/TropicalRainforestBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/TemperateRainforestBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/SeasonalForestBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/SavannaBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/IceBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/GrasslandBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/DesertBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/BorealForestBiome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics/Utils.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/Display/DebugScript.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/BlockInteration.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/WorldGenerator.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Chunk/Chunk.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/Display/DebugInfo.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/Display/DebugDisplay.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Editor/MapGeneratorEditor.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/MapDisplay.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics/Debug.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/StreamingAssets/character.json",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats/CharacterStat.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ObjectLoader.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Global.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/GenValues.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/MapGenerator.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Noise.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/GenSettings.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/GenParams.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/GenerationParams.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Editor/ReadOnlyAttribute.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biomes/Biome.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/Ice.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Editor/ShowOnlyAttribute.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World Gen Viewer/Editor/ShowOnlyDrawer.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelBone.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelFile.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelGeometry.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelCube.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/ModelDescription.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JsonHelper.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/ObjectLoader/JSONLoader.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Character Stats/StatModifier.cs",
+		"/C/Users/brand/Desktop/NeverWorldCharacter/character.json",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/CreateObject.cs",
+		"/C/Users/brand/AppData/Local/Temp/Temp1_Json120r2.zip/readme.txt",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Block.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Exploding Cube/CubeExplosion.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DiamondOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Packages/manifest.json",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Direction.cs",
+		"/C/Users/brand/AppData/LocalLow/Amilious/Never World/savedata/Chunk_0_64_96_16_16.dat",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/GoldOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/RedstoneOreBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/GrassBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/DirtBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/BedrockBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/SandBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/StoneBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/WaterBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Block/Blocks/AirBlock.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Preformance/ConcurrentDictionary.cs",
+		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Player/QM_Compass.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Preformance/LockFreeQueue.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Settings.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Chunk/ChunkGererator.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Chunk/Chunk.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Chunk.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/BlockInteration.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/ChunkMB.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Direction.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/Block.cs",
+		"/C/Users/brand/Desktop/WitchPot.json",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/Models/Test.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/Models/ModelCreator.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/Scripts/World.cs",
+		"/C/Users/brand/Desktop/NeverWorld/Assets/World/Global.cs",
+		"/C/Users/brand/AppData/Local/Temp/scp27717/var/www/louella.andersonsblog.com/index.html",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Never World.sln",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/Assets/World.cs",
+		"/C/Users/brand/Desktop/Game Classes/NeverWorld/Never World/NeverWorld.sublime-project",
+		"/C/Users/brand/AppData/Local/Temp/scp42010/var/www/wwlingo.com/classroom/classes/Unit.php",
+		"/C/Users/brand/AppData/Local/Temp/scp42903/var/www/wwlingo.com/classroom/classes/Level.php",
+		"/C/Users/brand/AppData/Local/Temp/scp42286/var/www/wwlingo.com/classroom/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp48199/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/Desktop/Game Classes/Voxel Worlds/1. Introduction/6/VLU2L9/Assets/World.cs",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/index.js",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/package.json",
+		"/C/Users/brand/AppData/Local/Discord/bots/translator/config.json",
+		"/C/Users/brand/AppData/Roaming/Sublime Text 3/Packages/Terminal/Terminal.sublime-settings",
+		"/C/Users/brand/Downloads/json.txt",
+		"/C/Users/brand/Downloads/f (1).txt",
+		"/C/Users/brand/AppData/Local/Temp/scp18736/var/www/wwlingo.com/classroom/classes/Level.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29819/var/www/wwlingo.com/classroom/classes/Chapter.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29794/var/www/wwlingo.com/classroom/classes/Unit.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18841/var/www/wwlingo.com/classroom/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18168/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28394/var/www/wwlingo.com/amilious_login/AmiliousLogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp33820/var/www/wwlingo.com/amilious_login/action/logout.php",
+		"/C/Users/brand/Desktop/wwlingo/Logo_On_Left/Blue_On_White/Logo Files/For Web/svg/Color logo - no background.svg",
+		"/C/Users/brand/AppData/Local/Temp/scp23422/var/www/wwlingo.com/assets/php/wwlingo.php",
+		"/C/Users/brand/AppData/Local/Temp/scp37208/var/www/wwlingo.com/classes/overview/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28277/var/www/wwlingo.com/classes/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp26551/var/www/wwlingo.com/account/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29761/var/www/wwlingo.com/amilious_login/configMaker.php",
+		"/C/Users/brand/AppData/Local/Temp/scp34160/var/www/wwlingo.com/amilious_login/AmiliousLoginConfig.php",
+		"/C/Users/brand/AppData/Local/Temp/scp26757/var/www/wwlingo.com/classroom/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp15517/var/www/wwlingo.com/classroom/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp40228/var/www/wwlingo.com/classes/ClassManager.php",
+		"/C/Users/brand/AppData/Local/Temp/scp07550/var/www/wwlingo.com/classes/classes/Course.php",
+		"/C/Users/brand/AppData/Local/Temp/scp29911/var/www/wwlingo.com/amilious_login/classes/User.php",
+		"/C/Users/brand/AppData/Local/Temp/scp06262/var/www/wwlingo.com/amilious_login/classes/DatabaseConnectors/MysqliDatabaseConnector.php",
+		"/C/Users/brand/AppData/Local/Temp/scp08734/var/www/wwlingo.com/amilious_login/AmiliousLogin.php",
+		"/C/Users/brand/AppData/Local/Temp/scp28313/var/www/wwlingo.com/amilious_login/AmiliousLoginConfig.php",
+		"/C/Users/brand/AppData/Local/Temp/scp54704/var/www/wwlingo.com/ltest/action.php",
+		"/C/Users/brand/AppData/Local/Temp/scp17852/var/www/wwlingo.com/classes/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp45885/var/www/wwlingo.com/assets/php/wwlingo.php",
+		"/C/Users/brand/AppData/Local/Temp/scp31816/var/www/wwlingo.com/classes/overview/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp18548/var/www/wwlingo.com/ltest/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp52230/var/www/wwlingo.com/ltest/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp47359/var/www/wwlingo.com/classes/classes/Class.php",
+		"/C/Users/brand/AppData/Local/Temp/scp07799/var/www/wwlingo.com/aboutus/index.php",
+		"/C/Users/brand/AppData/Local/Temp/scp58874/var/www/wwlingo.com/amilious_login/action/login.php"
+	],
+	"find":
+	{
+		"height": 22.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 36.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": false,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "Eidreven.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 214.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
