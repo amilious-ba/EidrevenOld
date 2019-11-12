@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"de",
+				"default\tdefault"
+			],
+			[
+				"ro",
+				"rotation\tQuaternion"
+			],
+			[
+				"No",
+				"NORTH\tDirection"
+			],
+			[
+				"direction",
+				"Direction\tDirection"
+			],
+			[
+				"Block",
+				"BlockInteration\tBlockInteration"
+			],
+			[
 				"N",
 				"NameFromPosition(GamePoint position)\tstring"
 			],
@@ -494,26 +514,6 @@
 			[
 				"level",
 				"level_id"
-			],
-			[
-				"num",
-				"num_levels"
-			],
-			[
-				"fet",
-				"fetchedAll"
-			],
-			[
-				"nu",
-				"num_levels"
-			],
-			[
-				"ava",
-				"available"
-			],
-			[
-				"avai",
-				"availableOnly"
 			]
 		]
 	},
@@ -523,7 +523,7 @@
 			"file": "Assets/Scripts/World/Block/Block.cs",
 			"settings":
 			{
-				"buffer_size": 8744,
+				"buffer_size": 8745,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -532,7 +532,7 @@
 			"file": "Assets/Scripts/Player/Display/DebugScript.cs",
 			"settings":
 			{
-				"buffer_size": 3176,
+				"buffer_size": 3457,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -541,7 +541,7 @@
 			"file": "Assets/Scripts/Player/BlockInteration.cs",
 			"settings":
 			{
-				"buffer_size": 4740,
+				"buffer_size": 5021,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -550,7 +550,7 @@
 			"file": "Assets/MainMenu/mainMenu.cs",
 			"settings":
 			{
-				"buffer_size": 451,
+				"buffer_size": 441,
 				"encoding": "UTF-8 with BOM",
 				"line_ending": "Windows"
 			}
@@ -561,15 +561,6 @@
 			{
 				"buffer_size": 1348,
 				"encoding": "UTF-8 with BOM",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "Assets/Scripts/World/World.cs",
-			"settings":
-			{
-				"buffer_size": 9365,
-				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
@@ -586,9 +577,29 @@
 			"file": "Assets/Scripts/CircleGenerator.cs",
 			"settings":
 			{
-				"buffer_size": 2349,
+				"buffer_size": 2430,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Assets/Scripts/Mics/Direction.cs",
+			"settings":
+			{
+				"buffer_size": 9612,
+				"encoding": "UTF-8 with BOM",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "using System.Collections;\nusing System.Collections.Generic;\nusing System;\nusing UnityEngine;\nusing UnityEngine.UI;\n\n/**\n * This is the main class used to interact with the world.\n * @type {[type]}\n */\npublic class World : MonoBehaviour {\n\n\n    [Header(\"World Seed\")]\n    [SerializeField]\n    private string seed = \"0\";\n    private string lastSeed = \"0\";\n    [SerializeField]\n    private int seedVal = 0;\n    private int lastSeedVal = 0;\n    [SerializeField]\n    private GameObject player = null;\n\t[Space(10)]\n\n\t[Header(\"Texture Maps\")]\n\t[SerializeField]\n\tprivate Material blockTextures = null;\n\t[SerializeField]\n\tprivate Material fluidTextures = null;\n\t[Space(10)]\n\n\t[Header(\"Hud Objects\")]\n\tpublic Slider loadingProgress;\n\tpublic Text loadingText;\n\tpublic Camera menuCamera;\n\tpublic Canvas menuCanvas;\n\tpublic Canvas hudCanvas;\t\n\t\n\t//private variables\n\tprivate bool firstLoad = true;\n\tprivate bool building = false;\n\tprivate int buildStep;\n\tprivate int buildSteps;\n\tprivate ConcurrentDictionary<string, Chunk> loadedChunks;\n\tprivate GamePoint lastbuildPos;\n\tprivate CoroutineQueue processQueue;\n\tprivate LockFreeQueue<String> unloadChunks = new LockFreeQueue<string>();\n\n\tprivate static int counter=0;\n\n\n\t/**\n\t * This method is called to initialize the world\n\t * object.\n\t */\n\tvoid Start () {\t\n\t\thudCanvas.gameObject.SetActive(false);\t\t\n\t\tplayer.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(false);\n\t\tloadingText.gameObject.SetActive(false);\n\t\tBlockInteration.setWorld(this);\n\t\tprocessQueue = new CoroutineQueue(Global.MaxCoroutines, StartCoroutine);\n\t\tfirstLoad = true;\n\t\tloadedChunks = new ConcurrentDictionary<string, Chunk>();\n\n\t\t//generate world seed\n\t\tseedVal = Utils.getSeedValue(seed);\n\t\tthis.clickPlay();\t\t\n\t}\n\t\n\t/**\n\t * This method is called once per frame.\n\t */\n\tvoid Update () {\n\t\tcounter++;if(counter<100){return;}counter = 0;\n\t\tif(building)return;\n\t\tif(firstLoad){\n\t\t\tif(processQueue==null)return;\n\t\t\tprocessQueue.Run(DrawChunks());\n\t\t\treturn;\n\t\t}\n\t\tGamePoint playerPosition = GamePoint.getParentIndex(player.transform.position,Global.ChunkSize);\n\t\tGamePoint movement = lastbuildPos - playerPosition;\n\t\tif(Global.BuildOnChunkChange){\n\t\t\tif(movement.magnitude > Global.BuildWhenMovedXChunks){\n\t\t\t\tlastbuildPos = playerPosition;\n\t\t\t\tBuildNearPlayer();\n\t\t\t}\n\t\t}else{\n\t\t\tlastbuildPos = player.transform.position;\n\t\t\tBuildNearPlayer();\n\t\t}\n\t\t//Draw Chunks\n\t\tprocessQueue.Run(DrawChunks());\n\t\t//remove unneeded chunks\n\t\tprocessQueue.Run(RemoveOldChunks());\n\t}\n\n\t/**\n\t * This method is called when the game object\n\t * is edited in the editor\n\t */\n\tpublic void OnValidate(){\n\t \tif(!seed.Equals(lastSeed)||seedVal!=lastSeedVal){\n\t \t\tlastSeed = seed;\n\t \t\tseedVal = lastSeedVal = Utils.getSeedValue(seed);\n\t \t}\n\t }\n\n\t/**\n\t * This method returns the block at the given world position.\n\t * @param Vector3 pos The position in the world.\n\t * @returns Vector3 containing the block at the given\n\t * position, otherwise returns null.\n\t */\n\tpublic Block getBlock(GamePoint pos){\n\t\t//get the chunk\n\t\tstring chunkName = Chunk.NameFromPosition(pos);\n\t\tChunk chunk = null; if(loadedChunks.TryGetValue(chunkName, out chunk))\n\t\t\treturn chunk.getBlock(Block.IndexInChunk(pos));\n\t\telse return null;\n\t}\n\n\t/**\n\t * This is a wrapper function used to get loaded chunks.\n\t * @param  string name The name of the chunk you want to try\n\t * get.\n\t * @param  out    Chunk\tchunk This variable will be set to the\n\t * desired chunk if it is found, otherwise it will be set to\n\t * null.\t\t\n\t * @return boolean returns true if the chunk was found in the\n\t * loaded chunks, otherwise returns false.\n\t */\n\tpublic bool getLoadedChunk(string name, out Chunk chunk){\n\t\tif(loadedChunks.TryGetValue(name, out chunk))return true;\n\t\telse{chunk = null;return false;}\n\t}\n\n\t\n\tprivate bool BuildChunk(GamePoint ChunkIndex){\n\t\tif(ChunkIndex.y<0||ChunkIndex.y>Global.ChunksTall)return false;\n\t\t//get chunk name\n\t\tstring chunkName = Chunk.NameFromIndex(ChunkIndex);\n\t\tChunk chunk = null;\n\t\t//if chunk does not exist create it\n\t\tif(!loadedChunks.TryGetValue(chunkName,out chunk)){\n\t\t\tchunk = new Chunk(ChunkIndex, this);\n\t\t\t//try to add chunk\n\t\t\tif(loadedChunks.TryAdd(chunkName,chunk)){\n\t\t\t\tchunk.Build(); return true;\n\t\t\t}else chunk.Destroy();\n\t\t}return false; //the chunk exists\n\t}\n\n\tIEnumerator BuildWorld(GamePoint index,Direction direction, int rad){\n\t\tif(rad<=0){yield break;}rad--;\n\t\t//first build in the passed direction\n\t\tGamePoint buildPos = index.moveDirection(direction,1);\n\t\tif(BuildChunk(buildPos)){updatefirstLoad(\"building \"+buildPos);}\n\t\tprocessQueue.Run(BuildWorld(buildPos, direction, rad));\n\t\tyield return null;\n\t\t//build down\n\t\tGamePoint down = index.moveDirection(Direction.DOWN,1);\n\t\tif(BuildChunk(down)){updatefirstLoad(\"building \"+down);}\n\t\tprocessQueue.Run(BuildWorld(down, direction, rad));\n\t\tyield return null;\n\t\t\n\t\t//then build to the left\n\t\tGamePoint left = index.moveDirection(Directions.rotateNWSE(direction),1);\n\t\tif(BuildChunk(left)){updatefirstLoad(\"building \"+left);}\n\t\tprocessQueue.Run(BuildWorld(left, direction, rad));\n\t\tyield return null;\n\n\t\t//then build to the right\n\t\tGamePoint right = index.moveDirection(Directions.rotateNESW(direction),1);\n\t\tif(BuildChunk(right)){updatefirstLoad(\"building \"+right);}\n\t\tprocessQueue.Run(BuildWorld(right, direction, rad));\n\t\tyield return null;\n\n\t\t//build up\n\t\tGamePoint up = index.moveDirection(Direction.UP,1);\n\t\tif(BuildChunk(up)){updatefirstLoad(\"building \"+up);}\n\t\tprocessQueue.Run(BuildWorld(up, direction, rad));\n\t\tyield return null;\n\n\t\t//then build behind\n\t\tGamePoint invert = index.moveDirection(Directions.invertDirection(direction),1);\n\t\tif(BuildChunk(invert)){updatefirstLoad(\"building \"+invert);}\n\t\tprocessQueue.Run(BuildWorld(invert, direction, rad));\n\t\tyield return null;\n\t}\n\n\tpublic bool isInRange(GamePoint position1, GamePoint position2, int radius){\n    \tradius++;radius*=radius;\n    \tint dxdx = (int)Mathf.Abs(position1.x-position2.x);dxdx*=dxdx;\n    \tint dydy = (int)Mathf.Abs(position1.y-position2.y);dydy*=dydy;\n    \tint dzdz = (int)Mathf.Abs(position1.z-position2.z);dzdz*=dzdz;\n    \tif(dxdx+dydy+dzdz>=radius)return false;\n    \treturn true;\n    }\t\n\n\t/*IEnumerator BuildRecursiveWorld(GamePoint index, int rad){\n\t\tif(rad<=0){yield break;}rad--;\n\t\tif(index.y>=0&&index.y<=Global.ChunksTall+1){\n\t\t\t\n\t\t\t//build chunk forward\n\t\t\tGamePoint forward = new GamePoint(index.x,index.y,index.z+1);\n\t\t\tif(BuildChunk(forward)){updatefirstLoad(\"building \"+forward);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(forward, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk backward\n\t\t\tGamePoint back = new GamePoint(index.x,index.y,index.z-1);\n\t\t\tif(BuildChunk(back)){updatefirstLoad(\"building \"+back);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(back, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk left\n\t\t\tGamePoint left = new GamePoint(index.x-1,index.y,index.z);\n\t\t\tif(BuildChunk(left)){updatefirstLoad(\"building \"+left);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(left, rad));\n\t\t\tyield return null;\n\t\t\t\n\t\t\t//build chunk right\n\t\t\tGamePoint right = new GamePoint(index.x+1,index.y,index.z);\n\t\t\tif(BuildChunk(right)){updatefirstLoad(\"building \"+right);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(right, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk up\n\t\tif(index.y+1<Global.ChunksTall+1){\n\t\t\tGamePoint up = new GamePoint(index.x,index.y+1,index.z);\n\t\t\tif(BuildChunk(up)){updatefirstLoad(\"building \"+up);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(up, rad));\n\t\t\tyield return null;\n\t\t}\n\t\t//build chunk down\n\t\tif(index.y-1>=0){\n\t\t\tGamePoint down = new GamePoint(index.x,index.y-1,index.z);\n\t\t\tif(BuildChunk(down)){updatefirstLoad(\"building \"+down);}\n\t\t\tprocessQueue.Run(BuildRecursiveWorld(down, rad));\n\t\t\tyield return null;\n\t\t}\n\t}*/\n\n\tIEnumerator DrawChunks(){\n\t\tforeach(KeyValuePair<string, Chunk> value in loadedChunks){\n\t\t\tChunk chunk = value.Value;\n\t\t\tif(Vector3.Distance(player.transform.position,\n\t\t\t\tchunk.Position)>Global.LoadRadius*Global.ChunkSize){\n\t\t\t\tunloadChunks.Enqueue(value.Key);\n\t\t\t}\n\t\t\telse if(chunk.Status == ChunkStatus.DRAW){\n\t\t\t\t//try{\n\t\t\t\t\tchunk.Draw();\n\t\t\t\t//}catch(MissingReferenceException mre){}\n\t\t\t\tupdatefirstLoad(\"drawing \"+(chunk.Index));\n\t\t\t}\n\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tIEnumerator RemoveOldChunks(){\n\t\tstring chunkName = \"\";\n\t\twhile(unloadChunks.Dequeue(out chunkName)){\n\t\t\tprocessQueue.Run(RemoveChunk(chunkName));\n\t\t}yield return null;\n\t}\n\n\tIEnumerator RemoveChunk(string name){\n\t\tChunk chunk;\n\t\tif(loadedChunks.TryGetValue(name,out chunk)){\n\t\t\tchunk.Destroy();\n\t\t\tloadedChunks.TryRemove(name, out chunk);\n\t\t\tyield return null;\n\t\t}\n\t}\n\n\tpublic void clickPlay(){\n\t\t//playButton.gameObject.SetActive(false);\n\t\tloadingProgress.gameObject.SetActive(true);\n\t\tloadingText.gameObject.SetActive(true);\t\n\t\tGamePoint playerPosition = GamePoint.roundVector3(player.transform.position);\n\t\tplayerPosition.y = WorldGenerator.GenerateHeight(playerPosition.x,playerPosition.y)+1;\n\t\tDebugScript.startTimer();\n\t\t//set the player above the ground\n\t\tplayer.transform.position = playerPosition;\n\t\tlastbuildPos = Chunk.IndexAtPosition(playerPosition);\n\n\t\t//set up the world\n\t\tthis.transform.position = Vector3.zero;\n\t\tthis.transform.rotation = Quaternion.identity;\n\t\t//caculate build steps\n\t\tthis.buildSteps = calculateSteps(lastbuildPos.y,Global.LoadRadius);\n\t\tthis.loadingProgress.maxValue = buildSteps;\n\t\t//build and draw the starting chunk\n\t\tbuilding = true;\n\t\tBuildChunk(lastbuildPos);\n\t\t//processQueue.Run(DrawChunks());\n\t\t//Vector3 chunkIndex = new Vector3((int)(ppos.x/Global.ChunkSize),(int)(ppos.y/Global.ChunkSize),(int)(ppos.z/Global.ChunkSize));\n\t\tprocessQueue.Run(BuildWorld(lastbuildPos,getLookingDirection(),Global.LoadRadius));\n\t}\n\n\tprivate Direction getLookingDirection(){\n\t\tint looking = (int)player.transform.rotation.eulerAngles.y;\n\t\tlooking = (looking+45); if(looking>360)looking-=360;looking/=90;\n\t\tswitch(looking){\n\t\t\tcase 0: return Direction.NORTH;\n\t\t\tcase 1: return Direction.EAST;\n\t\t\tcase 2: return Direction.SOUTH;\n\t\t\tcase 3: return Direction.WEST;\n\t\t\tdefault: return Direction.NORTH;\n\t\t} \n\t}\n\n\tpublic void BuildNearPlayer(){\n\t\tStopCoroutine(\"BuildRecursiveWorld\");\n\t\tprocessQueue.Run(BuildWorld(\n\t\t\tlastbuildPos,\n\t\t\tgetLookingDirection(),\n\t\t\tGlobal.LoadRadius));\n\t}\n\n\tpublic void updatefirstLoad(string status){\n\t\tDebugScript.setLoadedChunks(loadedChunks.Count);\n\t\tif(!firstLoad)return;\n\t\tbuildStep++;\n\t\t//this.loadingText.text = status;\n\t\tthis.loadingText.text = buildStep+\"/\"+buildSteps+\" \"+status;\n\t\tthis.loadingProgress.value = buildStep;\n\t\tif(building&&buildStep==buildSteps){\n\t\t\tbuilding = false;\n\t\t\tbuildStep = 0;\n\t\t\tbuildSteps-=(buildSteps/15);\n\t\t\tloadingProgress.maxValue = buildSteps;\n\t\t}else if(buildStep==buildSteps){\n\t\t\tfirstLoad=false;\n\t\t\t//activate player\n\t\t\tDebugScript.stopTimer(\"start Time\");\n\t\t\tplayer.SetActive(true);\n\t\t\tmenuCanvas.gameObject.SetActive(false);\n\t\t\tmenuCamera.gameObject.SetActive(false);\n\t\t\thudCanvas.gameObject.SetActive(true);\n\t\t}\n\t}\n\n\tpublic int calculateSteps(int y, int radius){\n\t\tint chunkCount = calculateLayerSteps(radius);\n\t\t//calculate up\n\t\tint up = y+radius; int upRad = radius-1;\n\t\tif(up>Global.ChunksTall)up=Global.ChunksTall;\n\t\tfor(int i=y+1;i<up;i++)\n\t\t\tchunkCount += calculateLayerSteps(upRad--);\n\t\t//calculate down\n\t\tint down = y-radius;  int downRad = radius-1;\n\t\tif(down<0)down=0;\n\t\tfor(int i=y-1;i>=down;i--)\n\t\t\tchunkCount+= calculateLayerSteps(downRad--);\n\t\treturn chunkCount;\n\t}\n\n\n\tpublic int calculateLayerSteps(int radius){\n\t\tint calc = 0;\n\t\tfor(int i=(radius*2)-1;i>0;i-=2)calc+=i;\n\t\tcalc*=2;calc+=((radius*2)+1);\n\t\treturn calc;\n\t}\n\n\t public int Seed{get{return seedVal;}}\n\t public Material FluidMaterial{get{return this.fluidTextures;}}\n\t public Material BlockMaterial{get{return this.blockTextures;}}\n\t public bool FirstLoad{get{return firstLoad;}}\n}",
+			"file": "Assets/Scripts/World/World.cs",
+			"file_size": 12079,
+			"file_write_time": 132174934952968510,
+			"settings":
+			{
+				"buffer_size": 11706,
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -687,6 +698,7 @@
 	],
 	"file_history":
 	[
+		"/E/sys/config.g",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/Mics/GamePoint.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/World.cs",
 		"/C/Users/brand/Desktop/Never_World/Never World/Assets/Scripts/World/Biome/Biomes/WoodLandBiome.cs",
@@ -813,12 +825,11 @@
 		"/C/Users/brand/AppData/Local/Temp/scp47359/var/www/wwlingo.com/classes/classes/Class.php",
 		"/C/Users/brand/AppData/Local/Temp/scp07799/var/www/wwlingo.com/aboutus/index.php",
 		"/C/Users/brand/AppData/Local/Temp/scp58874/var/www/wwlingo.com/amilious_login/action/login.php",
-		"/C/Users/brand/AppData/Local/Temp/scp19243/var/www/wwlingo.com/account/index.php",
-		"/C/Users/brand/AppData/Local/Temp/scp54285/var/www/wwlingo.com/account/settings/index2.php"
+		"/C/Users/brand/AppData/Local/Temp/scp19243/var/www/wwlingo.com/account/index.php"
 	],
 	"find":
 	{
-		"height": 40.0
+		"height": 22.0
 	},
 	"find_in_files":
 	{
@@ -861,7 +872,7 @@
 	"groups":
 	[
 		{
-			"selected": 8,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -870,15 +881,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8744,
+						"buffer_size": 8745,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8429,
-								8429
+								4490,
+								4490
 							]
 						],
 						"settings":
@@ -888,23 +899,21 @@
 								"3007,3016": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
 								"654,663": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
 								"682,691": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"7178,7500": "The variable 'mre' is declared but never used",
-								"8087,8242": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
+								"8016,8019": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
 								"813,822": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"8237,8242": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
-								"8567,8579": "Unreachable code detected",
+								"8166,8169": "Argument 1: cannot convert from 'UnityEngine.Vector3' to 'GamePoint'",
 								"857,866": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"8788,8797": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"8811,8820": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)"
+								"8642,8651": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"8665,8674": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)"
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1716.0,
+						"translation.y": 129.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -913,15 +922,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3176,
+						"buffer_size": 3457,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2178,
-								2178
+								1442,
+								1442
 							]
 						],
 						"settings":
@@ -929,7 +938,6 @@
 							"oops":
 							{
 								"0,5": "Unnecessary using directive.",
-								"2167,2172": "Assignment made to same variable; did you mean to assign something else?",
 								"229,233": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
 								"26,31": "Unnecessary using directive.",
 								"79,84": "Unnecessary using directive.",
@@ -940,7 +948,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 143.0,
+						"translation.y": 130.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 4,
@@ -952,15 +960,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4740,
+						"buffer_size": 5021,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4027,
-								4027
+								2457,
+								2457
 							]
 						],
 						"settings":
@@ -969,10 +977,10 @@
 							{
 								"182,186": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
 								"26,31": "Unnecessary using directive.",
-								"3866,3875": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"3887,3896": "The name 'GamePoint' does not exist in the current context",
-								"4225,4234": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"4247,4256": "The name 'GamePoint' does not exist in the current context",
+								"4147,4156": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4168,4177": "The name 'GamePoint' does not exist in the current context",
+								"4468,4477": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4490,4499": "The name 'GamePoint' does not exist in the current context",
 								"79,84": "Unnecessary using directive.",
 								"97,99": "The type or namespace name 'UI' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)"
 							},
@@ -980,10 +988,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 221.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -992,15 +1000,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 451,
+						"buffer_size": 441,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								401,
+								401
 							]
 						],
 						"settings":
@@ -1009,7 +1017,7 @@
 							{
 								"0,5": "Unnecessary using directive.",
 								"26,31": "Unnecessary using directive.",
-								"363,374": "'Application.LoadLevel(string)' is obsolete: 'Use SceneManager.LoadScene'",
+								"401,419": "The name 'EditorSceneManager' does not exist in the current context",
 								"79,84": "Unnecessary using directive."
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
@@ -1020,7 +1028,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 11,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1049,50 +1057,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 10,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "Assets/Scripts/World/World.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 9365,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								8989,
-								8989
-							]
-						],
-						"settings":
-						{
-							"oops":
-							{
-								"111,113": "The type or namespace name 'UI' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)",
-								"3182,3191": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"678,684": "The type or namespace name 'Slider' could not be found (are you missing a using directive or an assembly reference?)",
-								"6797,6806": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"6844,6853": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
-								"710,714": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
-								"93,98": "Unnecessary using directive."
-							},
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1677.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
 					"file": "Assets/Scripts/World/WorldGenerator.cs",
 					"semi_transient": false,
 					"settings":
@@ -1129,24 +1098,24 @@
 						"translation.y": 273.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 6,
 					"file": "Assets/Scripts/CircleGenerator.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2349,
+						"buffer_size": 2430,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								988,
-								988
+								2055,
+								1680
 							]
 						],
 						"settings":
@@ -1154,96 +1123,182 @@
 							"oops":
 							{
 								"0,5": "Unnecessary using directive.",
-								"1615,1619": "Predefined type 'System.Boolean' is not defined or imported",
-								"1630,1637": "Predefined type 'System.Object' is not defined or imported",
-								"1649,1656": "Predefined type 'System.Object' is not defined or imported",
-								"1668,1671": "Predefined type 'System.Int32' is not defined or imported",
-								"1707,1710": "Predefined type 'System.Int32' is not defined or imported",
-								"1719,1722": "Predefined type 'System.Int32' is not defined or imported",
-								"1723,1728": "Predefined type 'System.Int32' is not defined or imported",
-								"1729,1732": "Predefined type 'System.Object' is not defined or imported",
-								"1743,1744": "Predefined type 'System.Single' is not defined or imported",
-								"1755,1756": "Predefined type 'System.Single' is not defined or imported",
-								"1775,1778": "Predefined type 'System.Int32' is not defined or imported",
-								"1787,1790": "Predefined type 'System.Int32' is not defined or imported",
-								"1791,1796": "Predefined type 'System.Int32' is not defined or imported",
-								"1797,1800": "Predefined type 'System.Object' is not defined or imported",
-								"1811,1812": "Predefined type 'System.Single' is not defined or imported",
-								"1823,1824": "Predefined type 'System.Single' is not defined or imported",
+								"1687,1691": "Predefined type 'System.Boolean' is not defined or imported",
+								"1702,1709": "Predefined type 'System.Object' is not defined or imported",
+								"1721,1728": "Predefined type 'System.Object' is not defined or imported",
+								"1740,1743": "Predefined type 'System.Int32' is not defined or imported",
+								"1788,1791": "Predefined type 'System.Int32' is not defined or imported",
+								"1800,1803": "Predefined type 'System.Int32' is not defined or imported",
+								"1804,1809": "Predefined type 'System.Int32' is not defined or imported",
+								"1810,1813": "Predefined type 'System.Object' is not defined or imported",
+								"1824,1825": "Predefined type 'System.Single' is not defined or imported",
+								"1836,1837": "Predefined type 'System.Single' is not defined or imported",
 								"184,188": "Predefined type 'System.Void' is not defined or imported",
-								"1843,1846": "Predefined type 'System.Int32' is not defined or imported",
-								"1855,1858": "Predefined type 'System.Int32' is not defined or imported",
-								"1859,1864": "Predefined type 'System.Int32' is not defined or imported",
-								"1865,1868": "Predefined type 'System.Object' is not defined or imported",
-								"1879,1880": "Predefined type 'System.Single' is not defined or imported",
-								"1891,1892": "Predefined type 'System.Single' is not defined or imported",
-								"1914,1918": "Predefined type 'System.Boolean' is not defined or imported",
-								"1944,1949": "Predefined type 'System.Boolean' is not defined or imported",
-								"1963,1967": "Predefined type 'System.Boolean' is not defined or imported",
-								"1987,1990": "Predefined type 'System.Int32' is not defined or imported",
-								"2003,2006": "Predefined type 'System.Int32' is not defined or imported",
-								"2030,2033": "Predefined type 'System.Int32' is not defined or imported",
-								"2040,2041": "Predefined type 'System.Int32' is not defined or imported",
-								"2048,2051": "Predefined type 'System.Int32' is not defined or imported",
-								"2081,2084": "Predefined type 'System.Int32' is not defined or imported",
-								"2095,2096": "Predefined type 'System.Boolean' is not defined or imported",
+								"1856,1859": "Predefined type 'System.Int32' is not defined or imported",
+								"1868,1871": "Predefined type 'System.Int32' is not defined or imported",
+								"1872,1877": "Predefined type 'System.Int32' is not defined or imported",
+								"1878,1881": "Predefined type 'System.Object' is not defined or imported",
+								"1892,1893": "Predefined type 'System.Single' is not defined or imported",
+								"1904,1905": "Predefined type 'System.Single' is not defined or imported",
+								"1924,1927": "Predefined type 'System.Int32' is not defined or imported",
+								"1936,1939": "Predefined type 'System.Int32' is not defined or imported",
+								"1940,1945": "Predefined type 'System.Int32' is not defined or imported",
+								"1946,1949": "Predefined type 'System.Object' is not defined or imported",
+								"1960,1961": "Predefined type 'System.Single' is not defined or imported",
+								"1972,1973": "Predefined type 'System.Single' is not defined or imported",
+								"1995,1999": "Predefined type 'System.Boolean' is not defined or imported",
+								"2025,2030": "Predefined type 'System.Boolean' is not defined or imported",
+								"2044,2048": "Predefined type 'System.Boolean' is not defined or imported",
+								"2068,2071": "Predefined type 'System.Int32' is not defined or imported",
+								"2084,2087": "Predefined type 'System.Int32' is not defined or imported",
 								"211,231": "Predefined type 'System.Object' is not defined or imported",
-								"2117,2120": "Predefined type 'System.Int32' is not defined or imported",
-								"2141,2144": "Predefined type 'System.Int32' is not defined or imported",
-								"2155,2156": "Predefined type 'System.Boolean' is not defined or imported",
-								"2178,2181": "Predefined type 'System.Int32' is not defined or imported",
-								"2203,2206": "Predefined type 'System.Int32' is not defined or imported",
-								"2217,2218": "Predefined type 'System.Boolean' is not defined or imported",
-								"2241,2244": "Predefined type 'System.Int32' is not defined or imported",
-								"2264,2266": "Predefined type 'System.Boolean' is not defined or imported",
+								"2111,2114": "Predefined type 'System.Int32' is not defined or imported",
+								"2121,2122": "Predefined type 'System.Int32' is not defined or imported",
+								"2129,2132": "Predefined type 'System.Int32' is not defined or imported",
+								"2162,2165": "Predefined type 'System.Int32' is not defined or imported",
+								"2176,2177": "Predefined type 'System.Boolean' is not defined or imported",
+								"2198,2201": "Predefined type 'System.Int32' is not defined or imported",
+								"2222,2225": "Predefined type 'System.Int32' is not defined or imported",
+								"2236,2237": "Predefined type 'System.Boolean' is not defined or imported",
+								"2259,2262": "Predefined type 'System.Int32' is not defined or imported",
+								"2284,2287": "Predefined type 'System.Int32' is not defined or imported",
+								"2298,2299": "Predefined type 'System.Boolean' is not defined or imported",
+								"2322,2325": "Predefined type 'System.Int32' is not defined or imported",
+								"2345,2347": "Predefined type 'System.Boolean' is not defined or imported",
 								"236,243": "Predefined type 'System.Void' is not defined or imported",
-								"245,246": "Predefined type 'System.Int32' is not defined or imported",
-								"247,248": "Predefined type 'System.Int32' is not defined or imported",
-								"249,250": "Predefined type 'System.Int32' is not defined or imported",
-								"252,253": "Predefined type 'System.Int32' is not defined or imported",
+								"244,245": "Predefined type 'System.Int32' is not defined or imported",
+								"246,247": "Predefined type 'System.Int32' is not defined or imported",
+								"248,249": "Predefined type 'System.Int32' is not defined or imported",
+								"251,253": "Predefined type 'System.Int32' is not defined or imported",
 								"26,31": "Unnecessary using directive.",
 								"306,310": "Predefined type 'System.Void' is not defined or imported",
-								"353,357": "Predefined type 'System.Void' is not defined or imported",
-								"379,386": "Predefined type 'System.Object' is not defined or imported",
-								"395,398": "Predefined type 'System.Int32' is not defined or imported",
-								"413,423": "Predefined type 'System.Object' is not defined or imported",
-								"443,453": "Predefined type 'System.Void' is not defined or imported",
-								"454,455": "Predefined type 'System.String' is not defined or imported",
-								"492,495": "Predefined type 'System.Int32' is not defined or imported",
-								"525,528": "Predefined type 'System.Int32' is not defined or imported",
-								"539,540": "Predefined type 'System.Boolean' is not defined or imported",
-								"561,564": "Predefined type 'System.Int32' is not defined or imported",
-								"585,588": "Predefined type 'System.Int32' is not defined or imported",
-								"599,600": "Predefined type 'System.Boolean' is not defined or imported",
-								"622,625": "Predefined type 'System.Int32' is not defined or imported",
-								"647,650": "Predefined type 'System.Int32' is not defined or imported",
-								"661,662": "Predefined type 'System.Boolean' is not defined or imported",
-								"688,690": "Predefined type 'System.Boolean' is not defined or imported",
-								"752,762": "Predefined type 'System.Object' is not defined or imported",
-								"770,780": "Predefined type 'System.Object' is not defined or imported",
-								"781,796": "Predefined type 'System.Object' is not defined or imported",
-								"797,810": "Predefined type 'System.Object' is not defined or imported",
-								"841,849": "Predefined type 'System.Void' is not defined or imported",
-								"856,863": "Predefined type 'System.Void' is not defined or imported",
-								"871,872": "Predefined type 'System.Single' is not defined or imported",
-								"882,883": "Predefined type 'System.Single' is not defined or imported",
-								"893,894": "Predefined type 'System.Single' is not defined or imported",
-								"922,928": "Predefined type 'System.Void' is not defined or imported",
-								"93,108": "Predefined type 'System.Void' is not defined or imported"
+								"425,429": "Predefined type 'System.Void' is not defined or imported",
+								"451,458": "Predefined type 'System.Object' is not defined or imported",
+								"467,470": "Predefined type 'System.Int32' is not defined or imported",
+								"485,495": "Predefined type 'System.Object' is not defined or imported",
+								"515,525": "Predefined type 'System.Void' is not defined or imported",
+								"526,527": "Predefined type 'System.String' is not defined or imported",
+								"564,567": "Predefined type 'System.Int32' is not defined or imported",
+								"597,600": "Predefined type 'System.Int32' is not defined or imported",
+								"611,612": "Predefined type 'System.Boolean' is not defined or imported",
+								"633,636": "Predefined type 'System.Int32' is not defined or imported",
+								"657,660": "Predefined type 'System.Int32' is not defined or imported",
+								"671,672": "Predefined type 'System.Boolean' is not defined or imported",
+								"694,697": "Predefined type 'System.Int32' is not defined or imported",
+								"719,722": "Predefined type 'System.Int32' is not defined or imported",
+								"733,734": "Predefined type 'System.Boolean' is not defined or imported",
+								"760,762": "Predefined type 'System.Boolean' is not defined or imported",
+								"824,834": "Predefined type 'System.Object' is not defined or imported",
+								"842,852": "Predefined type 'System.Object' is not defined or imported",
+								"853,868": "Predefined type 'System.Object' is not defined or imported",
+								"869,882": "Predefined type 'System.Object' is not defined or imported",
+								"913,921": "Predefined type 'System.Void' is not defined or imported",
+								"928,935": "Predefined type 'System.Void' is not defined or imported",
+								"93,108": "Predefined type 'System.Void' is not defined or imported",
+								"943,944": "Predefined type 'System.Single' is not defined or imported",
+								"954,955": "Predefined type 'System.Single' is not defined or imported",
+								"965,966": "Predefined type 'System.Single' is not defined or imported",
+								"994,1000": "Predefined type 'System.Void' is not defined or imported"
 							},
 							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 156.0,
+						"translation.y": 143.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "Assets/Scripts/Mics/Direction.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9612,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3381,
+								3381
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"3498,3499": "Cannot implicitly convert type 'int' to 'UnityEngine.Vector3'"
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1383.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 8,
+					"file": "Assets/Scripts/World/World.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 11706,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9981,
+								9981
+							]
+						],
+						"settings":
+						{
+							"oops":
+							{
+								"1034,1043": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"111,113": "The type or namespace name 'UI' does not exist in the namespace 'UnityEngine' (are you missing an assembly reference?)",
+								"1977,1986": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"2004,2013": "The name 'GamePoint' does not exist in the current context",
+								"2076,2085": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"2971,2980": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"3772,3781": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4277,4286": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4399,4408": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4617,4626": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"4839,4848": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5078,5087": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5306,5315": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5511,5520": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5759,5768": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"5780,5789": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"699,705": "The type or namespace name 'Slider' could not be found (are you missing a using directive or an assembly reference?)",
+								"731,735": "The type or namespace name 'Text' could not be found (are you missing a using directive or an assembly reference?)",
+								"8683,8692": "The type or namespace name 'GamePoint' could not be found (are you missing a using directive or an assembly reference?)",
+								"8710,8719": "The name 'GamePoint' does not exist in the current context",
+								"93,98": "Unnecessary using directive."
+							},
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 4095.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "Assets/Scripts/World/Chunk/Chunk.cs",
 					"semi_transient": false,
 					"settings":
@@ -1292,11 +1347,11 @@
 						"translation.y": 1632.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 9,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 10,
 					"file": "Assets/Scripts/Mics/GamePoint.cs",
 					"semi_transient": false,
 					"settings":
@@ -1319,14 +1374,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2392.0,
+						"translation.y": 169.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 10,
+					"buffer": 11,
 					"file": "Assets/Scripts/World/Chunk/ChunkMB.cs",
 					"semi_transient": false,
 					"settings":
@@ -1351,11 +1406,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 11,
+					"buffer": 12,
 					"file": "Assets/Scripts/Mics/Utils.cs",
 					"semi_transient": false,
 					"settings":
@@ -1380,7 +1435,7 @@
 						"translation.y": 52.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 12,
 					"type": "text"
 				}
 			]

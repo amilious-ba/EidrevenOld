@@ -8,7 +8,7 @@ using UnityEngine.UI;
  * This is the main class used to interact with the world.
  * @type {[type]}
  */
-public class World : MonoBehaviour {
+public class World : MonoBehaviour, WorldLoaderListener {
 
 
     [Header("World Seed")]
@@ -105,6 +105,10 @@ public class World : MonoBehaviour {
 	 		lastSeed = seed;
 	 		seedVal = lastSeedVal = Utils.getSeedValue(seed);
 	 	}
+	 }
+
+	 public  void updateStatus(int value, int maxValue, string status){
+
 	 }
 
 	/**
