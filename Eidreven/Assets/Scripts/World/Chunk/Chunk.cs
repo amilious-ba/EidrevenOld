@@ -14,22 +14,36 @@ public class Chunk {
 	private bool drawn = false;
 	private bool built = false;
 	private bool forceLoad = false;
-
+	private bool changed = false;
+	private Block[,,] blocks;
 	private GamePoint position;
 	private GamePoint index;
+
+	private int moisture;
+	private int heat;
+	private Biome biome;
+	private bool topMost;
+
 	public ChunkMB mb;
 	
-	private Block[,,] blocks;
+	
 	public ChunkStatus status = ChunkStatus.NOTBUILT;
 	SaveData saveData;
-	private bool changed = false;
 
 
 	// Use this for initialization
 	public Chunk (GamePoint index, World world) {
 		this.world = world;
 		this.index = index;
-		this.position = index * Global.ChunkSize;	
+		this.position = index * Global.ChunkSize;
+		//get moisture
+		moisture = Biome.getMoistureLevel(world.Seed, index.x, index.z);
+		//get heat
+		heat = Biome.getHeatLevel(world.Seed, index.x, index.z);
+		//get biome
+		biome = Biome.getBiome(Biome.getBiomeType(moisture, heat));
+		//check if topmost
+		topMost = isTopLayer();
 	}	
 
 	public void Build(){
@@ -126,6 +140,14 @@ public class Chunk {
 		//Debug.Log("Saving chunk from file: " + chunkFile);
 	}	
 
+	private bool isTopLayer(){
+		int y = 0;
+		for(int x=0;x<Global.ChunkSize;x++)for(int z=0;z<Global.ChunkSize;z++){
+			y = Biome.getHeight(biome.getType(), world.Seed, position.x+x, position.z+z);
+			if(y<position.y+Global.ChunkSize&&y>=position.y)return true;
+		}return false;
+	}
+
 	public Chunk getNeighbor(Direction direction){
 		/*string neighborName = getNeighborName(direction);Chunk c = null;
 		world.getLoadedChunk(neighborName, out c);return c;*/
@@ -209,5 +231,9 @@ public class Chunk {
 	public GameObject Solids{get{return this.solidGameObject;}}
 	public GameObject Fluids{get{return this.fluidGameObject;}}
 	public bool ForceLoad{get{return forceLoad;}set{forceLoad = value;}}
+	public int Moisture{get{return moisture;}}
+	public int Heat{get{return heat;}}
+	public Biome Biome{get{return biome;}}
+	public bool TopMost{get{return topMost;}}
 
 }

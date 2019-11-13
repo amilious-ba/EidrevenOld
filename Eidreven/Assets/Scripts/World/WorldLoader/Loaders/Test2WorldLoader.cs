@@ -1,8 +1,17 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TestWorldLoader : WorldLoader{
+public class Test2WorldLoader : WorldLoader{
+
+	//load and draw initial chunks
+	
+	//on updated lastPos
+		//build the new chunks
+		//add the new chunks to a draw queue
+		//remove old chunks
+	//if draw queue is not empty
+		//deque based on direction	
 
 	//private variables
 	private ConcurrentDictionary<GamePoint, Chunk> loadedChunks;
@@ -11,7 +20,7 @@ public class TestWorldLoader : WorldLoader{
 	private int steps=0, progress=0;
 	private int counter = 0;
     
-	public TestWorldLoader(World world):base(world){		
+	public Test2WorldLoader(World world):base(world){		
 		loadedChunks = new ConcurrentDictionary<GamePoint, Chunk>();
 		unloadChunks = new LockFreeQueue<GamePoint>();
 	}

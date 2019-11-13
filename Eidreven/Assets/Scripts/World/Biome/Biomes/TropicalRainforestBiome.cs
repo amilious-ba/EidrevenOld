@@ -20,5 +20,6 @@ public class TropicalRainforestBiome :  Biome{
 		return Utils.getHeight(x, z, seed, 0, Global.MaxGeneratedHeight, heightSettings);
 	}
     
+    public override BiomeType getType(){return BiomeType.TropicalRainforest;}
 
 }

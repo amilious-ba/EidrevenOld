@@ -19,6 +19,8 @@ public class GrasslandBiome : Biome{
 	public override int getHeight(int seed, int x, int z){
 		return Utils.getHeight(x, z, seed, 0, Global.MaxGeneratedHeight, heightSettings);
 	}
+
+	public override BiomeType getType(){return BiomeType.Grassland;}
     
 }
 

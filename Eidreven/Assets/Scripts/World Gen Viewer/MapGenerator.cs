@@ -55,7 +55,11 @@ public class MapGenerator : MonoBehaviour{
     			for(int y=0;y<chunkSize;y++){
     				int yoff = y*chunkSize;
     				for(int x=0;x<chunkSize;x++){
-						colorMap[yoff+x] = Biome.getBiome(Biome.getBiomeType(humidMap[x,y], heatMap[x,y])).getMapColor();
+
+                        int moisture = Biome.getMoistureLevel(humidMap[x,y]);
+                        int heat = Biome.getHeatLevel(heatMap[x,y]);
+
+						colorMap[yoff+x] = Biome.getBiome(Biome.getBiomeType(moisture, heat)).getMapColor();
 					}
     			}
     			display.DrawColorMap(colorMap,chunkSize);

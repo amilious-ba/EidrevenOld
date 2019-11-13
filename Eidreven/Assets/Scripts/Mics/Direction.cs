@@ -34,7 +34,7 @@ public class Directions{
 	 * @return Direction        Returns the direction (to) is
 	 * from (from)
 	 */
-	public static Direction getDirection(Vector3 from, Vector3 to){
+	public static Direction getDirection(GamePoint from, GamePoint to){
 		return getDirection(to-from);
 	}
 
@@ -46,7 +46,7 @@ public class Directions{
 	 * @return Direction	returns the direction the position
 	 * is from the origin.
 	 */
-	public static Direction getDirection(Vector3 p){ 
+	public static Direction getDirection(GamePoint p){ 
 		if(p.y==0&&p.x==0&&p.z==0)return Direction.NONE;
 		if(p.z==0){//no north or south
 			if(p.x==0){//no east or west
@@ -250,6 +250,64 @@ public class Directions{
 			case Direction.DOWN_SOUTH_WEST: return position + new Vector3(-distance,-distance,-distance);
 			default: return position;
 		}
+	}
+
+	public static GamePoint convertToGamePoint(Direction direction){
+		GamePoint point = new GamePoint(0,0,0);
+		//north-south
+		switch(direction){
+			case Direction.NORTH: case Direction.NORTH_EAST: case Direction.NORTH_WEST:
+			case Direction.UP_NORTH: case Direction.UP_NORTH_EAST: case Direction.UP_NORTH_WEST:
+			case Direction.DOWN_NORTH: case Direction.DOWN_NORTH_EAST: case Direction.DOWN_NORTH_WEST:
+				//north
+				point.z = 1;
+				break;
+			case Direction.SOUTH: case Direction.SOUTH_EAST: case Direction.SOUTH_WEST:
+			case Direction.UP_SOUTH: case Direction.UP_SOUTH_EAST: case Direction.UP_SOUTH_WEST:
+			case Direction.DOWN_SOUTH: case Direction.DOWN_SOUTH_EAST: case Direction.DOWN_SOUTH_WEST:
+				//south
+				point.z=-1;
+				break;
+			default:
+				//not north or south
+				break;
+		}
+
+		//east - west
+		switch(direction){
+			case Direction.EAST: case Direction.NORTH_EAST: case Direction.SOUTH_EAST:
+			case Direction.UP_EAST: case Direction.UP_NORTH_EAST: case Direction.UP_SOUTH_EAST:
+			case Direction.DOWN_EAST: case Direction.DOWN_NORTH_EAST: case Direction.DOWN_SOUTH_EAST:
+				//east
+				point.x=1;
+				break;
+			case Direction.WEST: case Direction.NORTH_WEST: case Direction.SOUTH_WEST:
+			case Direction.UP_WEST: case Direction.UP_NORTH_WEST: case Direction.UP_SOUTH_WEST:
+			case Direction.DOWN_WEST: case Direction.DOWN_NORTH_WEST: case Direction.DOWN_SOUTH_WEST:
+				//east
+				point.x=-1;
+				break;
+			default: //not east or west
+				break;			
+		}
+
+		//up - down
+		switch(direction){
+			case Direction.UP: case Direction.UP_EAST: case Direction.UP_WEST:
+			case Direction.UP_NORTH: case Direction.UP_SOUTH: case Direction.UP_NORTH_EAST:
+			case Direction.UP_NORTH_WEST: case Direction.UP_SOUTH_EAST: case Direction.UP_SOUTH_WEST:
+				//up
+				point.y=1;
+				break;
+			case Direction.DOWN: case Direction.DOWN_EAST: case Direction.DOWN_WEST:
+			case Direction.DOWN_NORTH: case Direction.DOWN_SOUTH: case Direction.DOWN_NORTH_EAST:
+			case Direction.DOWN_NORTH_WEST: case Direction.DOWN_SOUTH_EAST: case Direction.DOWN_SOUTH_WEST:
+				//up
+				point.y=-1;
+				break;
+			default: break; //no up down
+		}
+		return point;
 	}
 
 	public static Vector3 getCubeNormal(Direction direction){

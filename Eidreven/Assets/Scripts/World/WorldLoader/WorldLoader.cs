@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum LoaderType{Standard, Test}
+public enum LoaderType{Standard, Test, Test2}
 
 public abstract class WorldLoader{
 
@@ -78,11 +78,14 @@ public abstract class WorldLoader{
 		foreach(WorldLoaderListener listener in listeners)listener.worldInitLoadComplete();
 	}
 
+	public bool isInitalLoad(){return (!completedInitialBuild||!completedInitialDraw);}
+
 	public static WorldLoader CreateLoader(World world, LoaderType loaderType){
 		WorldLoader loader = null;
 		switch(loaderType){
 			case LoaderType.Standard: loader = new StandardWorldLoader(world);break;
 			case LoaderType.Test: loader = new TestWorldLoader(world);break;
+			case LoaderType.Test2: loader = new Test2WorldLoader(world);break;
 			default: loader = new StandardWorldLoader(world);break;
 		}
 		loader.addListener(world);

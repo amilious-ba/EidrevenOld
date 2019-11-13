@@ -16,6 +16,12 @@ public enum BiomeType{
 }
 
 public abstract class Biome {
+
+	public abstract Color getMapColor();
+	public abstract int getHeight(int seed, int x, int z);
+	public abstract int getStoneHeight(int seed, int x, int z);
+	public abstract BiomeType getType();
+
     protected static BiomeType[,] BiomeTable = new BiomeType[6,6] {   
 	    //COLDEST        //COLDER          //COLD                  //HOT                          //HOTTER                       //HOTTEST
 	    { BiomeType.Ice, BiomeType.Tundra, BiomeType.Grassland,    BiomeType.Desert,              BiomeType.Desert,              BiomeType.Desert },              //DRYEST
@@ -37,15 +43,8 @@ public abstract class Biome {
 	protected static TundraBiome tundra = new TundraBiome();
 	protected static IceBiome ice = new IceBiome();
 
-
-
-	public static BiomeType getBiomeType(float moisture, float temperature){
-		int m = (int)Utils.Map(0,BiomeTable.GetLength(0),0,1,moisture);
-		int t = (int)Utils.Map(0,BiomeTable.GetLength(1),0,1,temperature);
-		if(m==BiomeTable.GetLength(0))m=BiomeTable.GetLength(0)-1;
-		if(t==BiomeTable.GetLength(1))t=BiomeTable.GetLength(1)-1;
-		return BiomeTable[m,t];
-
+	public static BiomeType getBiomeType(int moistureLevel, int heatLevel){
+		return BiomeTable[moistureLevel,heatLevel];
 	}
 
 	public static Biome getBiome(BiomeType type){
@@ -64,12 +63,6 @@ public abstract class Biome {
 		}
 	}
 
-	public abstract Color getMapColor();
-	public abstract int getHeight(int seed, int x, int z);
-	public abstract int getStoneHeight(int seed, int x, int z);
-
-	//public abstract Block[,,] generateChunkBlocks(Vector2 position, int seed, int maxHeight);
-	
 	public static int getHeight(BiomeType biome, int seed, int x, int z){
 		return getBiome(biome).getHeight(seed, x, z);
 	}
@@ -87,7 +80,31 @@ public abstract class Biome {
 	public static BiomeType getBiomeType( int seed, int x, int z){
 		float heat = Utils.FBM(x, z, seed, Global.HeatSettings);
 		float humid = Utils.FBM(x,z,seed,Global.HumiditySettings);
-		return getBiomeType(humid, heat);
+		return getBiomeType(getMoistureLevel(seed, x, z), getHeatLevel(seed, x, z));
+	} 
+
+	public static int getMoistureLevel(int seed, int x, int z){
+		int moisture = (int)Utils.Map(0,BiomeTable.GetLength(0),0,1,Utils.FBM(x,z,seed,Global.HumiditySettings));
+		if(moisture==BiomeTable.GetLength(0))moisture=BiomeTable.GetLength(0)-1;
+		return moisture;
+	}
+
+	public static int getMoistureLevel(float value){
+		int moisture = (int)Utils.Map(0,BiomeTable.GetLength(0),0,1,value);
+		if(moisture==BiomeTable.GetLength(0))moisture=BiomeTable.GetLength(0)-1;
+		return moisture;
+	}
+
+	public static int getHeatLevel(int seed, int x, int z){
+		int heat = (int)Utils.Map(0,BiomeTable.GetLength(1),0,1,Utils.FBM(x,z,seed,Global.HeatSettings));
+		if(heat==BiomeTable.GetLength(1))heat=BiomeTable.GetLength(1)-1;
+		return heat;
+	}
+
+	public static int getHeatLevel(float value){
+		int heat = (int)Utils.Map(0,BiomeTable.GetLength(1),0,1,value);
+		if(heat==BiomeTable.GetLength(1))heat=BiomeTable.GetLength(1)-1;
+		return heat;
 	}
 
 }
