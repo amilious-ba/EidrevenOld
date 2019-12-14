@@ -756,6 +756,7 @@ MonoBehaviour:
   seed: newSeed
   seedVal: -722319954
   player: {fileID: 1446591297}
+  loaderType: 2
   blockTextures: {fileID: 2100000, guid: c09baebc416d6134e96495dca799840c, type: 2}
   fluidTextures: {fileID: 2100000, guid: 6cbd92f39fce9a447a2838534528a18a, type: 2}
   loadingProgress: {fileID: 1468006808}
@@ -1071,7 +1072,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 460683318}
-  debugText: {fileID: 2037040866}
   displayCube: {fileID: 1444817268}
 --- !u!1 &1459066652
 GameObject:
